@@ -109,7 +109,7 @@ flutter:
     - assets/
     - assets/global_icon/
     - assets/animation/
-    - assets/chatappproject-f51f9-071ab798efde.json
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
