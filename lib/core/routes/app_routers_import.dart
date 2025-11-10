@@ -1,0 +1,42 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:my_template/core/routes/routes_name.dart';
+import 'package:my_template/core/utils/app_local_kay.dart';
+import 'package:my_template/features/auth/presentation/view/screen/login_screen.dart';
+import 'package:my_template/features/home/presentation/view/screen/home_screen.dart';
+import 'package:my_template/features/layout/presentation/view/layout_screen.dart';
+import 'package:my_template/features/notification/presentation/screen/Pending_requests_detailes_screen.dart';
+import 'package:my_template/features/notification/presentation/screen/notification_screen.dart';
+import 'package:my_template/features/notification/presentation/screen/pending_requests_screen.dart';
+import 'package:my_template/features/on_boarding/presentation/view/screen/on_boarding_screen.dart';
+import 'package:my_template/features/profile/presentation/view/screen/profile_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/back_from_vacation_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/employee_warning_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/employment_application_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/evaluating_anemployees_performance_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/housing_allowance_request.dart';
+import 'package:my_template/features/services/presentation/view/screen/passport_application_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/request_acar_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/request_aletter_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/request_atraining_course.dart';
+import 'package:my_template/features/services/presentation/view/screen/request_general_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/request_leave_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/request_to_issue_tickets_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/resignation_request_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/sesid_change_request_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/solfa_request_screen.dart';
+import 'package:my_template/features/services/presentation/view/screen/transfer_request_screen.dart';
+import 'package:my_template/features/setting/presentation/screen/attendance_screen.dart';
+import 'package:my_template/features/setting/presentation/screen/chat_bot_screen.dart';
+import 'package:my_template/features/setting/presentation/screen/help_center_screen.dart';
+import 'package:my_template/features/setting/presentation/screen/privacy_screen.dart';
+import 'package:my_template/features/setting/presentation/screen/rate_app_screen.dart';
+import 'package:my_template/features/setting/presentation/screen/salary_vocabulary_screen.dart';
+import 'package:my_template/features/setting/presentation/screen/security_settings_screen.dart';
+import 'package:my_template/features/setting/presentation/screen/suggestions_screen.dart';
+import 'package:my_template/features/setting/presentation/screen/time_sheet_screen.dart';
+
+
+import '../../features/splash/presentation/view/screen/splash_screen.dart' show SplashScreen;
+
+part 'app_routers.dart';

@@ -1,0 +1,41 @@
+class RoutesName {
+  static const String splashScreen = '/';
+  static const String homeScreen = 'homeScreen';
+  static const String detailsScreen = 'detailsScreen';
+  static const String loginScreen = 'loginScreen';
+  static const String onboardingScreen = 'onboardingScreen';
+  static const String layoutScreen = 'layoutScreen';
+  static const String requestLeaveScreen = 'requestLeaveScreen';
+  static const String backFromVacationScreen = 'backFromVacationScreen';
+  static const String leavesScreen = 'leavesScreen';
+  static const String requestAletterScreen = 'RequestAletterScreen';
+  static const String requestAtrainingCourseScreen = 'requestAtrainingCourseScreen';
+  static const String resignationRequestScreen = 'resignationRequestScreen';
+  static const String passportapplicationScreen = 'passportapplicationScreen';
+  static const String requestToIssueTicketsScreen = 'requestToIssueTicketsScreen';
+  static const String housingAllowanceRequestcreen = 'housingAllowanceRequestcreen';
+  static const String requestACar = 'requestACar';
+  static const String employmentApplication = 'employmentApplication';
+  static const String transferrequest = 'transferrequest';
+  static const String evaluatingAnemployeesPerformanceScreen =
+      'evaluatingAnemployeesPerformanceScreen';
+  static const String solfaRequestScreen = 'loanRequest';
+  static const String employeewarning = 'employeewarning';
+  static const String notificationScreen = 'notificationScreen';
+  static const String requestHistoryDetilesScreen = 'requestHistoryDetilesScreen';
+  static const String privacyScreen = 'privacyScreen';
+  static const String securitySettingsScreen = 'SecuritySettingsScreen';
+  static const String pendingRequests = 'pendingRequests';
+  static const String pendingRequestDetailScreen = 'pendingRequestDetailScreen';
+  static const String helpCenterScreen = 'helpCenterScreen';
+  static const String chatBotScreen = 'chatBotScreen';
+  static const String attendanceScreen = 'attendanceScreen';
+  static const String profileScreen = 'profileScreen';
+  static const String editProfileScreen = 'editProfileScreen';
+  static const String salaryvocabulary = 'salaryvocabulary';
+  static const String timeSheetScreen = 'timeSheetScreen';
+  static const String sesidChangeRequestScreen = 'sesidChangeRequestScreen';
+  static const String requestgeneral = 'requestgeneral';
+  static const String rateApp = 'rate_app';
+  static const String suggestions = 'suggestions';
+}

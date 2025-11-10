@@ -1,0 +1,33 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
+import 'package:get_it/get_it.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:my_template/core/cache/hive/hive_methods.dart';
+import 'package:my_template/core/network/connection_checker.dart';
+import 'package:my_template/features/auth/data/repository/auth_repo.dart';
+import 'package:my_template/features/auth/presentation/view/cubit/auth_cubit.dart';
+import 'package:my_template/features/chat/data/repo/chat_repository.dart';
+import 'package:my_template/features/chat/presentation/cubit/chat_cubit.dart';
+import 'package:my_template/features/chat/presentation/cubit/group_cubit.dart';
+import 'package:my_template/features/home/data/repository/home_repo.dart';
+import 'package:my_template/features/home/presentation/cubit/home_cubit.dart';
+import 'package:my_template/features/layout/presentation/cubit/layout_cubit.dart';
+import 'package:my_template/features/notification/data/repo/notifiction_repo.dart';
+import 'package:my_template/features/notification/presentation/cubit/notification_cubit.dart';
+import 'package:my_template/features/on_boarding/data/repository/on_boarding_rep.dart';
+import 'package:my_template/features/on_boarding/presentation/view/cubit/on_boarding_cubit.dart';
+import 'package:my_template/features/profile/data/repo/Profile_repo.dart';
+import 'package:my_template/features/profile/presentation/cubit/prefile_cubit.dart';
+import 'package:my_template/features/request_history/data/repo/vacation_requests_repo.dart';
+import 'package:my_template/features/request_history/presentation/view/cubit/vacation_requests_cubit.dart';
+import 'package:my_template/features/services/data/repo/services_repo.dart';
+import 'package:my_template/features/services/presentation/cubit/services_cubit.dart';
+import 'package:my_template/features/setting/data/repo/setting_repo.dart';
+import 'package:my_template/features/setting/presentation/cubit/settting_cubit.dart';
+
+import '../network/api_consumer.dart';
+import '../network/app_interceptors.dart';
+import '../network/dio_consumer.dart';
+
+
+part 'services_locator_imports.dart';
