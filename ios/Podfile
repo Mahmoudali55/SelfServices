@@ -1,15 +1,17 @@
-# Uncomment this line to define a global platform for your project
+# تحديد نسخة iOS
 platform :ios, '15.0'
 
-# CocoaPods dependency manager
+# استخدام frameworks و modular headers
 use_frameworks!
 use_modular_headers!
 
-# Include the Flutter helper
+# مسار مشروع Flutter
 flutter_application_path = '../'
-load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
+
+# تحميل helper الخاص بالـ Flutter
+load File.join(flutter_application_path, '.flutter-plugins-dependencies', 'podhelper.rb')
 
 target 'Runner' do
-  # Flutter Pods
-  install_all_flutter_pods(flutter_application_path)
+  # تثبيت جميع Flutter Pods
+  install_all_flutter_pods(File.dirname(File.realpath(__FILE__)))
 end
