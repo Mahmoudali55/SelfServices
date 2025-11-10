@@ -6,9 +6,10 @@ use_frameworks!
 use_modular_headers!
 
 # Include the Flutter helper
-require File.join(File.dirname(`flutter --version`.strip), '.ios', 'Flutter', 'podhelper.rb')
+flutter_application_path = '../'
+load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
 
 target 'Runner' do
   # Flutter Pods
-  install_all_flutter_pods(File.dirname(File.realpath(__FILE__)))
+  install_all_flutter_pods(flutter_application_path)
 end
