@@ -1,0 +1,35 @@
+# Podfile
+platform :ios, '15.0'
+
+# تجنب مشاكل بعض البكجات مع use_frameworks
+# use_frameworks!   # يمكن تفعيله إذا كنت تحتاج framework حقيقي لبعض البكجات
+use_modular_headers!  
+
+# تفعيل التوافق مع Flutte
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}."
+end
+
+target 'Runner' do
+  # تثبيت جميع الـ pods الخاصة بـ Flutter
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  # إذا كنت تستخدم Swift Packages مع بعض البكجات، يمكن إضافة هذا
+  # use_frameworks!
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      # تفعيل Swift 5 لكل البكجات
+      config.build_settings['SWIFT_VERSION'] = '5.0'
+      # إصلاح بعض مشاكل التوقيع عند تثبيت pods
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+    end
+  end
+end
