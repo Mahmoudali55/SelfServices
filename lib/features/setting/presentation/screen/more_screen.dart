@@ -10,6 +10,7 @@ import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
+import 'package:my_template/features/setting/presentation/screen/rate_app_screen.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/show_change_password_sheet_widget.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/show_language_sheet.dart';
 
@@ -114,8 +115,19 @@ class _MoreScreenState extends State<MoreScreen> {
               icon: Icons.star_border_outlined,
               color: Colors.yellow,
               title: AppLocalKay.rate_app.tr(),
-              onTap: () => NavigatorMethods.pushNamed(context, RoutesName.rateApp),
+              onTap: () => showBottomSheet(
+                backgroundColor: AppColor.whiteColor(context, listen: false),
+                elevation: 5,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+
+                context: context,
+                builder: (context) => const SizedBox(height: 300, child: RateAppScreen()),
+              ),
             ),
+
             _listTile(
               icon: Icons.question_answer_outlined,
               color: Colors.purple,

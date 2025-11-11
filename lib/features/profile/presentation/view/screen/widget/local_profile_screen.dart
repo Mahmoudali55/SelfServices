@@ -135,13 +135,16 @@ class _UploadProfileWidgetState extends State<UploadProfileWidget> {
           clipBehavior: Clip.none,
           alignment: Alignment.center,
           children: [
-            CircleAvatar(
-              radius: 60.r,
-              backgroundColor: Colors.grey[300],
-              backgroundImage: imageProvider,
-              child: imageProvider == null
-                  ? const Icon(Icons.person, color: Colors.grey, size: 35)
-                  : null,
+            GestureDetector(
+              onTap: imageProvider != null ? () => _viewImage(imageProvider!) : null,
+              child: CircleAvatar(
+                radius: 60.r,
+                backgroundColor: Colors.grey[300],
+                backgroundImage: imageProvider,
+                child: imageProvider == null
+                    ? const Icon(Icons.person, color: Colors.grey, size: 35)
+                    : null,
+              ),
             ),
             Positioned(
               bottom: -5.h,
@@ -167,6 +170,29 @@ class _UploadProfileWidgetState extends State<UploadProfileWidget> {
           ],
         );
       },
+    );
+  }
+
+  void _viewImage(ImageProvider imageProvider) {
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(10),
+        child: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: InteractiveViewer(
+            panEnabled: true,
+            minScale: 0.5,
+            maxScale: 4.0,
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

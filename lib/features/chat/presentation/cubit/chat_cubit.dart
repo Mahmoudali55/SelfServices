@@ -20,6 +20,29 @@ class ChatCubit extends Cubit<ChatState> {
     // عند إنشاء الكيوبت، نعتبر المستخدم متصل
     repository.updateUserStatus(currentUserId, isOnline: true);
     startHeartbeat();
+    listenToLastMessages();
+    listenToAllIncomingMessages();
+  }
+  StreamSubscription<List<ChatMessage>>? _incomingMessagesSubscription;
+
+  void listenToAllIncomingMessages() {
+    _incomingMessagesSubscription?.cancel();
+
+    _incomingMessagesSubscription = repository.listenToIncomingMessages(currentUserId).listen((
+      newMessages,
+    ) {
+      // دمج الرسائل الجديدة مع الرسائل الحالية
+      final updated = List<ChatMessage>.from(state.chatMessages);
+
+      for (var msg in newMessages) {
+        // لو الرسالة جديدة ولم تكن موجودة، نضيفها
+        if (!updated.any((m) => m.id == msg.id)) {
+          updated.add(msg);
+        }
+      }
+
+      emit(state.copyWith(chatMessages: updated));
+    });
   }
 
   // ------------------- إدارة المستخدم الآخر -------------------
@@ -32,9 +55,10 @@ class ChatCubit extends Cubit<ChatState> {
 
     final initialMessages = await repository.getChatMessages(currentUserId, otherUserId!).first;
 
+    // الترتيب من الأحدث للأقدم
     emit(
       state.copyWith(
-        chatMessages: initialMessages..sort((a, b) => a.timestamp.compareTo(b.timestamp)),
+        chatMessages: initialMessages..sort((a, b) => b.timestamp.compareTo(a.timestamp)),
       ),
     );
 
@@ -43,11 +67,14 @@ class ChatCubit extends Cubit<ChatState> {
       messages,
     ) {
       emit(
-        state.copyWith(chatMessages: messages..sort((a, b) => a.timestamp.compareTo(b.timestamp))),
+        state.copyWith(
+          chatMessages: messages
+            ..sort((a, b) => b.timestamp.compareTo(a.timestamp)), // ترتيب الأحدث أولاً
+        ),
       );
     });
 
-    // متابعة حالة المستخدم الآخر (متصل الآن / آخر ظهور)
+    // متابعة حالة المستخدم الآخر
     _otherUserStatusSubscription = repository.getUserStatus(otherUserId!).listen((status) {
       emit(
         state.copyWith(

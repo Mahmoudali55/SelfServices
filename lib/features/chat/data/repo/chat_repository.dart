@@ -106,4 +106,16 @@ class ChatRepository {
       return isTyping;
     });
   }
+
+  Stream<List<ChatMessage>> listenToIncomingMessages(int currentUserId) {
+    return firestore
+        .collection('chats')
+        .where('receiverId', isEqualTo: currentUserId)
+        .where('isRead', isEqualTo: false)
+        .snapshots()
+        .map(
+          (snapshot) =>
+              snapshot.docs.map((doc) => ChatMessage.fromMap(doc.data(), id: doc.id)).toList(),
+        );
+  }
 }

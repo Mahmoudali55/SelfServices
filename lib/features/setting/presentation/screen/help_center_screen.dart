@@ -70,21 +70,21 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                             children: [
                               ListTile(
                                 leading: const Icon(Icons.email_outlined),
-                                title: const Text('support@myapp.com'),
+                                title: const Text(' erp@delta-asg.com'),
                                 onTap: () =>
-                                    UrlLauncherMethods.makeMailMessage('support@myapp.com'),
+                                    UrlLauncherMethods.makeMailMessage(' erp@delta-asg.com'),
                               ),
                               const Divider(),
                               ListTile(
                                 leading: const Icon(Icons.phone),
-                                title: const Text('+966 50 000 0000'),
-                                onTap: () => UrlLauncherMethods.makePhoneCall('+966 50 000 0000'),
+                                title: const Text(' 580926448 966+'),
+                                onTap: () => UrlLauncherMethods.makePhoneCall('+966 580926448'),
                               ),
                               const Divider(),
                               ListTile(
                                 leading: const Icon(Icons.chat),
                                 title: Text(AppLocalKay.supportwhatsapp.tr()),
-                                onTap: () => UrlLauncherMethods.launchWhatsApp('+966 50 000 0000'),
+                                onTap: () => UrlLauncherMethods.launchWhatsApp('+966 580926448'),
                               ),
                             ],
                           )

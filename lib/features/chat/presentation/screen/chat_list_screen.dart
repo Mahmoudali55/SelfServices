@@ -183,13 +183,18 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
                   return (emp.empName ?? '').toLowerCase().contains(searchText.toLowerCase());
                 }).toList();
 
-                // فصل الموظفين اللي لديهم محادثة
                 final chattedEmployees = filteredEmployees
                     .where((emp) => lastMessageMap.containsKey(emp.empCode))
                     .toList();
                 final nonChattedEmployees = filteredEmployees
                     .where((emp) => !lastMessageMap.containsKey(emp.empCode))
                     .toList();
+
+                chattedEmployees.sort((a, b) {
+                  final msgA = lastMessageMap[a.empCode]?.timestamp ?? DateTime(1970);
+                  final msgB = lastMessageMap[b.empCode]?.timestamp ?? DateTime(1970);
+                  return msgB.compareTo(msgA);
+                });
 
                 return Column(
                   children: [
@@ -345,7 +350,7 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: Text(
-                    DateFormat('hh:mm a').format(lastMsg.timestamp),
+                    formatMessageTime(lastMsg.timestamp),
                     style: AppTextStyle.text14RGrey(
                       context,
                     ).copyWith(fontWeight: FontWeight.bold, fontSize: 12),
@@ -534,7 +539,13 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
                               leading: CircleAvatar(
                                 backgroundColor: AppColor.primaryColor(context),
                                 radius: 30,
-                                child: Text(initials, style: AppTextStyle.text16MSecond(context, color: AppColor.whiteColor(context))),
+                                child: Text(
+                                  initials,
+                                  style: AppTextStyle.text16MSecond(
+                                    context,
+                                    color: AppColor.whiteColor(context),
+                                  ),
+                                ),
                               ),
                               title: Text(
                                 context.locale.languageCode == 'ar' ? empName : empNameE,
@@ -573,5 +584,21 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
         );
       },
     );
+  }
+
+  String formatMessageTime(DateTime timestamp) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final sentDay = DateTime(timestamp.year, timestamp.month, timestamp.day);
+
+    final diff = today.difference(sentDay).inDays;
+
+    if (diff == 0) {
+      return DateFormat('hh:mm a').format(timestamp);
+    } else if (diff == 1) {
+      return AppLocalKay.yesterday.tr();
+    } else {
+      return DateFormat('dd/MM/yyyy').format(timestamp);
+    }
   }
 }

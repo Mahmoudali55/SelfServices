@@ -396,4 +396,5 @@ class AppLocalKay {
   static const String request_a_car_screen = 'request_a_car_screen';
   static const String housing_allowance_request_screen = 'housing_allowance_request_screen';
   static const String back_from_vacation_screen = 'back_from_vacation_screen';
+  static const String yesterday = 'yesterday';
 }

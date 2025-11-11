@@ -31,9 +31,12 @@ AppBar CustomAppBarServicesWidget(BuildContext context, {required String title, 
                 },
               );
             },
-            child: Icon(
-              Icons.help_outline,
-              color: AppColor.blackColor(innerContext, listen: false),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Icon(
+                Icons.help_outline,
+                color: AppColor.primaryColor(innerContext, listen: false),
+              ),
             ),
           );
         },

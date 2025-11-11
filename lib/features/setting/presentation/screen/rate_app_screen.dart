@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:my_template/core/custom_widgets/buttons/custom_button.dart';
-import 'package:my_template/core/custom_widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:my_template/core/custom_widgets/custom_form_field/custom_form_field.dart';
+import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 
@@ -12,87 +14,91 @@ class RateAppScreen extends StatefulWidget {
   @override
   State<RateAppScreen> createState() => _RateAppScreenState();
 }
+
 class _RateAppScreenState extends State<RateAppScreen> {
   double rating = 0.0;
   final TextEditingController feedbackController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        context,
-        title: Text(AppLocalKay.rate_app.tr(), style: AppTextStyle.text18MSecond(context)),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-
-      body: Padding(
-        padding: const EdgeInsets.all(20),
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              AppLocalKay.how_was_your_experience.tr(),
-              style: AppTextStyle.text16MSecond(context),
+            InkWell(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                height: 20.h,
+                width: 20.h,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColor.whiteColor(context),
+                  border: Border.all(color: AppColor.greyColor(context)),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Icon(Icons.close, color: AppColor.blackColor(context), size: 15)],
+                ),
+              ),
             ),
 
-            const SizedBox(height: 20),
+            Center(
+              child: Text(
+                AppLocalKay.how_was_your_experience.tr(),
+                style: AppTextStyle.text16MSecond(context),
+              ),
+            ),
+
+            const SizedBox(height: 10),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(5, (index) {
+                final isActive = index < rating;
                 return GestureDetector(
                   onTap: () {
                     setState(() {
                       rating = index + 1.0;
                     });
                   },
-                  child: Icon(
-                    Icons.star,
-                    size: 40,
-                    color: (index < rating) ? Colors.amber : Colors.grey,
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween<double>(begin: 1.0, end: isActive ? 1.3 : 1.0),
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOut,
+                    builder: (context, scale, child) {
+                      return Transform.scale(
+                        scale: scale,
+                        child: Icon(
+                          Icons.star,
+                          size: 40,
+                          color: isActive ? Colors.amber : Colors.grey,
+                        ),
+                      );
+                    },
                   ),
                 );
               }),
             ),
-            const SizedBox(height: 30),
+            Gap(10.h),
             CustomFormField(
               controller: feedbackController,
-              maxLines: 4,
+              maxLines: 2,
               title: AppLocalKay.notes.tr(),
               hintText: AppLocalKay.write_notes.tr(),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
             CustomButton(
               radius: 12,
               onPressed: () {
-                _showThankYouDialog(context);
+                Navigator.pop(context);
               },
               text: AppLocalKay.send_rating.tr(),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _showThankYouDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: Text(AppLocalKay.thank.tr(), style: AppTextStyle.text18MSecond(context)),
-        content: Text(
-          rating == 0
-              ? '${AppLocalKay.your_notes_received.tr()}'
-              : '${AppLocalKay.your_rating_has_been_recorded.tr()} ⭐ $rating',
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalKay.good.tr())),
-        ],
       ),
     );
   }

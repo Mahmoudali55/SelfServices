@@ -36,7 +36,6 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CustomFormField(
                 controller: titleController,
@@ -64,45 +63,21 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                   return null;
                 },
               ),
-
-              const SizedBox(height: 30),
+              const Spacer(),
               CustomButton(
                 radius: 12,
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    _showSuccessDialog(context);
+                    Navigator.pop(context);
                   }
                 },
                 text: AppLocalKay.send.tr(),
               ),
+              const SizedBox(height: 30),
             ],
           ),
         ),
       ),
     );
-  }
-
-  // نافذة رسالة الشكر
-  void _showSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: Text(AppLocalKay.thank.tr(), style: AppTextStyle.text18MSecond(context)),
-        content: Text(
-          AppLocalKay.send_suggestion_success.tr(),
-          style: AppTextStyle.text18MSecond(context),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalKay.good.tr(), style: AppTextStyle.text18MSecond(context)),
-          ),
-        ],
-      ),
-    );
-
-    titleController.clear();
-    suggestionController.clear();
   }
 }
