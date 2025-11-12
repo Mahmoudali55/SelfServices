@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_template/core/network/contants.dart';
-
 import 'app.dart';
 import 'core/theme/cubit/app_theme_cubit.dart';
 import 'service_initialize.dart';

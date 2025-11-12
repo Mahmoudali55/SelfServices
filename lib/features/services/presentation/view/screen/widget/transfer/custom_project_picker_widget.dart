@@ -147,7 +147,7 @@ class CustomProjectPickerWidget extends StatelessWidget {
                                 final proj = filtered[index];
                                 final displayName = context.locale.languageCode == 'ar'
                                     ? proj.projectName
-                                    : (proj.projectNameEng ?? proj.projectName);
+                                    : (proj.projectNameEng ?? '-');
                                 return ListTile(
                                   title: Text(proj.projectId.toString()),
                                   trailing: Text(
@@ -161,7 +161,6 @@ class CustomProjectPickerWidget extends StatelessWidget {
                                     projectIdController.text = proj.projectId.toString();
                                     projectNameController.text = displayName;
 
-                                    // ✅ استدعاء callback
                                     if (onProjectSelected != null) {
                                       onProjectSelected!(proj);
                                     }

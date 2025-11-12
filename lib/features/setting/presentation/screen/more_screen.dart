@@ -11,6 +11,7 @@ import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/setting/presentation/screen/rate_app_screen.dart';
+import 'package:my_template/features/setting/presentation/screen/suggestions_screen.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/show_change_password_sheet_widget.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/show_language_sheet.dart';
 
@@ -37,33 +38,6 @@ class _MoreScreenState extends State<MoreScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           Gap(40.h),
-          _sectionTitle(AppLocalKay.notifications.tr(), textColor),
-          _settingCard([
-            _switchTile(
-              icon: Icons.notifications_active,
-              color: Colors.blueAccent,
-              title: AppLocalKay.appNotifications.tr(),
-              value: isNotificationOn,
-              onChanged: (val) => setState(() => isNotificationOn = val),
-            ),
-            _switchTile(
-              icon: Icons.email,
-              color: Colors.green,
-              title: AppLocalKay.email.tr(),
-              value: isEmailOn,
-              onChanged: (val) => setState(() => isEmailOn = val),
-            ),
-          ]),
-
-          _sectionTitle(AppLocalKay.language.tr(), textColor),
-          _settingCard([
-            _listTile(
-              icon: Icons.language,
-              color: Colors.deepPurple,
-              title: AppLocalKay.changeLanguage.tr(),
-              onTap: () => showLanguageSheet(context),
-            ),
-          ]),
 
           _sectionTitle(AppLocalKay.account.tr(), textColor),
           _settingCard([
@@ -86,7 +60,15 @@ class _MoreScreenState extends State<MoreScreen> {
               onTap: () => NavigatorMethods.pushNamed(context, RoutesName.timeSheetScreen),
             ),
           ]),
-
+          _sectionTitle(AppLocalKay.language.tr(), textColor),
+          _settingCard([
+            _listTile(
+              icon: Icons.language,
+              color: Colors.deepPurple,
+              title: AppLocalKay.changeLanguage.tr(),
+              onTap: () => showLanguageSheet(context),
+            ),
+          ]),
           _sectionTitle(AppLocalKay.privacy.tr(), textColor),
           _settingCard([
             _listTile(
@@ -115,7 +97,8 @@ class _MoreScreenState extends State<MoreScreen> {
               icon: Icons.star_border_outlined,
               color: Colors.yellow,
               title: AppLocalKay.rate_app.tr(),
-              onTap: () => showBottomSheet(
+              onTap: () => showModalBottomSheet(
+                isScrollControlled: true,
                 backgroundColor: AppColor.whiteColor(context, listen: false),
                 elevation: 5,
                 clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -124,7 +107,7 @@ class _MoreScreenState extends State<MoreScreen> {
                 ),
 
                 context: context,
-                builder: (context) => const SizedBox(height: 300, child: RateAppScreen()),
+                builder: (context) => const RateAppScreen(),
               ),
             ),
 
@@ -132,7 +115,17 @@ class _MoreScreenState extends State<MoreScreen> {
               icon: Icons.question_answer_outlined,
               color: Colors.purple,
               title: AppLocalKay.suggestions.tr(),
-              onTap: () => NavigatorMethods.pushNamed(context, RoutesName.suggestions),
+              onTap: () => showModalBottomSheet(
+                isScrollControlled: true,
+                backgroundColor: AppColor.whiteColor(context, listen: false),
+                elevation: 5,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                context: context,
+                builder: (context) => const SuggestionsScreen(),
+              ),
             ),
           ]),
           Gap(20.h),

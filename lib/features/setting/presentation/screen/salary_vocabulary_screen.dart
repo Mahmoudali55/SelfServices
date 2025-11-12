@@ -41,9 +41,9 @@ class _SalaryVocabularyScreenState extends State<SalaryVocabularyScreen> {
 
   void _fetchSalary() {
     context.read<SettingCubit>().employeeSalary(
-      2016,
+      currentMonth.year,
       empCode,
-      12,
+      currentMonth.month,
       context.locale.languageCode == 'ar' ? 'ar' : 'EN-GB',
     );
   }

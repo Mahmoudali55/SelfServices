@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:my_template/core/custom_widgets/buttons/custom_button.dart';
-import 'package:my_template/core/custom_widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:my_template/core/custom_widgets/custom_form_field/custom_form_field.dart';
+import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 
@@ -21,22 +23,47 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        context,
-        title: Text(AppLocalKay.suggestions.tr(), style: AppTextStyle.text18MSecond(context)),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Form(
+        key: _formKey,
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.6,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      height: 20.h,
+                      width: 20.h,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColor.whiteColor(context),
+                        border: Border.all(color: AppColor.greyColor(context)),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.close, color: AppColor.blackColor(context), size: 15),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    AppLocalKay.suggestions.tr(),
+                    style: AppTextStyle.text16MSecond(
+                      context,
+                    ).copyWith(color: AppColor.primaryColor(context)),
+                  ),
+                  const Spacer(),
+                ],
+              ),
+              Gap(30.h),
               CustomFormField(
                 controller: titleController,
                 title: AppLocalKay.send_suggestion.tr(),
@@ -55,7 +82,7 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                 controller: suggestionController,
                 title: AppLocalKay.suggestion.tr(),
                 hintText: AppLocalKay.suggestion_placeholder2.tr(),
-                maxLines: 5,
+                maxLines: 3,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return AppLocalKay.suggestion_required.tr();

@@ -21,10 +21,10 @@ void showChangePasswordSheet(BuildContext context) {
     isScrollControlled: true,
     isDismissible: storedPassword == null || storedPassword.isEmpty || storedPassword == ''
         ? false
-        : true, // ❌ يمنع الإغلاق بالضغط خارج النافذة
+        : true,
     enableDrag: storedPassword == null || storedPassword.isEmpty || storedPassword == ''
         ? false
-        : true, // ❌ يمنع السحب للأسفل
+        : true,
     backgroundColor: Colors.white,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -47,10 +47,8 @@ void showChangePasswordSheet(BuildContext context) {
                   type: ToastType.success,
                 );
 
-                // ✅ حفظ كلمة المرور الجديدة في Hive
                 HiveMethods.updateEmpPassword(passwordController.text.trim());
 
-                // ✅ إغلاق الـ BottomSheet بعد النجاح فقط
                 Navigator.pop(context);
               } else if (status.isFailure) {
                 CommonMethods.showToast(
@@ -67,7 +65,7 @@ void showChangePasswordSheet(BuildContext context) {
                 bottom: MediaQuery.of(context).viewInsets.bottom + 20,
               ),
               child: SingleChildScrollView(
-                physics:  const NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 child: Form(
                   key: formKey,
                   child: Column(

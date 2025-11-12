@@ -22,82 +22,86 @@ class _RateAppScreenState extends State<RateAppScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            InkWell(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                height: 20.h,
-                width: 20.h,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColor.whiteColor(context),
-                  border: Border.all(color: AppColor.greyColor(context)),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Icon(Icons.close, color: AppColor.blackColor(context), size: 15)],
-                ),
-              ),
-            ),
-
-            Center(
-              child: Text(
-                AppLocalKay.how_was_your_experience.tr(),
-                style: AppTextStyle.text16MSecond(context),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(5, (index) {
-                final isActive = index < rating;
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      rating = index + 1.0;
-                    });
-                  },
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween<double>(begin: 1.0, end: isActive ? 1.3 : 1.0),
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeOut,
-                    builder: (context, scale, child) {
-                      return Transform.scale(
-                        scale: scale,
-                        child: Icon(
-                          Icons.star,
-                          size: 40,
-                          color: isActive ? Colors.amber : Colors.grey,
-                        ),
-                      );
-                    },
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.4,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              InkWell(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  height: 20.h,
+                  width: 20.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColor.whiteColor(context),
+                    border: Border.all(color: AppColor.greyColor(context)),
                   ),
-                );
-              }),
-            ),
-            Gap(10.h),
-            CustomFormField(
-              controller: feedbackController,
-              maxLines: 2,
-              title: AppLocalKay.notes.tr(),
-              hintText: AppLocalKay.write_notes.tr(),
-            ),
-            const SizedBox(height: 20),
-            CustomButton(
-              radius: 12,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              text: AppLocalKay.send_rating.tr(),
-            ),
-          ],
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [Icon(Icons.close, color: AppColor.blackColor(context), size: 15)],
+                  ),
+                ),
+              ),
+
+              Center(
+                child: Text(
+                  AppLocalKay.how_was_your_experience.tr(),
+                  style: AppTextStyle.text16MSecond(context),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(5, (index) {
+                  final isActive = index < rating;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        rating = index + 1.0;
+                      });
+                    },
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween<double>(begin: 1.0, end: isActive ? 1.3 : 1.0),
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
+                      builder: (context, scale, child) {
+                        return Transform.scale(
+                          scale: scale,
+                          child: Icon(
+                            Icons.star,
+                            size: 40,
+                            color: isActive ? Colors.amber : Colors.grey,
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }),
+              ),
+              Gap(10.h),
+              CustomFormField(
+                controller: feedbackController,
+                maxLines: 2,
+                title: AppLocalKay.notes.tr(),
+                hintText: AppLocalKay.write_notes.tr(),
+              ),
+              const SizedBox(height: 20),
+              CustomButton(
+                radius: 12,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                text: AppLocalKay.send_rating.tr(),
+              ),
+            ],
+          ),
         ),
       ),
     );
