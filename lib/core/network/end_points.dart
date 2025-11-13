@@ -179,13 +179,13 @@ class EndPoints {
   static String getimageFileName(String fileName) =>
       '/DeltagroupService/Users/userimge?imageFileName=$fileName';
   // طلب عام
-  static String checkEmpHaveTicketInProccissingGeneral(int Empid) =>
-      '/DeltagroupService/Vacation/CheckEmpHaveRequestsInProccissing?typeid=5007&empcode=$Empid';
+  static String checkEmpHaveTicketInProccissingGeneral(int Empid,int typeid) =>
+      '/DeltagroupService/Vacation/CheckEmpHaveRequestsInProccissing?typeid=$typeid&empcode=$Empid';
   static const String addnewRequestGeneral = '/DeltagroupService/Dynamic/addnewDynamicorder';
-  static String getAllRequestsGeneral(int Empid) =>
-      '/DeltagroupService/Dynamic/GetDynamicorder?RequestId=&empcode=$Empid&RequestType=5007';
+  static String getAllRequestsGeneral(int Empid,int typeid) =>
+      '/DeltagroupService/Dynamic/GetDynamicorder?RequestId=&empcode=$Empid&RequestType=$typeid';
   static const String deleteRequestGeneral = '/DeltagroupService/Dynamic/DynamicorderDel';
   static const String updateRequestGeneral = '/DeltagroupService/Dynamic/update_Dynamicorder';
-  static String requestDynamicCount(int Empid) =>
-      '/DeltagroupService/Users/DynamicRequestsCountToDecide?empcode=$Empid&RequestType=5007';
+  static String requestDynamicCount(int Empid ,int typeid) =>
+      '/DeltagroupService/Users/DynamicRequestsCountToDecide?empcode=$Empid&RequestType=$typeid';
 }

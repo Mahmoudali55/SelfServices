@@ -334,9 +334,12 @@ class VacationRequestsCubit extends Cubit<VacationRequestsState> {
     );
   }
 
-  Future<void> getAllRequestsGeneral({required int empCode}) async {
+  Future<void> getAllRequestsGeneral({required int empCode, required int requestId}) async {
     emit(state.copyWith(dynamicOrderStatus: const StatusState.loading()));
-    final result = await vacationRequestsRepo.getDynamicOrder(empcode: empCode);
+    final result = await vacationRequestsRepo.getDynamicOrder(
+      empcode: empCode,
+      requesttypeid: requestId,
+    );
     result.fold(
       (error) => emit(state.copyWith(dynamicOrderStatus: StatusState.failure(error.errMessage))),
       (success) => emit(state.copyWith(dynamicOrderStatus: StatusState.success(success))),
@@ -379,6 +382,7 @@ class VacationRequestsCubit extends Cubit<VacationRequestsState> {
     required BuildContext context,
     required int empcodeadmin,
     required int empcode,
+    required int requesttypeid,
   }) async {
     if (isClosed) return;
     emit(state.copyWith(deleteDynamicOrderStatus: const StatusState.loading()));
@@ -386,6 +390,7 @@ class VacationRequestsCubit extends Cubit<VacationRequestsState> {
     final result = await vacationRequestsRepo.deleteDynamicOrder(
       requestId: requestId,
       empcode: empcode,
+      requesttypeid: requesttypeid,
     );
 
     if (isClosed) return;
@@ -400,7 +405,7 @@ class VacationRequestsCubit extends Cubit<VacationRequestsState> {
           message: context.locale.languageCode == 'ar' ? 'تم الحذف بنجاح' : 'Deleted successfully',
           type: ToastType.success,
         );
-        getAllRequestsGeneral(empCode: empcodeadmin);
+        getAllRequestsGeneral(empCode: empcodeadmin, requestId: requesttypeid);
       },
     );
   }

@@ -16,8 +16,10 @@ class NotificationState extends Equatable {
   final StatusState<List<VacationRequestToDecideModel>> transferRequestToDecideModel;
   final StatusState<List<VacationRequestToDecideModel>> housingAllowanceRequestToDecideModel;
   final StatusState<List<VacationRequestToDecideModel>> ticketRequestToDecideModel;
-  final StatusState<List<VacationRequestToDecideModel>> dynamicRequestToDecideModel;
-  final StatusState<List<RequestDynamicCountModel>> requestDynamicCountModel;
+  final StatusState<List<VacationRequestToDecideModel>> dynamicRequestToDecideModel5007;
+  final StatusState<List<VacationRequestToDecideModel>> dynamicRequestToDecideModel5008;
+  final StatusState<List<RequestDynamicCountModel>> requestDynamic5007;
+  final StatusState<List<RequestDynamicCountModel>> requestDynamic5008;
   final StatusState<DecidingInResponseModel> decidingInStatus;
   final StatusState<EmployeeRequestsNotify> employeeRequestsNotify;
 
@@ -33,8 +35,11 @@ class NotificationState extends Equatable {
     this.ticketRequestToDecideModel = const StatusState.initial(),
     this.decidingInStatus = const StatusState.initial(),
     this.employeeRequestsNotify = const StatusState.initial(),
-    this.dynamicRequestToDecideModel = const StatusState.initial(),
-    this.requestDynamicCountModel = const StatusState.initial(),
+    this.dynamicRequestToDecideModel5007 = const StatusState.initial(),
+    this.dynamicRequestToDecideModel5008 = const StatusState.initial(),
+    this.requestDynamic5007 = const StatusState.initial(),
+    this.requestDynamic5008 = const StatusState.initial(),
+
   });
 
   NotificationState copyWith({
@@ -49,8 +54,10 @@ class NotificationState extends Equatable {
     StatusState<List<VacationRequestToDecideModel>>? ticketRequestToDecideModel,
     StatusState<DecidingInResponseModel>? decidingInStatus,
     StatusState<EmployeeRequestsNotify>? employeeRequestsNotify,
-    StatusState<List<VacationRequestToDecideModel>>? dynamicRequestToDecideModel,
-    StatusState<List<RequestDynamicCountModel>>? requestDynamicCountModel,
+    StatusState<List<VacationRequestToDecideModel>>? dynamicRequestToDecideModel5007,
+    StatusState<List<VacationRequestToDecideModel>>? dynamicRequestToDecideModel5008,
+    StatusState<List<RequestDynamicCountModel>>? requestDynamic5007,
+    StatusState<List<RequestDynamicCountModel>>? requestDynamic5008,
   }) {
     return NotificationState(
       reqCountStatus: reqCountStatus ?? this.reqCountStatus,
@@ -69,8 +76,10 @@ class NotificationState extends Equatable {
       ticketRequestToDecideModel: ticketRequestToDecideModel ?? this.ticketRequestToDecideModel,
       decidingInStatus: decidingInStatus ?? this.decidingInStatus,
       employeeRequestsNotify: employeeRequestsNotify ?? this.employeeRequestsNotify,
-      dynamicRequestToDecideModel: dynamicRequestToDecideModel ?? this.dynamicRequestToDecideModel,
-      requestDynamicCountModel: requestDynamicCountModel ?? this.requestDynamicCountModel,
+      dynamicRequestToDecideModel5007: dynamicRequestToDecideModel5007 ?? this.dynamicRequestToDecideModel5007,
+      dynamicRequestToDecideModel5008: dynamicRequestToDecideModel5008 ?? this.dynamicRequestToDecideModel5008,
+      requestDynamic5007: requestDynamic5007 ?? this.requestDynamic5007,
+      requestDynamic5008: requestDynamic5008 ?? this.requestDynamic5008,
     );
   }
 
@@ -87,7 +96,9 @@ class NotificationState extends Equatable {
     ticketRequestToDecideModel,
     decidingInStatus,
     employeeRequestsNotify,
-    dynamicRequestToDecideModel,
-    requestDynamicCountModel,
+    dynamicRequestToDecideModel5007,
+    requestDynamic5007,
+    requestDynamic5008,
+    dynamicRequestToDecideModel5008
   ];
 }

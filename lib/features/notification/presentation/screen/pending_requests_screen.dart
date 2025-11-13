@@ -190,8 +190,13 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
         );
       case RequestType.dynamicRequest:
         return (
-          state.dynamicRequestToDecideModel.isLoading,
-          state.dynamicRequestToDecideModel.data ?? [],
+          state.dynamicRequestToDecideModel5007.isLoading,
+          state.dynamicRequestToDecideModel5007.data ?? [],
+        );
+      case RequestType.changeIdPhoneRequest:
+        return (
+          state.dynamicRequestToDecideModel5008.isLoading,
+          state.dynamicRequestToDecideModel5008.data ?? [],
         );
       default:
         return (false, []);

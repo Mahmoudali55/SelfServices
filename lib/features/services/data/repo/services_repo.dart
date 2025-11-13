@@ -183,6 +183,7 @@ abstract interface class ServicesRepo {
   //طلب عام
   Future<Either<Failure, List<CheckEmpHaveRequestsModel>>> checkEmpHaveGeneral({
     required int empCode,
+    required int requesttypeid,
   });
   Future<Either<Failure, AddNewDynamicOrderResponse>> addnewGeneralRequest(
     AddNewDynamicOrder request,
@@ -817,11 +818,12 @@ class ServicesRepoImpl implements ServicesRepo {
   @override
   Future<Either<Failure, List<CheckEmpHaveRequestsModel>>> checkEmpHaveGeneral({
     required int empCode,
+    required int requesttypeid,
   }) {
     return handleDioRequest(
       request: () async {
         final response = await apiConsumer.get(
-          EndPoints.checkEmpHaveTicketInProccissingGeneral(empCode),
+          EndPoints.checkEmpHaveTicketInProccissingGeneral(empCode, requesttypeid),
         );
         return CheckEmpHaveRequestsModel.listFromResponse(response);
       },

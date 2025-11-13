@@ -86,16 +86,31 @@ class NotificationScreen extends StatelessWidget {
                     child: BlocBuilder<NotifictionCubit, NotificationState>(
                       builder: (context, state) {
                         final dataList = state.reqCountStatus.data?.data ?? [];
-                        final dynamicList = state.requestDynamicCountModel.data ?? [];
-                        final totalRequestsCount =
-                            dataList.fold<int>(0, (sum, item) => sum + item.reqCount) +
-                            dynamicList.fold<int>(0, (sum, item) => sum + item.requestCount);
+                        final dynamic5007 = state.requestDynamic5007.data ?? [];
+                        final dynamic5008 = state.requestDynamic5008.data ?? [];
 
-                        final totalStatusesCount = requestStatuses.data?.data.length ?? 0;
+                        // حساب العدد لكل نوع
+                        final totalRequestsCount = dataList.fold<int>(
+                          0,
+                          (sum, item) => sum + item.reqCount,
+                        );
+                        final totalDynamic5007 = dynamic5007.fold<int>(
+                          0,
+                          (sum, item) => sum + item.requestCount,
+                        );
+                        final totalDynamic5008 = dynamic5008.fold<int>(
+                          0,
+                          (sum, item) => sum + item.requestCount,
+                        );
+
+                        // المجموع الكلي
+                        final totalDynamicCount = totalDynamic5007 + totalDynamic5008;
+                        final totalStatusesCount =
+                            state.employeeRequestsNotify.data?.data.length ?? 0;
 
                         return CustomTabBarWidget(
-                          totalRequestsCount: totalRequestsCount,
-                          totalStatusesCount: totalStatusesCount ?? 0,
+                          totalRequestsCount: totalRequestsCount + totalDynamicCount,
+                          totalStatusesCount: totalStatusesCount,
                         );
                       },
                     ),
@@ -112,7 +127,8 @@ class NotificationScreen extends StatelessWidget {
                         buildRequestList(
                           context,
                           status.data?.data ?? [],
-                          dynamicRequests: state.requestDynamicCountModel.data ?? [],
+                          dynamicRequests5007: state.requestDynamic5007.data ?? [],
+                          dynamicRequests5008: state.requestDynamic5008.data ?? [],
                         ),
 
                         ModernNotificationScreen(data: requestStatuses.data?.data ?? []),

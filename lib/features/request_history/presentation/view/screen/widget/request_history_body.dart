@@ -37,6 +37,7 @@ class _RequestHistoryBodyState extends State<RequestHistoryBody> {
       AppLocalKay.nqalRequest.tr(),
       AppLocalKay.tickets.tr(),
       AppLocalKay.requestgenerals.tr(),
+      AppLocalKay.requestchangePhone.tr(),
     ];
     final Map<String, String> requestTypeKeys = {
       'leavesRequest': AppLocalKay.leavesRequest.tr(),
@@ -48,6 +49,7 @@ class _RequestHistoryBodyState extends State<RequestHistoryBody> {
       'nqalRequest': AppLocalKay.nqalRequest.tr(),
       'tickets': AppLocalKay.tickets.tr(),
       'requestgenerals': AppLocalKay.requestgenerals.tr(),
+      'requestchangePhone': AppLocalKay.requestchangePhone.tr(),
     };
     final incomingKey = widget.initialType?.trim() ?? 'leavesRequest';
     selectedType = requestTypeKeys[incomingKey] ?? AppLocalKay.leavesRequest.tr();
@@ -75,7 +77,9 @@ class _RequestHistoryBodyState extends State<RequestHistoryBody> {
     } else if (selectedType == AppLocalKay.tickets.tr()) {
       cubit.getTicketRequests(empCode: empCode);
     } else if (selectedType == AppLocalKay.requestgenerals.tr()) {
-      cubit.getAllRequestsGeneral(empCode: empCode);
+      cubit.getAllRequestsGeneral(empCode: empCode, requestId: 5007);
+    } else if (selectedType == AppLocalKay.requestchangePhone.tr()) {
+      cubit.getAllRequestsGeneral(empCode: empCode, requestId: 5008);
     }
   }
 

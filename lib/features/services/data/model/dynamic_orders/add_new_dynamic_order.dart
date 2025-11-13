@@ -6,6 +6,7 @@ class AddNewDynamicOrder extends Equatable {
   final String? requestDateH;
   final int requestTypeId;
   final String strField1;
+  final String strField2;
   final String strNotes;
 
   const AddNewDynamicOrder({
@@ -14,6 +15,7 @@ class AddNewDynamicOrder extends Equatable {
     this.requestDateH,
     required this.requestTypeId,
     required this.strField1,
+    required this.strField2,
     required this.strNotes,
   });
 
@@ -25,6 +27,7 @@ class AddNewDynamicOrder extends Equatable {
       requestDateH: json['RequestDateH'],
       requestTypeId: json['RequestTypeId'] ?? 0,
       strField1: json['StrField1'] ?? '',
+      strField2: json['StrField2'] ?? '',
       strNotes: json['StrNotes'] ?? '',
     );
   }
@@ -37,6 +40,7 @@ class AddNewDynamicOrder extends Equatable {
       'RequestDateH': requestDateH,
       'RequestTypeId': requestTypeId,
       'StrField1': strField1,
+      'StrField2': strField2,
       'StrNotes': strNotes,
     };
   }
@@ -49,6 +53,7 @@ class AddNewDynamicOrder extends Equatable {
     int? requestTypeId,
     String? strField1,
     String? strNotes,
+    String? strField2,
   }) {
     return AddNewDynamicOrder(
       empCode: empCode ?? this.empCode,
@@ -57,6 +62,7 @@ class AddNewDynamicOrder extends Equatable {
       requestTypeId: requestTypeId ?? this.requestTypeId,
       strField1: strField1 ?? this.strField1,
       strNotes: strNotes ?? this.strNotes,
+      strField2: strField2 ?? this.strField2,
     );
   }
 
@@ -68,5 +74,6 @@ class AddNewDynamicOrder extends Equatable {
     requestTypeId,
     strField1,
     strNotes,
+    strField2,
   ];
 }

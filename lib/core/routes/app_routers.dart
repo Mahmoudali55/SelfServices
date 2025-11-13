@@ -119,7 +119,10 @@ class AppRouters {
       case RoutesName.timeSheetScreen:
         return MaterialPageRoute(builder: (_) => const TimeSheetScreen());
       case RoutesName.sesidChangeRequestScreen:
-        return MaterialPageRoute(builder: (_) => const SesidChangeRequestScreen());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => SesidChangeRequestScreen(dynamicOrderModel: args?['request']),
+        );
       case RoutesName.requestgeneral:
         final args = settings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(

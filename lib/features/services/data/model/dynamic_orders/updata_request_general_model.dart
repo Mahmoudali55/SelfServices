@@ -7,6 +7,7 @@ class UpdataRequestGeneralModel extends Equatable {
   final String? requestDateH;
   final int requestTypeId;
   final String strField1;
+  final String strField2;
   final String strNotes;
 
   const UpdataRequestGeneralModel({
@@ -16,6 +17,7 @@ class UpdataRequestGeneralModel extends Equatable {
     this.requestDateH,
     required this.requestTypeId,
     required this.strField1,
+    required this.strField2,
     required this.strNotes,
   });
 
@@ -28,6 +30,7 @@ class UpdataRequestGeneralModel extends Equatable {
       requestTypeId: json['RequestTypeId'] ?? 0,
       strField1: json['StrField1'] ?? '',
       strNotes: json['StrNotes'] ?? '',
+      strField2: json['StrField2'] ?? '',
     );
   }
 
@@ -39,6 +42,7 @@ class UpdataRequestGeneralModel extends Equatable {
       'RequestDateH': requestDateH,
       'RequestTypeId': requestTypeId,
       'StrField1': strField1,
+      'StrField2': strField2,
       'StrNotes': strNotes,
     };
   }
@@ -51,6 +55,7 @@ class UpdataRequestGeneralModel extends Equatable {
     requestDateH,
     requestTypeId,
     strField1,
+    strField2,
     strNotes,
   ];
 }

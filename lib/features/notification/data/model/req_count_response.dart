@@ -72,6 +72,7 @@ enum RequestType {
   returnFromLeave, // 13- العودة من إجازة
   transferRequest, // 14- طلب النقل
   dynamicRequest, // 15- طلبات متغيرة
+  changeIdPhoneRequest, // 16- طلبات التغيير
 }
 
 class RequestTypeHelper {
@@ -91,6 +92,7 @@ class RequestTypeHelper {
     RequestType.returnFromLeave,
     RequestType.transferRequest,
     RequestType.dynamicRequest,
+    RequestType.changeIdPhoneRequest,
   ];
   static RequestType fromIndex(int index) {
     if (index < 0 || index >= _types.length) return RequestType.vacation;
@@ -117,8 +119,10 @@ class RequestTypeHelper {
         return AppLocalKay.transferRequest.tr();
       case RequestType.dynamicRequest:
         return AppLocalKay.requestgeneral.tr();
+      case RequestType.changeIdPhoneRequest:
+        return AppLocalKay.requestchangePhone.tr();
       default:
-        return '';
+        return '';  
     }
   }
 }

@@ -51,7 +51,14 @@ class _CustomHomeHeaderWidgetState extends State<CustomHomeHeaderWidget> {
       final empId = int.tryParse(HiveMethods.getEmpCode() ?? '0') ?? 0;
       context.read<NotifictionCubit>().getReqCount(empId: empId);
       context.read<NotifictionCubit>().getemployeeRequestsNotify(empId: empId);
-      context.read<NotifictionCubit>().getDynamicRequestToDecideModel(empId: empId);
+      context.read<NotifictionCubit>().getDynamicRequestToDecideModel(
+        empId: empId,
+        requestType: 5007,
+      );
+      context.read<NotifictionCubit>().getDynamicRequestToDecideModel(
+        empId: empId,
+        requestType: 5008,
+      );
     });
   }
 
@@ -177,16 +184,19 @@ class _CustomHomeHeaderWidgetState extends State<CustomHomeHeaderWidget> {
               int cachedCount = HiveMethods.getNotificationCount() ?? 0;
               final dataList = state.reqCountStatus.data?.data ?? [];
               final list = state.employeeRequestsNotify.data?.data ?? [];
-              final dynamicCountList = state.requestDynamicCountModel.data ?? [];
+              final total5007 =
+                  state.requestDynamic5007.data?.fold(0, (sum, item) => sum + item.requestCount) ??
+                  0;
+              final total5008 =
+                  state.requestDynamic5008.data?.fold(0, (sum, item) => sum + item.requestCount) ??
+                  0;
+
+              final totalDynamic = total5007 + total5008;
 
               final totalReqCount = dataList.fold<int>(0, (sum, item) => sum + item.reqCount);
               final totalStatusesCount = list.length;
-              final totalDynamicCount = dynamicCountList.fold<int>(
-                0,
-                (sum, item) => sum + item.requestCount,
-              );
 
-              final serverCount = totalReqCount + totalStatusesCount + totalDynamicCount;
+              final serverCount = totalReqCount + totalStatusesCount + totalDynamic;
 
               if (serverCount != cachedCount) {
                 cachedCount = serverCount;

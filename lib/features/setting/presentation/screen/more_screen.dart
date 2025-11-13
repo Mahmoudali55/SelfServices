@@ -100,14 +100,14 @@ class _MoreScreenState extends State<MoreScreen> {
               onTap: () => showModalBottomSheet(
                 isScrollControlled: true,
                 backgroundColor: AppColor.whiteColor(context, listen: false),
-                elevation: 5,
+                elevation: 0,
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
 
                 context: context,
-                builder: (context) => const RateAppScreen(),
+                builder: (context) => SizedBox(height: 400.h, child: const RateAppScreen()),
               ),
             ),
 
@@ -118,13 +118,13 @@ class _MoreScreenState extends State<MoreScreen> {
               onTap: () => showModalBottomSheet(
                 isScrollControlled: true,
                 backgroundColor: AppColor.whiteColor(context, listen: false),
-                elevation: 5,
+                elevation: 0,
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
                 context: context,
-                builder: (context) => const SuggestionsScreen(),
+                builder: (context) => SizedBox(height: 400.h, child: const SuggestionsScreen()),
               ),
             ),
           ]),

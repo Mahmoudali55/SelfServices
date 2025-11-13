@@ -221,7 +221,8 @@ class NotifictionCubit extends Cubit<NotificationState> {
   }
 
   Future<void> dynamicRequestToDecideModel({required int empId}) async {
-    emit(state.copyWith(dynamicRequestToDecideModel: const StatusState.loading()));
+    emit(state.copyWith(dynamicRequestToDecideModel5007: const StatusState.loading()));
+    emit(state.copyWith(dynamicRequestToDecideModel5008: const StatusState.loading()));
 
     try {
       final result = await repo.dynamicRequestToDecideModel(empId: empId);
@@ -230,38 +231,76 @@ class NotifictionCubit extends Cubit<NotificationState> {
         (failure) {
           emit(
             state.copyWith(
-              dynamicRequestToDecideModel: StatusState.failure(_mapFailureToMessage(failure)),
+              dynamicRequestToDecideModel5007: StatusState.failure(_mapFailureToMessage(failure)),
+              dynamicRequestToDecideModel5008: StatusState.failure(_mapFailureToMessage(failure)),
             ),
           );
         },
         (response) {
-          emit(state.copyWith(dynamicRequestToDecideModel: StatusState.success(response)));
+          // response هنا List<RequestDynamicCountModel>
+          final list5007 = response.where((e) => e.requestType == 5007).toList();
+          final list5008 = response.where((e) => e.requestType == 5008).toList();
+
+          emit(
+            state.copyWith(
+              dynamicRequestToDecideModel5007: StatusState.success(list5007),
+              dynamicRequestToDecideModel5008: StatusState.success(list5008),
+            ),
+          );
         },
       );
     } catch (e) {
-      emit(state.copyWith(dynamicRequestToDecideModel: StatusState.failure(e.toString())));
+      emit(
+        state.copyWith(
+          dynamicRequestToDecideModel5007: StatusState.failure(e.toString()),
+          dynamicRequestToDecideModel5008: StatusState.failure(e.toString()),
+        ),
+      );
     }
   }
 
-  Future<void> getDynamicRequestToDecideModel({required int empId}) async {
-    emit(state.copyWith(requestDynamicCountModel: const StatusState.loading()));
+  Future<void> getDynamicRequestToDecideModel({
+    required int empId,
+    required int requestType,
+  }) async {
+    if (requestType == 5007) {
+      emit(state.copyWith(requestDynamic5007: const StatusState.loading()));
+    } else if (requestType == 5008) {
+      emit(state.copyWith(requestDynamic5008: const StatusState.loading()));
+    }
 
     try {
-      final result = await repo.requestDynamicCountModel(empId);
+      final result = await repo.requestDynamicCountModel(empId, requestType);
       result.fold(
         (failure) {
-          emit(
-            state.copyWith(
-              requestDynamicCountModel: StatusState.failure(_mapFailureToMessage(failure)),
-            ),
-          );
+          if (requestType == 5007) {
+            emit(
+              state.copyWith(
+                requestDynamic5007: StatusState.failure(_mapFailureToMessage(failure)),
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                requestDynamic5008: StatusState.failure(_mapFailureToMessage(failure)),
+              ),
+            );
+          }
         },
         (response) {
-          emit(state.copyWith(requestDynamicCountModel: StatusState.success(response)));
+          if (requestType == 5007) {
+            emit(state.copyWith(requestDynamic5007: StatusState.success(response)));
+          } else {
+            emit(state.copyWith(requestDynamic5008: StatusState.success(response)));
+          }
         },
       );
     } catch (e) {
-      emit(state.copyWith(requestDynamicCountModel: StatusState.failure(e.toString())));
+      if (requestType == 5007) {
+        emit(state.copyWith(requestDynamic5007: StatusState.failure(e.toString())));
+      } else {
+        emit(state.copyWith(requestDynamic5008: StatusState.failure(e.toString())));
+      }
     }
   }
 
@@ -343,6 +382,8 @@ class NotifictionCubit extends Cubit<NotificationState> {
       case RequestType.transferRequest:
         getTransferRequestToDecideModel(empId: empId);
       case RequestType.dynamicRequest:
+        dynamicRequestToDecideModel(empId: empId);
+      case RequestType.changeIdPhoneRequest:
         dynamicRequestToDecideModel(empId: empId);
         break;
     }

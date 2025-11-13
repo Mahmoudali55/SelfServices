@@ -714,10 +714,16 @@ class ServicesCubit extends Cubit<ServicesState> {
     );
   }
 
-  Future<CheckEmpHaveRequestsModel?> checkEmpGeneral({required int empCode}) async {
+  Future<CheckEmpHaveRequestsModel?> checkEmpGeneral({
+    required int empCode,
+    required int requesttypeid,
+  }) async {
     emit(state.copyWith(checkEmpHaveResignationRequestsStatus: const StatusState.loading()));
 
-    final result = await leavesRepo.checkEmpHaveGeneral(empCode: empCode);
+    final result = await leavesRepo.checkEmpHaveGeneral(
+      empCode: empCode,
+      requesttypeid: requesttypeid,
+    );
     return result.fold(
       (failure) {
         emit(

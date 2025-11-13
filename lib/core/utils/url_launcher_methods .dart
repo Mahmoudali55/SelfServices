@@ -33,9 +33,9 @@ class UrlLauncherMethods {
     }
   }
 
-  static Future<void> launchWhatsApp(String phoneNumber) async {
+  static Future<void> launchWhatsApp(String phoneNumber, {String? message}) async {
     if (!await launchUrl(
-      Uri.parse(_whatsAppUrl(phoneNumber)),
+      Uri.parse(_whatsAppUrl(phoneNumber + '?text=$message')),
       mode: LaunchMode.externalApplication,
     )) {
       throw 'Could not launch ${_whatsAppUrl(phoneNumber)}';

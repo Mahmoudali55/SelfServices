@@ -91,9 +91,15 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
             notes.clear();
             requestNumber.clear();
           },
+          isLoading: widget.dynamicOrderModel == null
+              ? context.watch<ServicesCubit>().state.addnewGeneralStatus.isLoading
+              : context.watch<ServicesCubit>().state.updataGeneralStatus.isLoading,
+          title: widget.dynamicOrderModel == null ? AppLocalKay.save.tr() : AppLocalKay.edit.tr(),
+          color: widget.dynamicOrderModel == null ? AppColor.primaryColor(context) : Colors.orange,
           save: () async {
             final checkResult = await context.read<ServicesCubit>().checkEmpGeneral(
               empCode: int.parse(empCode),
+              requesttypeid: 5007,
             );
 
             if (widget.dynamicOrderModel == null && checkResult != null) {
@@ -109,6 +115,7 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
                     requestDate: _dateController.text,
                     requestTypeId: 5007,
                     strField1: requestDescription.text,
+                    strField2: '',
                     strNotes: notes.text,
                   ),
                 );
@@ -119,6 +126,7 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
                     requestDate: _dateController.text,
                     requestTypeId: 5007,
                     strField1: requestDescription.text,
+                    strField2: '',
                     strNotes: notes.text,
                   ),
                 );

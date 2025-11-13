@@ -70,10 +70,14 @@ abstract interface class VacationRequestsRepo {
     required int requestId,
     required int empcode,
   });
-  Future<Either<Failure, List<DynamicOrderModel>>> getDynamicOrder({required int empcode});
+  Future<Either<Failure, List<DynamicOrderModel>>> getDynamicOrder({
+    required int empcode,
+    required int requesttypeid,
+  });
   Future<Either<Failure, DeleteRequestSolfaModel>> deleteDynamicOrder({
     required int requestId,
     required int empcode,
+    required int requesttypeid,
   });
 }
 
@@ -349,10 +353,15 @@ class VacationRequestsRepoImpl implements VacationRequestsRepo {
   }
 
   @override
-  Future<Either<Failure, List<DynamicOrderModel>>> getDynamicOrder({required int empcode}) {
+  Future<Either<Failure, List<DynamicOrderModel>>> getDynamicOrder({
+    required int empcode,
+    required int requesttypeid,
+  }) {
     return handleDioRequest(
       request: () async {
-        final response = await apiConsumer.get(EndPoints.getAllRequestsGeneral(empcode));
+        final response = await apiConsumer.get(
+          EndPoints.getAllRequestsGeneral(empcode, requesttypeid),
+        );
 
         final dataString = response['Data'] as String?;
 
@@ -368,12 +377,13 @@ class VacationRequestsRepoImpl implements VacationRequestsRepo {
   Future<Either<Failure, DeleteRequestSolfaModel>> deleteDynamicOrder({
     required int requestId,
     required int empcode,
+    required int requesttypeid,
   }) {
     return handleDioRequest(
       request: () async {
         final response = await apiConsumer.delete(
           EndPoints.deleteRequestGeneral,
-          body: {'Requestid': requestId, 'RequestTypeId': 5007, 'EmpCode': empcode},
+          body: {'Requestid': requestId, 'RequestTypeId': requesttypeid, 'EmpCode': empcode},
         );
         return DeleteRequestSolfaModel.fromJson(response ?? {});
       },

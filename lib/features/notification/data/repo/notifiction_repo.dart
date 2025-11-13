@@ -44,7 +44,10 @@ abstract interface class NotifictionRepo {
   });
   Future<Either<Failure, DecidingInResponseModel>> decidingIn(DecidingInRequestModel request);
   Future<Either<Failure, EmployeeRequestsNotify>> employeeRequestsNotify(int Empid);
-  Future<Either<Failure, List<RequestDynamicCountModel>>> requestDynamicCountModel(int Empid);
+  Future<Either<Failure, List<RequestDynamicCountModel>>> requestDynamicCountModel(
+    int Empid,
+    int requesttypeid,
+  );
 }
 
 class NotifictionRepoImpl implements NotifictionRepo {
@@ -253,10 +256,13 @@ class NotifictionRepoImpl implements NotifictionRepo {
   }
 
   @override
-  Future<Either<Failure, List<RequestDynamicCountModel>>> requestDynamicCountModel(int empId) {
+  Future<Either<Failure, List<RequestDynamicCountModel>>> requestDynamicCountModel(
+    int empId,
+    int requesttypeid,
+  ) {
     return handleDioRequest<List<RequestDynamicCountModel>>(
       request: () async {
-        final response = await apiConsumer.get(EndPoints.requestDynamicCount(empId));
+        final response = await apiConsumer.get(EndPoints.requestDynamicCount(empId, requesttypeid));
         final rawData = response['Data'] as String? ?? '[]';
         final decoded = jsonDecode(rawData) as List<dynamic>;
         final list = decoded

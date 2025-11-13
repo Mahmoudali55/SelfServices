@@ -99,7 +99,9 @@ class HousingAllowanceRequestItem extends StatelessWidget {
             Icon(Icons.request_quote, size: 16, color: AppColor.blackColor(context)),
             const SizedBox(width: 8),
             Text(
-              AppLocalKay.requestgeneral.tr(),
+              request.strField2.isEmpty
+                  ? AppLocalKay.requestgeneral.tr()
+                  : AppLocalKay.requestchangePhone.tr(),
               style: AppTextStyle.text16MSecond(context, color: AppColor.blackColor(context)),
             ),
           ],
@@ -135,14 +137,16 @@ class _Details extends StatelessWidget {
         CustomTitelCardWidget(
           icon: Icons.request_quote,
           request: request,
-          title: AppLocalKay.reason.tr(),
+          title: request.strField2.isEmpty ? AppLocalKay.reason.tr() : AppLocalKay.newDevice.tr(),
           description: request.strField1.toString(),
         ),
         CustomTitelCardWidget(
           icon: Icons.notes,
           request: request,
-          title: AppLocalKay.notes.tr(),
-          description: request.strNotes.toString(),
+          title: request.strField2.isEmpty ? AppLocalKay.notes.tr() : AppLocalKay.reason.tr(),
+          description: request.strField2.isEmpty
+              ? request.strNotes.toString()
+              : request.strField2.toString(),
         ),
       ],
     );
@@ -188,7 +192,9 @@ class _ActionButtons extends StatelessWidget {
             onTap: () {
               Navigator.pushNamed(
                 context,
-                RoutesName.requestgeneral,
+                request.strField2.isEmpty
+                    ? RoutesName.requestgeneral
+                    : RoutesName.sesidChangeRequestScreen,
                 arguments: {'request': request},
               );
             },
@@ -222,6 +228,7 @@ class _ActionButtons extends StatelessWidget {
 
               if (confirm == true) {
                 context.read<VacationRequestsCubit>().deleteRequestGeneral(
+                  requesttypeid: request.strField2.isEmpty ? 5007 : 5008,
                   requestId: request.requestId ?? 0,
                   empcodeadmin: empcoded,
                   empcode: request.empCode ?? 0,
