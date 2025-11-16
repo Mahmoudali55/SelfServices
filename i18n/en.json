@@ -410,5 +410,6 @@
   "housing_allowance_request_screen": "This page allows you to submit or edit a housing allowance request.\n\n✅ On this page you can:\n• View the request number automatically if it is an edited request\n• Select the request date\n• Specify the housing place or allowance type\n• Enter the requested amount\n• Add additional notes\n\n✅ After submission:\n• The request will be sent to management for review and approval\n• You will receive a notification about the request status later\n• You can edit the request later depending on its status",
   "back_from_vacation_screen": "This page allows you to submit or edit a vacation return request.\n\n✅ On this page you can:\n• View the request number automatically if it is an edited request\n• Select the request date\n• Specify the vacation start and end dates\n• Specify the actual return date\n• See the number of vacation days and any late days\n• Add additional notes\n\n✅ After submission:\n• The request will be sent to management for review and approval\n• You will receive a notification about the request status later\n• You can edit the request later depending on its status",
   "yesterday": "Yesterday",
-  "requestchangePhone": "requestchangePhone"
+  "requestchangePhone": "requestchangePhone",
+  "device_not_supported": "This device is not supported for security reasons."
 }

@@ -109,11 +109,19 @@ class GroupCubit extends Cubit<GroupState> {
     }
   }
 
-  /// حذف رسالة واحدة
   Future<void> deleteMessage(String groupId, ChatMessage message) async {
     try {
+      // تحديث الرسالة في Firebase
       await repository.deleteGroupMessage(groupId, message.id!);
-      final updatedMessages = groupMessages[groupId]?.where((msg) => msg.id != message.id).toList();
+
+      // تحديث الحالة محليًا لتعيين isDeleted
+      final updatedMessages = groupMessages[groupId]?.map((msg) {
+        if (msg.id == message.id) {
+          return msg.copyWith(isDeleted: true);
+        }
+        return msg;
+      }).toList();
+
       if (updatedMessages != null) {
         groupMessages[groupId] = updatedMessages;
         emit(GroupLoaded(groups, groupMessages: groupMessages));
@@ -153,16 +161,19 @@ class GroupCubit extends Cubit<GroupState> {
     _refreshSelectionUI();
   }
 
-  /// حذف كل الرسائل المحددة
   Future<void> deleteSelectedMessages(String groupId) async {
     final selectedIds = _selectedMessageIds.toList();
     for (final id in selectedIds) {
       await repository.deleteGroupMessage(groupId, id);
     }
     _selectedMessageIds.clear();
-    final updatedMessages = groupMessages[groupId]
-        ?.where((msg) => !selectedIds.contains(msg.id))
-        .toList();
+    final updatedMessages = groupMessages[groupId]?.map((msg) {
+      if (selectedIds.contains(msg.id)) {
+        return msg.copyWith(isDeleted: true);
+      }
+      return msg;
+    }).toList();
+
     if (updatedMessages != null) {
       groupMessages[groupId] = updatedMessages;
       emit(GroupLoaded(groups, groupMessages: groupMessages));
@@ -172,20 +183,7 @@ class GroupCubit extends Cubit<GroupState> {
   Future<void> addMemberToGroup(String groupId, int empId, String name) async {
     try {
       await repository.addMemberToGroup(groupId, empId, name);
-
-      // بعد إضافة العضو، تحديث الحالة الحالية لإظهار التغيير فورًا
-      final currentState = state;
-      if (currentState is GroupLoaded) {
-        final groups = List<GroupModel>.from(currentState.groups);
-        final index = groups.indexWhere((g) => g.id == groupId);
-        if (index != -1) {
-          // إضافة العضو للمجموعة المحلية
-          final members = List<Map<String, dynamic>>.from(groups[index].members);
-          members.add({'id': empId, 'name': name}); // يمكنك تمرير الاسم الحقيقي
-          groups[index] = groups[index].copyWith(members: members);
-          emit(GroupLoaded(groups, groupMessages: currentState.groupMessages));
-        }
-      }
+      // ✅ لا تضيف العضو محليًا هنا، Stream سيقوم بتحديث الـstate تلقائيًا
     } catch (e) {
       emit(GroupError('فشل إضافة العضو: $e'));
     }

@@ -437,20 +437,29 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
+        preferredSize: const Size.fromHeight(70),
         child: AppBar(
           backgroundColor: Colors.white,
+          leadingWidth: 40,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () => Navigator.pop(context),
           ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 widget.groupName,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
+              const SizedBox(height: 10),
               BlocBuilder<GroupCubit, GroupState>(
                 builder: (context, state) {
                   if (state is! GroupLoaded) return const SizedBox.shrink();
@@ -462,17 +471,24 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   if (group.members.isEmpty) return const SizedBox.shrink();
 
                   return SizedBox(
-                    height: 30,
-                    child: ListView.builder(
+                    height: 24,
+                    child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: group.members.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 6),
                       itemBuilder: (context, index) {
                         final member = group.members[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           child: Text(
                             member['name'],
-                            style: const TextStyle(color: Colors.black, fontSize: 12),
+                            style: const TextStyle(fontSize: 12, color: Colors.black87),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         );
                       },
@@ -484,9 +500,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           ),
           actions: [
             PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert, color: Colors.black),
+              icon: const Icon(Icons.more_vert, color: Colors.black87),
               onSelected: (value) async {
-                final cubit = context.read<GroupCubit>(); // read بدون listen
+                final cubit = context.read<GroupCubit>();
                 final state = cubit.state;
                 final groupData = (state is GroupLoaded)
                     ? state.groups.firstWhere((g) => g.id == widget.groupId)
@@ -497,7 +513,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   case 'add_member':
                     if (groupData != null) _addMemberToGroup(groupData.id);
                     break;
-
                   case 'leave_group':
                     if (groupData == null) return;
                     bool confirmLeave = await showDialog(
@@ -519,15 +534,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                     );
                     if (confirmLeave) {
                       cubit.leaveGroup(widget.groupId);
-                      CommonMethods.showToast(
-                        message: AppLocalKay.leave_group_confirmation.tr(),
-                        seconds: 3,
-                        type: ToastType.success,
-                      );
                       Navigator.pop(context);
                     }
                     break;
-
                   case 'delete_group':
                     if (!isAdmin || groupData == null) return;
                     bool confirmDelete = await showDialog(
@@ -549,15 +558,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                     );
                     if (confirmDelete) {
                       await cubit.deleteGroup(widget.groupId);
-                      CommonMethods.showToast(
-                        message: AppLocalKay.group_deleted_success.tr(),
-                        seconds: 3,
-                        type: ToastType.success,
-                      );
                       Navigator.pop(context);
                     }
                     break;
-
                   case 'remove_member':
                     if (!isAdmin || groupData == null) return;
                     showModalBottomSheet(
@@ -572,13 +575,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                           shrinkWrap: true,
                           children: groupData.members
                               .where((m) => m['id'] != cubit.currentUserId)
-                              .map((member) {
-                                String _cleanName(String name) {
-                                  return name.replaceFirst(RegExp(r'^\d+\s*'), '').trim();
-                                }
-
-                                return ListTile(
-                                  title: Text(_cleanName(member['name'])),
+                              .map(
+                                (member) => ListTile(
+                                  title: Text(member['name']),
                                   trailing: Text(
                                     AppLocalKay.delete.tr(),
                                     style: const TextStyle(
@@ -589,14 +588,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                                   onTap: () async {
                                     await cubit.removeMemberFromGroup(widget.groupId, member['id']);
                                     Navigator.pop(context);
-                                    CommonMethods.showToast(
-                                      message: 'تم حذف العضو ${member['name']} بنجاح',
-                                      seconds: 3,
-                                      type: ToastType.success,
-                                    );
                                   },
-                                );
-                              })
+                                ),
+                              )
                               .toList(),
                         );
                       },
