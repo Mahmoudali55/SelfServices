@@ -151,7 +151,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     } catch (e) {
       status = AppLocalKay.errorOccurred.tr();
       CommonMethods.showToast(message: status, type: ToastType.error);
-      debugPrint('Attendance Error: $e');
     } finally {
       setState(() {
         isLoadingIn = false;

@@ -74,26 +74,8 @@ class _EmploymentApplicationScreenState extends State<EmploymentApplicationScree
                 ],
               ),
 
-              // CustomFormField(
-              //   title: AppLocalKay.department.tr(),
-              //   items: const ['IT', 'HR', 'Finance'],
-              //   value: 'IT',
-              //   onDropDownChanged: (val) {
-              //     print('Selected Department: $val');
-              //   },
-              // ),
-
-              // CustomFormField(
-              //   title: AppLocalKay.project.tr(),
-              //   items: const ['Project A', 'Project B'],
-              //   onDropDownChanged: (val) {},
-              // ),
-
-              // CustomFormField(
-              //   title: AppLocalKay.jobTitle.tr(),
-              //   items: const ['Manager', 'Developer', 'Tester'],
-              //   onDropDownChanged: (val) {},
-              // ),
+             
+             
               CustomFormField(title: AppLocalKay.nunmberemployees.tr()),
               CustomFormField(
                 controller: _startDateController,

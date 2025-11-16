@@ -56,7 +56,7 @@ class ServerFailure extends Failure {
           return ServerFailure('Oops! There was an error, please try again.');
       }
     } catch (e, stack) {
-      log('ServerFailure.fromDioError error: $e\n$stack');
+  
       return ServerFailure('An unknown error occurred');
     }
   }
@@ -109,15 +109,14 @@ Future<Either<Failure, T>> handleDioRequest<T>({required Future<T> Function() re
     final response = await request();
     return Right(response);
   } on DioException catch (e) {
-    log('[DioException] ➜ ${e.message}');
+  
     final serverMsg = ServerFailure._extractServerMessage(
       e.response?.data['Message'] ?? e.response?.data,
     );
-    if (serverMsg != null) log('[Server message] ➜ $serverMsg');
+    if (serverMsg != null) ;
     return Left(ServerFailure.fromDioError(e));
   } catch (e, stack) {
-    log('[Unknown Error] ➜ $e');
-    log('[StackTrace] ➜ $stack');
+   
     return Left(ServerFailure(e.toString()));
   }
 }

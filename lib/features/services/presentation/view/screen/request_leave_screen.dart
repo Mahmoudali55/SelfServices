@@ -494,7 +494,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                         _ballController.text = balData
                             .fold<double>(0, (sum, e) => sum + (e.column1 ?? 0))
                             .toString();
-                        debugPrint('💰 Total Balance: ${_ballController.text}');
+                       
                       }
                     }
 
@@ -505,7 +505,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                         _balanceController.text = vacData
                             .fold<double>(0, (sum, e) => sum + (e.empVacBal ?? 0))
                             .toString();
-                        debugPrint('📊 Total Vacation: ${_balanceController.text}');
+                       
                       }
                     }
                   },
@@ -970,10 +970,10 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
 
       await file.writeAsBytes(bytes, flush: true);
 
-      // فتح الملف باستخدام التطبيقات المناسبة على الجهاز
+     
       await OpenFilex.open(file.path);
     } catch (e) {
-      print('Error opening file: $e');
+    
     }
   }
 }

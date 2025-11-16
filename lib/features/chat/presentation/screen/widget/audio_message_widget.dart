@@ -54,7 +54,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
 
       await _player!.stopPlayer(); // نوقف التشغيل فورًا بعد معرفة المدة
     } catch (e) {
-      debugPrint('Error getting audio duration: $e');
+      
     }
   }
 

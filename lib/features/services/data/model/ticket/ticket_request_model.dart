@@ -71,10 +71,9 @@ class TicketRequest extends Equatable {
 Future<void> addNewTicketRequest(TicketRequest request) async {
   final Map<String, dynamic> payload = request.toJson();
 
-  // هنا تقدر تستخدم Dio أو http لإرسال الطلب للـ API
-  print('Sending Ticket Request: $payload');
+
 
   // مثال وهمي
   await Future.delayed(const Duration(seconds: 1));
-  print('Ticket Request added successfully!');
+
 }

@@ -16,7 +16,6 @@ class CloudinaryService {
       );
       return response.secureUrl;
     } catch (e) {
-      print('Error uploading file: $e');
       return null;
     }
   }
@@ -28,7 +27,6 @@ class CloudinaryService {
       );
       return response.secureUrl;
     } catch (e) {
-      print('Error uploading file: $e');
       return null;
     }
   }
@@ -40,7 +38,6 @@ class CloudinaryService {
       );
       return response.secureUrl;
     } catch (e) {
-      print('Error uploading file: $e');
       return null;
     }
   }

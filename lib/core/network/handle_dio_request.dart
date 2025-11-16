@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
@@ -11,7 +10,6 @@ Future<Either<Failure, T>> handleDioRequest<T>({required Future<T> Function() re
     return Right(response);
   } on DioException catch (e) {
     // log error type and message
-    log('[DioException] ➜ ${e.message}');
 
     String serverMsg = 'An unknown error occurred';
 
@@ -45,13 +43,9 @@ Future<Either<Failure, T>> handleDioRequest<T>({required Future<T> Function() re
       }
     }
 
-    log('[Server message] ➜ $serverMsg');
-
     // هنا بنمرر الرسالة اللي رجعت من السيرفر
     return Left(ServerFailure(serverMsg));
   } catch (e, stack) {
-    log('[Unknown Error] ➜ $e');
-    log('[StackTrace] ➜ $stack');
     return Left(ServerFailure(e.toString()));
   }
 }

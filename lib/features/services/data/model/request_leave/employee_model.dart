@@ -81,7 +81,6 @@ class EmployeeModel extends Equatable {
         return [];
       }
     } catch (e) {
-      print('Error parsing EmployeeModel list: $e');
       return [];
     }
   }
