@@ -97,9 +97,9 @@ class HomeRepoImp implements HomeRepo {
     return handleDioRequest(
       request: () async {
         final response = await apiConsumer.get(
-          EndPoints.vacationAdditionalPrivilages(pageID, empId),
+          EndPoints.vacationAdditionalPrivilagesPath,
+          queryParameters: {'PageID': pageID, 'EmpId': empId},
         );
-
         final dynamic dataRaw = response['Data'];
         List<Map<String, dynamic>> dataList = [];
 

@@ -2,8 +2,8 @@ class EndPoints {
   static const String login = '/token';
   static const String users = 'users';
   static String detailsUser(int id) => '$users/$id';
-  static String vacationAdditionalPrivilages(int pageID, int empId) =>
-      '/DeltagroupService/Vacation/Getvacation_AdditionalPrivilages?PageID=$pageID&EmpId=$empId';
+  static const String vacationAdditionalPrivilagesPath =
+      '/DeltagroupService/Vacation/Getvacation_AdditionalPrivilages';
   static String vacationType = '/DeltagroupService/Vacation/Getvacation_Type';
   static String employeewithPrivilages(int empcode, int privid) =>
       '/DeltagroupService/Vacation/GetemployeewithPrivilages?empcode=$empcode&privid=$privid';
@@ -179,13 +179,13 @@ class EndPoints {
   static String getimageFileName(String fileName) =>
       '/DeltagroupService/Users/userimge?imageFileName=$fileName';
   // طلب عام
-  static String checkEmpHaveTicketInProccissingGeneral(int Empid,int typeid) =>
+  static String checkEmpHaveTicketInProccissingGeneral(int Empid, int typeid) =>
       '/DeltagroupService/Vacation/CheckEmpHaveRequestsInProccissing?typeid=$typeid&empcode=$Empid';
   static const String addnewRequestGeneral = '/DeltagroupService/Dynamic/addnewDynamicorder';
-  static String getAllRequestsGeneral(int Empid,int typeid) =>
+  static String getAllRequestsGeneral(int Empid, int typeid) =>
       '/DeltagroupService/Dynamic/GetDynamicorder?RequestId=&empcode=$Empid&RequestType=$typeid';
   static const String deleteRequestGeneral = '/DeltagroupService/Dynamic/DynamicorderDel';
   static const String updateRequestGeneral = '/DeltagroupService/Dynamic/update_Dynamicorder';
-  static String requestDynamicCount(int Empid ,int typeid) =>
+  static String requestDynamicCount(int Empid, int typeid) =>
       '/DeltagroupService/Users/DynamicRequestsCountToDecide?empcode=$Empid&RequestType=$typeid';
 }

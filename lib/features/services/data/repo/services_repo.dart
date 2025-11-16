@@ -219,26 +219,22 @@ class ServicesRepoImpl implements ServicesRepo {
   Future<Either<Failure, List<EmployeeModel>>> getEmployees({
     required int empcode,
     required int privid,
-    bool forceRefresh = false, // شيلنا page و pageSize
+    bool forceRefresh = false,
   }) {
     return handleDioRequest(
       request: () async {
         final cacheKey = '$empcode-$privid';
 
-        // استرجاع من الكاش لو موجود
         if (!forceRefresh && _cache.containsKey(cacheKey)) {
           return _cache[cacheKey]!;
         }
 
-        // جلب البيانات من API
         final response = await apiConsumer.get(EndPoints.employeewithPrivilages(empcode, privid));
 
         final allEmployees = EmployeeModel.listFromJson(response['Data']);
 
-        // تخزين البيانات في الكاش
         _cache[cacheKey] = allEmployees;
 
-        // إرجاع كل الموظفين دفعة واحدة
         return allEmployees;
       },
     );
