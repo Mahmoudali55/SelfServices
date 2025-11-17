@@ -43,10 +43,7 @@ class AppRouters {
             vacationBackRequestModel: args['vacationRequestOrdersModelBack'],
           ),
         );
-      case RoutesName.requestAletterScreen:
-        return MaterialPageRoute(builder: (_) => const RequestAletterScreen());
-      case RoutesName.requestAtrainingCourseScreen:
-        return MaterialPageRoute(builder: (_) => const RequestAtrainingCourseScreen());
+
       case RoutesName.resignationRequestScreen:
         return MaterialPageRoute(
           builder: (_) => ResignationRequestScreen(
@@ -54,8 +51,7 @@ class AppRouters {
             resignationModel: args['resignationRequestmodel'],
           ),
         );
-      case RoutesName.passportapplicationScreen:
-        return MaterialPageRoute(builder: (_) => const PassportApplicationScreen());
+
       case RoutesName.requestToIssueTicketsScreen:
         return MaterialPageRoute(
           builder: (_) => RequestToIssueTicketsScreen(
@@ -74,8 +70,7 @@ class AppRouters {
         return MaterialPageRoute(
           builder: (_) => RequestACarScreen(empCode: args['empId'] as int, car: args['requestCar']),
         );
-      case RoutesName.employmentApplication:
-        return MaterialPageRoute(builder: (_) => const EmploymentApplicationScreen());
+
       case RoutesName.transferrequest:
         return MaterialPageRoute(
           builder: (_) => TransferRequestScreen(
@@ -84,14 +79,12 @@ class AppRouters {
             transferModel: args['getAllTransferModel'],
           ),
         );
-      case RoutesName.evaluatingAnemployeesPerformanceScreen:
-        return MaterialPageRoute(builder: (_) => const EvaluatingAnemployeesPerformanceScreen());
+
       case RoutesName.solfaRequestScreen:
         return MaterialPageRoute(
           builder: (_) => solfaRequestScreen(empId: args['empId'], solfaItem: args['solfaItem']),
         );
-      case RoutesName.employeewarning:
-        return MaterialPageRoute(builder: (_) => const EmployeeWarningScreen());
+
       case RoutesName.notificationScreen:
         return MaterialPageRoute(
           builder: (_) => NotificationScreen(pagePrivID: args['pagePrivID']),

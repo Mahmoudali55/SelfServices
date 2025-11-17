@@ -229,6 +229,7 @@ class _MoreScreenState extends State<MoreScreen> {
 
     if (shouldLogout ?? false) {
       await HiveMethods.deleteEmpCode();
+
       await HiveMethods.deleteToken();
       final empId = HiveMethods.getEmpCode();
       await HiveMethods.deleteBoxFromDisk('chat_messages_$empId');

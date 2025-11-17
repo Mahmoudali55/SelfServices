@@ -73,7 +73,7 @@ class ServicesCubit extends Cubit<ServicesState> {
         emit(state.copyWith(employeesStatus: StatusState.failure(error.errMessage)));
       },
       (data) {
-        employees = data; // تحديث قائمة الموظفين
+        employees = data;
         emit(state.copyWith(employeesStatus: StatusState.success(List.from(employees))));
       },
     );

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jailbreak_root_detection/jailbreak_root_detection.dart';
+import 'package:my_template/core/cache/hive/get_secure_key.dart';
 import 'package:my_template/core/network/contants.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 
@@ -16,7 +17,9 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp();
   await Hive.initFlutter();
-  await Hive.openBox('app');
+
+  final key = await getSecureKey();
+  await Hive.openBox('app', encryptionCipher: HiveAesCipher(key));
   final box = Hive.box('app');
   final savedLang = box.get('lang', defaultValue: 'ar') as String;
   await ServiceInitialize.initialize();
