@@ -21,14 +21,11 @@ class _ModernNotificationScreenState extends State<ModernNotificationScreen> {
   void initState() {
     super.initState();
 
-    // ترتيب من الأحدث → الأقدم
     final sortedData = sortByDate(widget.data);
 
-    // Latest: أول 3 عناصر (الأحدث)
     final takeCount = sortedData.length >= 3 ? 3 : sortedData.length;
     latestItems = sortedData.take(takeCount).toList();
 
-    // Older: الباقي
     olderItems = sortedData.length > takeCount ? sortedData.sublist(takeCount) : <RequestItem>[];
 
     WidgetsBinding.instance.addPostFrameCallback((_) {

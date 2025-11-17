@@ -87,7 +87,6 @@ class HiveMethods {
     await _box.put('DEVICE_ID', id);
   }
 
-  // استرجاع Device ID
   static String? getDeviceId() {
     return _box.get('DEVICE_ID');
   }
@@ -106,7 +105,6 @@ class HiveMethods {
     await _box.put('PAGE_PRIV_ID', pagePrivID);
   }
 
-  // استرجاع صلاحية الصفحة
   static int? getPagePrivID() {
     return _box.get('PAGE_PRIV_ID');
   }

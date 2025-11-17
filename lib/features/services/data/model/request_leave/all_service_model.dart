@@ -24,7 +24,6 @@ class ALLServiceModel extends Equatable {
     );
   }
 
-  // هنا نتعامل مع Data اللي هي String
   static List<ALLServiceModel> listFromResponse(Map<String, dynamic> responseJson) {
     if (responseJson['Data'] == null) return [];
 

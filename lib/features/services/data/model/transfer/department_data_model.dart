@@ -19,7 +19,6 @@ class DepartmentModel extends Equatable {
 
   Map<String, dynamic> toJson() => {'D_CODE': dCode, 'D_NAME': dName, 'D_NAME_E': dNameE};
 
-  /// ✅ دالة static لإرجاع List<DepartmentModel> من الـ API مباشرة
   static List<DepartmentModel> listFromMap(Map<String, dynamic> json) {
     final dataString = json['Data'] as String? ?? '[]';
     final List<dynamic> decodedList = jsonDecode(dataString);

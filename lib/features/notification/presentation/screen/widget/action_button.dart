@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
 
 class ActionButton extends StatelessWidget {
@@ -21,7 +22,7 @@ class ActionButton extends StatelessWidget {
             label,
             style: AppTextStyle.text14RGrey(
               context,
-              color: Colors.white,
+              color: AppColor.whiteColor(context),
             ).copyWith(fontWeight: FontWeight.bold),
           ),
         ),

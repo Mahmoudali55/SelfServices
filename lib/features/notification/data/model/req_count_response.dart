@@ -23,7 +23,6 @@ class ReqCountResponse extends Equatable {
           final map = entry.value as Map<String, dynamic>? ?? {};
           return ReqCountItem.fromJson(map, type: RequestTypeHelper.fromIndex(index));
         })
-        // فقط الأنواع المسموح بها
         .where((item) => _allowedTypes.contains(item.type))
         .toList();
     return ReqCountResponse(data: data);
@@ -32,7 +31,6 @@ class ReqCountResponse extends Equatable {
   List<Object?> get props => [data];
 }
 
-// قائمة الأنواع المسموح بها للعرض
 const List<RequestType> _allowedTypes = [
   RequestType.vacation,
   RequestType.loan,
@@ -57,22 +55,22 @@ class ReqCountItem extends Equatable {
 }
 
 enum RequestType {
-  vacation, // 1- طلبات الاجازة
-  loan, // 2- السُلف
-  resignation, // 3- الاستقالة
-  travelPermit, // 4- جواز السفر
-  travelTicket, // 5- تذاكر السفر
-  housingAllowance, // 6- بدل السكن
-  introLetter, // 7- خطاب التعريف
-  trainingCourse, // 8- الدورات التدريبية
-  carRequest, // 9- السيارات
-  hiringRequest, // 10- طلب التوظيف
-  performanceEval, // 11- تقييم أداء الموظف
-  warningRequest, // 12- طلب إنذار
-  returnFromLeave, // 13- العودة من إجازة
-  transferRequest, // 14- طلب النقل
-  dynamicRequest, // 15- طلبات متغيرة
-  changeIdPhoneRequest, // 16- طلبات التغيير
+  vacation,
+  loan,
+  resignation,
+  travelPermit,
+  travelTicket,
+  housingAllowance,
+  introLetter,
+  trainingCourse,
+  carRequest,
+  hiringRequest,
+  performanceEval,
+  warningRequest,
+  returnFromLeave,
+  transferRequest,
+  dynamicRequest,
+  changeIdPhoneRequest,
 }
 
 class RequestTypeHelper {
@@ -122,7 +120,7 @@ class RequestTypeHelper {
       case RequestType.changeIdPhoneRequest:
         return AppLocalKay.requestchangePhone.tr();
       default:
-        return '';  
+        return '';
     }
   }
 }

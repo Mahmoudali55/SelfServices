@@ -399,4 +399,15 @@ class AppLocalKay {
   static const String yesterday = 'yesterday';
   static const String requestchangePhone = 'requestchangePhone';
   static const String device_not_supported = 'device_not_supported';
+  static const String message_deletedes = 'message_deletedes';
+  static const String image_deleted = 'image_deleted';
+  static const String file_deleted = 'file_deleted';
+  static const String voice_deleted = 'voice_deleted';
+  static const String no_employees = 'no_employees';
+  static const String no_conversations = 'no_conversations';
+  static const String selected = 'selected';
+  static const String exitAppTitle = 'exitAppTitle';
+  static const String exitAppMessage = 'exitAppMessage';
+  static const String yes = 'yes';
+  static const String no = 'no';
 }

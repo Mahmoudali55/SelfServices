@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 
 class DecidingInRequestModel extends Equatable {
-  final int requestType; // نوع الطلب
-  final int requestId; // رقم الطلب
-  final int actionType; // الاجراء المتخذ 1 موافق 2 غير موافق 3 اجراء
-  final int actionMakerEmpID; // اليوزر الى موجود فى الtoken
-  final String strNotes; // الشرح
-  final int isLastDecidingEmp; // 1 اخر شخص، 0 لا
-  final int haveSpecialDecide; // 0 حالياً
-  final int? specialDecideEmpId; // فاضية حاليا
+  final int requestType;
+  final int requestId;
+  final int actionType;
+  final int actionMakerEmpID;
+  final String strNotes;
+  final int isLastDecidingEmp;
+  final int haveSpecialDecide;
+  final int? specialDecideEmpId;
 
   const DecidingInRequestModel({
     required this.requestType,
@@ -20,7 +20,6 @@ class DecidingInRequestModel extends Equatable {
     this.haveSpecialDecide = 0,
     this.specialDecideEmpId,
   });
-
 
   Map<String, dynamic> toJson() {
     return {

@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_template/core/cache/hive/hive_methods.dart';
+import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/chat/data/model/chat_model.dart';
 import 'package:my_template/features/chat/data/model/group_model.dart';
 import 'package:my_template/features/chat/data/repo/chat_repository.dart';
@@ -17,12 +19,10 @@ class GroupCubit extends Cubit<GroupState> {
   Map<String, List<ChatMessage>> groupMessages = {};
   Map<String, StreamSubscription<List<ChatMessage>>> _messagesSubscriptions = {};
 
-  /// 🟦 مجموعة لتخزين الرسائل المحددة (بواسطة ID)
   final Set<String> _selectedMessageIds = {};
 
   GroupCubit(this.repository, this.currentUserId) : super(GroupInitial());
 
-  /// الاستماع للمجموعات
   void listenToGroups() {
     repository.getUserGroups(currentUserId).listen((groupList) {
       groups = groupList;
@@ -33,7 +33,7 @@ class GroupCubit extends Cubit<GroupState> {
   void listenToGroupss() {
     repository.getUserGroups(currentUserId).listen((groupList) {
       groups = groupList;
-      // استمع لكل مجموعة للحصول على آخر رسالة
+
       for (var group in groups) {
         listenToGroupMessages(group.id);
       }
@@ -41,17 +41,15 @@ class GroupCubit extends Cubit<GroupState> {
     });
   }
 
-  /// إنشاء مجموعة جديدة
   Future<void> createGroup({
     required String name,
     required String adminname,
-    required List<Map<String, dynamic>> members, // id + name
+    required List<Map<String, dynamic>> members,
   }) async {
     emit(GroupLoading());
     try {
-      final adminId = HiveMethods.getEmpCode(); // جلب ID المستخدم الحالي
+      final adminId = HiveMethods.getEmpCode();
 
-      // أضف admin إلى القائمة إذا لم يكن موجود
       if (!members.any((m) => m['id'] == int.parse(adminId ?? ''))) {
         members.add({'id': int.parse(adminId ?? ''), 'name': adminname});
       }
@@ -69,7 +67,6 @@ class GroupCubit extends Cubit<GroupState> {
     }
   }
 
-  /// الاستماع للرسائل في مجموعة محددة
   void listenToGroupMessages(String groupId) {
     _messagesSubscriptions[groupId]?.cancel();
     _messagesSubscriptions[groupId] = repository.getGroupMessages(groupId).listen((messages) {
@@ -82,20 +79,17 @@ class GroupCubit extends Cubit<GroupState> {
     });
   }
 
-  /// إرسال رسالة
   Future<void> sendGroupMessage(String groupId, ChatMessage message) async {
     try {
       await repository.sendGroupMessage(groupId, message);
-      // ❌ لا تضيف الرسالة يدوياً، Stream سيحدث واجهة المستخدم تلقائياً
     } catch (e) {
       emit(GroupError(e.toString()));
     }
   }
 
-  /// تحديث رسالة موجودة
   Future<void> updateMessage(String groupId, ChatMessage oldMessage, String newText) async {
     try {
-      final updated = oldMessage.copyWith(message: newText);
+      final updated = oldMessage.copyWith(message: newText ?? '', isEdited: true);
       await repository.updateGroupMessage(groupId, updated);
       final updatedMessages = groupMessages[groupId]
           ?.map((msg) => msg.id == updated.id ? updated : msg)
@@ -111,10 +105,13 @@ class GroupCubit extends Cubit<GroupState> {
 
   Future<void> deleteMessage(String groupId, ChatMessage message) async {
     try {
-      // تحديث الرسالة في Firebase
-      await repository.deleteGroupMessage(groupId, message.id!);
+      if (message.id == null) return;
+      final deletedMessage = message.copyWith(
+        message: AppLocalKay.message_deletedes.tr(),
+        isDeleted: true,
+      );
+      await repository.deleteGroupMessage(groupId, deletedMessage.id!);
 
-      // تحديث الحالة محليًا لتعيين isDeleted
       final updatedMessages = groupMessages[groupId]?.map((msg) {
         if (msg.id == message.id) {
           return msg.copyWith(isDeleted: true);
@@ -131,17 +128,11 @@ class GroupCubit extends Cubit<GroupState> {
     }
   }
 
-  /// 🔁 إعادة توجيه رسالة
   Future<void> forwardMessage(ChatMessage message, String targetGroupId) async {
     final forwarded = message.copyWith(timestamp: DateTime.now(), id: null);
     await sendGroupMessage(targetGroupId, forwarded);
   }
 
-  // 🟩-------------------------
-  // 🟩 تحديد الرسائل (Selection)
-  // 🟩-------------------------
-
-  /// تبديل حالة التحديد
   void toggleMessageSelection(String messageId) {
     if (_selectedMessageIds.contains(messageId)) {
       _selectedMessageIds.remove(messageId);
@@ -152,10 +143,8 @@ class GroupCubit extends Cubit<GroupState> {
     _refreshSelectionUI();
   }
 
-  /// التحقق من حالة التحديد
   bool isMessageSelected(String messageId) => _selectedMessageIds.contains(messageId);
 
-  /// مسح كل التحديدات
   void clearSelection() {
     _selectedMessageIds.clear();
     _refreshSelectionUI();
@@ -183,29 +172,24 @@ class GroupCubit extends Cubit<GroupState> {
   Future<void> addMemberToGroup(String groupId, int empId, String name) async {
     try {
       await repository.addMemberToGroup(groupId, empId, name);
-      // ✅ لا تضيف العضو محليًا هنا، Stream سيقوم بتحديث الـstate تلقائيًا
     } catch (e) {
       emit(GroupError('فشل إضافة العضو: $e'));
     }
   }
 
-  /// تحديث واجهة المستخدم بعد التحديد
   void _refreshSelectionUI() {
     if (state is GroupLoaded) {
       final current = state as GroupLoaded;
-      emit(GroupLoaded(current.groups, groupMessages: current.groupMessages)); // إعادة بناء الواجهة
+      emit(GroupLoaded(current.groups, groupMessages: current.groupMessages));
     }
   }
 
-  /// مغادرة المجموعة
   Future<void> leaveGroup(String groupId) async {
     try {
-      final userId = currentUserId; // أو HiveMethods.getEmpCode() إذا تفضل
+      final userId = currentUserId;
 
-      // استدعاء repository لإزالة العضو من المجموعة
       await repository.removeMemberFromGroup(groupId, userId);
 
-      // إزالة المستخدم محليًا إذا تريد تحديث UI فورًا
       groups = groups.map((g) {
         if (g.id == groupId) {
           final updatedMembers = g.members.where((member) => member['id'] != userId).toList();

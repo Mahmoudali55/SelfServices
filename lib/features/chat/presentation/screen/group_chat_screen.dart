@@ -32,9 +32,7 @@ class GroupChatScreen extends StatefulWidget {
   final String groupId;
   final String groupName;
   final List<ChatUser>? members;
-
   const GroupChatScreen({super.key, required this.groupId, required this.groupName, this.members});
-
   @override
   State<GroupChatScreen> createState() => _GroupChatScreenState();
 }
@@ -42,7 +40,6 @@ class GroupChatScreen extends StatefulWidget {
 class _GroupChatScreenState extends State<GroupChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-
   FlutterSoundRecorder? _audioRecorder;
   bool _isRecording = false;
   String? _recordedFilePath;
@@ -50,12 +47,10 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   Timer? _recordingTimer;
   int _recordingSeconds = 0;
   bool isUploading = false;
-
   ChatMessage? repliedMessage;
   String? editingMessageId;
   String? selectedMessageId;
   bool _showEmojiPicker = false;
-
   @override
   void initState() {
     super.initState();
@@ -342,8 +337,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
                                   final emp = filteredEmployees[index];
                                   final empName = context.locale.languageCode == 'ar'
-                                      ? emp.empName ?? 'الموظف'
-                                      : emp.empNameE ?? 'الموظف';
+                                      ? _cleanName(emp.empName ?? 'الموظف')
+                                      : _cleanName(emp.empNameE ?? 'Employee');
 
                                   return ListTile(
                                     leading: CircleAvatar(child: Text(empName[0])),

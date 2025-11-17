@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:my_template/core/routes/routes_name.dart';
 import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
@@ -113,7 +114,7 @@ class _HeaderRow extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(iconData, color: AppColor.blackColor(context)),
-            const SizedBox(width: 8),
+            const Gap(8),
             Text(
               vacTypeName,
               style: AppTextStyle.text16MSecond(context, color: AppColor.blackColor(context)),
@@ -124,7 +125,7 @@ class _HeaderRow extends StatelessWidget {
         Row(
           children: [
             Icon(Icons.calendar_today, size: 16, color: AppColor.blackColor(context)),
-            const SizedBox(width: 4),
+            const Gap(4),
             Text(
               '$vacDayCount ${AppLocalKay.days.tr()}',
               style: AppTextStyle.text16MSecond(context),
@@ -200,7 +201,7 @@ class _ActionButtons extends StatelessWidget {
     return Row(
       children: [
         Expanded(child: _EditButton(request: request)),
-        const SizedBox(width: 10),
+        const Gap(10),
         Expanded(
           child: _DeleteButton(request: request, empcoded: empcoded),
         ),
@@ -296,7 +297,7 @@ class _ActionContainer extends StatelessWidget {
           label,
           style: AppTextStyle.text14RGrey(
             context,
-            color: Colors.white,
+            color: AppColor.whiteColor(context),
           ).copyWith(fontWeight: FontWeight.bold),
         ),
       ),

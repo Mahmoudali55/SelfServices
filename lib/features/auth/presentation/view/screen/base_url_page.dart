@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:my_template/core/custom_widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:my_template/core/custom_widgets/custom_form_field/custom_form_field.dart';
 import 'package:my_template/core/custom_widgets/custom_toast/custom_toast.dart';
@@ -36,7 +37,7 @@ class BaseUrlPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(AppLocalKay.companysubdomain.tr(), style: AppTextStyle.text18MSecond(context)),
-                const SizedBox(height: 20),
+                const Gap(20),
 
                 CustomFormField(
                   controller: urlController,
@@ -57,7 +58,7 @@ class BaseUrlPage extends StatelessWidget {
                     return null;
                   },
                 ),
-                const SizedBox(height: 30),
+                const Gap(30),
 
                 SizedBox(
                   width: double.infinity,

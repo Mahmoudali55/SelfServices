@@ -19,7 +19,6 @@ class AddNewDynamicOrder extends Equatable {
     required this.strNotes,
   });
 
-  /// 🟢 إنشاء الكائن من JSON
   factory AddNewDynamicOrder.fromJson(Map<String, dynamic> json) {
     return AddNewDynamicOrder(
       empCode: json['EmpCode'] ?? 0,
@@ -32,7 +31,6 @@ class AddNewDynamicOrder extends Equatable {
     );
   }
 
-  /// 🟢 تحويل الكائن إلى JSON
   Map<String, dynamic> toJson() {
     return {
       'EmpCode': empCode,
@@ -45,7 +43,6 @@ class AddNewDynamicOrder extends Equatable {
     };
   }
 
-  /// 🟢 نسخ مع تعديل بعض القيم
   AddNewDynamicOrder copyWith({
     int? empCode,
     String? requestDate,

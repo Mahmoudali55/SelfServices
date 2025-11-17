@@ -35,7 +35,7 @@ class VacationRequestModel extends Equatable {
   final int adminEmpCode;
   final int alternativeEmpCode;
   final List<Map<String, Object>> service;
-  final List<AttachmentModel> attachment; // ✅ أضفنا حقل Attachment
+  final List<AttachmentModel> attachment;
 
   const VacationRequestModel({
     required this.empCode,

@@ -67,13 +67,11 @@ class LayoutScreen extends StatelessWidget {
           final cubit = context.read<LayoutCubit>();
           return WillPopScope(
             onWillPop: () async {
-              // لو مش في الصفحة الرئيسية → رجعه للـ Home
               if (cubit.state.currentIndex != 0) {
                 cubit.changePage(0);
                 return false;
               }
 
-              // لو بالفعل في الصفحة الرئيسية → اعرض الـ Dialog
               final shouldExit = await _showExitDialog(context);
               return shouldExit;
             },
@@ -120,18 +118,21 @@ class LayoutScreen extends StatelessWidget {
           context: context,
           builder: (context) => AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: Text(tr('exitAppTitle')),
-            content: Text(tr('exitAppMessage')),
+            title: Text(AppLocalKay.exitAppTitle.tr(), style: AppTextStyle.text16MSecond(context)),
+            content: Text(
+              AppLocalKay.exitAppMessage.tr(),
+              style: AppTextStyle.text14RGrey(context),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: Text(tr('no'), style: AppTextStyle.text14RGrey(context)),
+                child: Text(AppLocalKay.no.tr(), style: AppTextStyle.text14RGrey(context)),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 child: Text(
-                  tr('yes'),
+                  AppLocalKay.yes.tr(),
                   style: AppTextStyle.text14RGrey(context, color: Colors.white),
                 ),
               ),

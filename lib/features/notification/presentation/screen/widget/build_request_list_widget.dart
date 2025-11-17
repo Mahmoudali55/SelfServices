@@ -37,10 +37,8 @@ Widget buildRequestList(
 }) {
   final empId = int.tryParse(HiveMethods.getEmpCode() ?? '0') ?? 0;
 
-
   final allTiles = <Widget>[];
 
-  // الطلبات الثابتة
   for (var r in requests) {
     allTiles.add(
       _buildTile(

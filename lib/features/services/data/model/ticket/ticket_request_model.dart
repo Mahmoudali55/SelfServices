@@ -8,7 +8,7 @@ class TicketRequest extends Equatable {
   final String travelDate;
   final String? travelDateH;
   final String ticketPath;
-  final int goBack; // 1 = ذهاب وعودة, 2 = ذهاب فقط
+  final int goBack;
   final String strNotes;
 
   const TicketRequest({
@@ -23,7 +23,6 @@ class TicketRequest extends Equatable {
     required this.strNotes,
   });
 
-  // لتحويل من JSON
   factory TicketRequest.fromJson(Map<String, dynamic> json) {
     return TicketRequest(
       empCode: json['EmpCode'] ?? 0,
@@ -38,7 +37,6 @@ class TicketRequest extends Equatable {
     );
   }
 
-  // لتحويل إلى JSON
   Map<String, dynamic> toJson() {
     return {
       'EmpCode': empCode,
@@ -67,13 +65,8 @@ class TicketRequest extends Equatable {
   ];
 }
 
-// مثال دالة لإضافة طلب جديد
 Future<void> addNewTicketRequest(TicketRequest request) async {
   final Map<String, dynamic> payload = request.toJson();
 
-
-
-  // مثال وهمي
   await Future.delayed(const Duration(seconds: 1));
-
 }

@@ -23,11 +23,12 @@ class _NewsTickerState extends State<NewsTicker> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 10))..repeat();
 
     _controller.addListener(() {
       if (_scrollController.hasClients) {
-        _scrollController.jumpTo(_controller.value * _scrollController.position.maxScrollExtent);
+        final maxScroll = _scrollController.position.maxScrollExtent;
+        _scrollController.jumpTo(_controller.value * maxScroll);
       }
     });
   }
@@ -41,40 +42,79 @@ class _NewsTickerState extends State<NewsTicker> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 30.h,
+    return Container(
+      height: 35.h,
+      margin: EdgeInsets.symmetric(horizontal: 10.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w),
+      decoration: BoxDecoration(
+        color: AppColor.whiteColor(context),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
+      ),
       child: ListView.separated(
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
         itemCount: widget.newsList.length,
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        separatorBuilder: (_, __) => SizedBox(width: 40.w),
+        separatorBuilder: (_, __) => SizedBox(width: 30.w),
         itemBuilder: (context, index) {
           final news = widget.newsList[index];
           return GestureDetector(
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            onTap: () => _showNewsDetails(context, news),
+            child: Row(
+              children: [
+                Icon(Icons.fiber_new, color: AppColor.greenColor(context), size: 18.sp),
+                SizedBox(width: 5.w),
+                Text(
+                  news.newsTitle,
+                  style: AppTextStyle.text14MPrimary(context, color: AppColor.greenColor(context)),
                 ),
-                builder: (ctx) => Padding(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(ctx).viewInsets.bottom + 20.h,
-                    left: 20.w,
-                    right: 20.w,
-                    top: 10.h,
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showNewsDetails(BuildContext context, GetNewsModel news) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => DraggableScrollableSheet(
+        builder: (context, scrollController) {
+          return Container(
+            decoration: BoxDecoration(
+              color: AppColor.whiteColor(context),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
+              boxShadow: const [
+                BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, -4)),
+              ],
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+            child: Column(
+              children: [
+                Container(
+                  width: 40.w,
+                  height: 5.h,
+                  margin: EdgeInsets.only(bottom: 15.h),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                ),
+                Expanded(
+                  child: ListView(
+                    controller: scrollController,
                     children: [
                       Row(
                         children: [
-                          IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: const Icon(Icons.close),
+                          CircleAvatar(
+                            backgroundColor: Colors.grey.shade300,
+                            child: IconButton(
+                              onPressed: () => Navigator.pop(context),
+                              icon: const Icon(Icons.close, color: Colors.black),
+                            ),
                           ),
                           const Spacer(),
                           Text(
@@ -87,28 +127,27 @@ class _NewsTickerState extends State<NewsTicker> with SingleTickerProviderStateM
                           const Spacer(),
                         ],
                       ),
-                      Gap(20.h),
+                      Gap(15.h),
                       Text(
                         news.newsTitle,
-                        style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppColor.blackColor(context),
+                        ),
                       ),
                       Gap(10.h),
                       Text(
                         news.miniNewsSubject,
                         style: AppTextStyle.text14MPrimary(
                           context,
-                          color: AppColor.blackColor(context),
+                          color: AppColor.greyColor(context),
                         ),
                       ),
-                      Gap(20.h),
                     ],
                   ),
                 ),
-              );
-            },
-            child: Text(
-              news.newsTitle,
-              style: AppTextStyle.text16MSecond(context, color: AppColor.greenColor(context)),
+              ],
             ),
           );
         },

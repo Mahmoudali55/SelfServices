@@ -89,7 +89,6 @@ class NotificationScreen extends StatelessWidget {
                         final dynamic5007 = state.requestDynamic5007.data ?? [];
                         final dynamic5008 = state.requestDynamic5008.data ?? [];
 
-                        // حساب العدد لكل نوع
                         final totalRequestsCount = dataList.fold<int>(
                           0,
                           (sum, item) => sum + item.reqCount,
@@ -103,7 +102,6 @@ class NotificationScreen extends StatelessWidget {
                           (sum, item) => sum + item.requestCount,
                         );
 
-                        // المجموع الكلي
                         final totalDynamicCount = totalDynamic5007 + totalDynamic5008;
                         final totalStatusesCount =
                             state.employeeRequestsNotify.data?.data.length ?? 0;

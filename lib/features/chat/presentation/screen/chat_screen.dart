@@ -61,9 +61,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   bool otherUserIsTyping = false;
   bool _showRecordingWidget = false;
   int _recordingSeconds = 0;
-  Timer? _recordingTimer; 
+  Timer? _recordingTimer;
   final Set<String> selectedMessageIds = {};
-  
+
   bool _showEmojiPicker = false;
   @override
   void initState() {
@@ -81,7 +81,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
     _listenToOtherUserTyping();
     _controller.addListener(() {
-      setState(() {}); 
+      setState(() {});
     });
   }
 
@@ -120,7 +120,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
   void _startTyping() {
     final cubit = context.read<ChatCubit>();
-    cubit.startTyping(); 
+    cubit.startTyping();
     _typingTimer?.cancel();
     _typingTimer = Timer(const Duration(seconds: 3), () {
       cubit.stopTyping();
@@ -158,14 +158,13 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     _scrollToBottom();
   }
 
-  bool isUploading = false; 
+  bool isUploading = false;
 
   Future<void> _startRecording() async {
     final tempDir = await getTemporaryDirectory();
     final path = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.aac';
     await _audioRecorder!.startRecorder(toFile: path, codec: Codec.aacADTS);
 
-   
     _recordingSeconds = 0;
     _recordingTimer?.cancel();
     _recordingTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -397,6 +396,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                         DateTime? previousDate;
 
                         return ListView.builder(
+                          reverse: true,
                           controller: _scrollController,
                           itemCount: messages.chatMessages.length,
                           itemBuilder: (_, index) {
@@ -563,7 +563,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                             if (msg.type == MessageType.text)
                                               Text(
                                                 msg.isDeleted
-                                                    ? 'تم حذف الرسالة'
+                                                    ? AppLocalKay.message_deletedes.tr()
                                                     : (msg.message ?? ''),
                                                 style: AppTextStyle.text16MSecond(context).copyWith(
                                                   color: msg.isDeleted
@@ -578,7 +578,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                             if (msg.type == MessageType.image)
                                               msg.isDeleted
                                                   ? Text(
-                                                      'تم حذف الصورة',
+                                                      AppLocalKay.image_deleted.tr(),
                                                       style: AppTextStyle.text16MSecond(context)
                                                           .copyWith(
                                                             color: Colors.grey,
@@ -595,7 +595,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                             if (msg.type == MessageType.file)
                                               msg.isDeleted
                                                   ? Text(
-                                                      'تم حذف الملف',
+                                                      AppLocalKay.file_deleted.tr(),
                                                       style: AppTextStyle.text16MSecond(context)
                                                           .copyWith(
                                                             color: Colors.grey,
@@ -606,7 +606,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                       onTap: () async {
                                                         final url = msg.message ?? '';
                                                         if (url.isEmpty) return;
-                                                        // تحميل الملف مؤقتاً لو هو على الإنترنت
+
                                                         final fileName = url.split('/').last;
                                                         final tempDir =
                                                             await getTemporaryDirectory();
@@ -653,7 +653,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                             if (msg.type == MessageType.audio)
                                               msg.isDeleted
                                                   ? Text(
-                                                      'تم حذف الصوت',
+                                                      AppLocalKay.voice_deleted.tr(),
                                                       style: AppTextStyle.text16MSecond(context)
                                                           .copyWith(
                                                             color: Colors.grey,
@@ -874,7 +874,6 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                       ),
                                     ],
 
-                                    // حقل النص
                                     Expanded(
                                       child: _isRecording
                                           ? RecordingWidget(
@@ -913,7 +912,6 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
                                     const SizedBox(width: 8),
 
-                                    // زر الإرسال أو الميكروفون
                                     _isRecording
                                         ? const SizedBox.shrink()
                                         : (_controller.text.trim().isEmpty
@@ -932,7 +930,6 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                 ),
                               ),
 
-                              // لوحة الإيموجي
                               if (_showEmojiPicker)
                                 Offstage(
                                   offstage: !_showEmojiPicker,
@@ -972,8 +969,6 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             ],
                           ),
                         ),
-
-                        // ------------------- مؤشر "يكتب الآن..." -------------------
                       ],
                     ),
                   ),
@@ -983,7 +978,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           ),
           if (isUploading)
             Container(
-              color: Colors.black54, // خلفية نصف شفافة
+              color: Colors.black54,
               child: Center(
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -1018,7 +1013,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   }
 }
 
-// ------------------- صفحة إعادة التوجيه -------------------
+
 class SelectUserScreen extends StatefulWidget {
   final ChatMessage message;
   final int currentUserId;

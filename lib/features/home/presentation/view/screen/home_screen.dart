@@ -136,7 +136,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Gap(10.h),
 
-            // Marquee
             BlocBuilder<HomeCubit, HomeState>(
               builder: (context, state) {
                 final newsList = state.newsStatus.data ?? [];
@@ -167,7 +166,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Gap(10.h),
 
-            // Services Grid
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.5,
               child: BlocBuilder<HomeCubit, HomeState>(

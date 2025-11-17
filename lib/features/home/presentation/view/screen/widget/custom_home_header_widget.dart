@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:badges/badges.dart' as badges;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,7 +72,6 @@ class _CustomHomeHeaderWidgetState extends State<CustomHomeHeaderWidget> {
 
     return BlocListener<ServicesCubit, ServicesState>(
       listener: (context, state) async {
-        // بعد نجاح تحميل الصورة من السيرفر
         if (state.imageFileNameStatus?.isSuccess ?? false) {
           final newBase64 = state.imageFileNameStatus!.data;
           if (newBase64 != null && newBase64.isNotEmpty) {
@@ -79,7 +79,6 @@ class _CustomHomeHeaderWidgetState extends State<CustomHomeHeaderWidget> {
               _imageBase64FromServer = newBase64;
             });
 
-            // حفظ الصورة الجديدة في الكاش
             HiveMethods.saveEmpPhotoBase64(newBase64);
           }
         }
@@ -158,70 +157,61 @@ class _CustomHomeHeaderWidgetState extends State<CustomHomeHeaderWidget> {
   }
 
   Widget _buildNotificationIcon(BuildContext context) {
-    return Stack(
-      children: [
-        IconButton(
-          onPressed: () async {
-            final homeCubit = context.read<HomeCubit>();
-            final pagePrivID = homeCubit.state.vacationStatus.data?.pagePrivID ?? 0;
-            await homeCubit.loadVacationAdditionalPrivilages(
-              pageID: 14,
-              empId: int.tryParse(HiveMethods.getEmpCode() ?? '0') ?? 0,
-            );
-            NavigatorMethods.pushNamed(
+    return BlocBuilder<NotifictionCubit, NotificationState>(
+      builder: (context, state) {
+        int cachedCount = HiveMethods.getNotificationCount() ?? 0;
+
+        final dataList = state.reqCountStatus.data?.data ?? [];
+        final list = state.employeeRequestsNotify.data?.data ?? [];
+
+        final total5007 =
+            state.requestDynamic5007.data?.fold(0, (sum, item) => sum + item.requestCount) ?? 0;
+        final total5008 =
+            state.requestDynamic5008.data?.fold(0, (sum, item) => sum + item.requestCount) ?? 0;
+
+        final totalDynamic = total5007 + total5008;
+        final totalReqCount = dataList.fold<int>(0, (sum, item) => sum + item.reqCount);
+        final totalStatusesCount = list.length;
+
+        final serverCount = totalReqCount + totalStatusesCount + totalDynamic;
+
+        // تحديث الكاش لو العدد تغير
+        if (serverCount != cachedCount) {
+          cachedCount = serverCount;
+          HiveMethods.saveNotificationCount(serverCount);
+        }
+
+        return badges.Badge(
+          showBadge: cachedCount > 0,
+          badgeContent: Text(
+            '$cachedCount',
+            style: AppTextStyle.text14RGrey(
               context,
-              RoutesName.notificationScreen,
-              arguments: {'pagePrivID': pagePrivID},
-            );
-          },
-          icon: Icon(Icons.notifications, size: 40, color: AppColor.whiteColor(context)),
-        ),
-        Positioned(
-          right: 0,
-          top: 5,
-          child: BlocBuilder<NotifictionCubit, NotificationState>(
-            builder: (context, state) {
-              int cachedCount = HiveMethods.getNotificationCount() ?? 0;
-              final dataList = state.reqCountStatus.data?.data ?? [];
-              final list = state.employeeRequestsNotify.data?.data ?? [];
-              final total5007 =
-                  state.requestDynamic5007.data?.fold(0, (sum, item) => sum + item.requestCount) ??
-                  0;
-              final total5008 =
-                  state.requestDynamic5008.data?.fold(0, (sum, item) => sum + item.requestCount) ??
-                  0;
+              color: Colors.white,
+            ).copyWith(fontSize: 11, fontWeight: FontWeight.bold),
+          ),
+          position: badges.BadgePosition.center(),
+          badgeStyle: const badges.BadgeStyle(badgeColor: Colors.red, padding: EdgeInsets.all(4)),
+          child: IconButton(
+            onPressed: () async {
+              final homeCubit = context.read<HomeCubit>();
+              final pagePrivID = homeCubit.state.vacationStatus.data?.pagePrivID ?? 0;
 
-              final totalDynamic = total5007 + total5008;
+              await homeCubit.loadVacationAdditionalPrivilages(
+                pageID: 14,
+                empId: int.tryParse(HiveMethods.getEmpCode() ?? '0') ?? 0,
+              );
 
-              final totalReqCount = dataList.fold<int>(0, (sum, item) => sum + item.reqCount);
-              final totalStatusesCount = list.length;
-
-              final serverCount = totalReqCount + totalStatusesCount + totalDynamic;
-
-              if (serverCount != cachedCount) {
-                cachedCount = serverCount;
-                HiveMethods.saveNotificationCount(serverCount);
-              }
-
-              if (cachedCount == 0) return const SizedBox();
-
-              return Container(
-                padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
-                constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
-                child: Text(
-                  '$cachedCount',
-                  style: AppTextStyle.text14RGrey(
-                    context,
-                    color: AppColor.whiteColor(context),
-                  ).copyWith(fontSize: 12),
-                  textAlign: TextAlign.center,
-                ),
+              NavigatorMethods.pushNamed(
+                context,
+                RoutesName.notificationScreen,
+                arguments: {'pagePrivID': pagePrivID},
               );
             },
+            icon: Icon(Icons.notifications, size: 40, color: AppColor.whiteColor(context)),
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 }

@@ -6,12 +6,10 @@ class TicketResponse extends Equatable {
 
   const TicketResponse({required this.success, required this.reqId});
 
-  // لتحويل من JSON
   factory TicketResponse.fromJson(Map<String, dynamic> json) {
     return TicketResponse(success: json['success'] ?? false, reqId: json['ReqId'] ?? '');
   }
 
-  // لتحويل إلى JSON
   Map<String, dynamic> toJson() {
     return {'success': success, 'ReqId': reqId};
   }

@@ -6,7 +6,6 @@ class AddNewDynamicOrderResponse extends Equatable {
 
   const AddNewDynamicOrderResponse({required this.success, required this.reqId});
 
-  /// 🟢 إنشاء الكائن من JSON
   factory AddNewDynamicOrderResponse.fromJson(Map<String, dynamic> json) {
     return AddNewDynamicOrderResponse(
       success: json['success'] ?? false,
@@ -14,7 +13,6 @@ class AddNewDynamicOrderResponse extends Equatable {
     );
   }
 
-  /// 🟢 تحويل الكائن إلى JSON
   Map<String, dynamic> toJson() {
     return {'success': success, 'ReqId': reqId};
   }

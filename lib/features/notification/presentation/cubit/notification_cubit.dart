@@ -237,7 +237,6 @@ class NotifictionCubit extends Cubit<NotificationState> {
           );
         },
         (response) {
-          // response هنا List<RequestDynamicCountModel>
           final list5007 = response.where((e) => e.requestType == 5007).toList();
           final list5008 = response.where((e) => e.requestType == 5008).toList();
 

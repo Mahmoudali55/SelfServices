@@ -26,7 +26,7 @@ class EmployeeRequestsNotify extends Equatable {
 
 class RequestItem extends Equatable {
   final int vacRequestId;
-  final String? vacRequestDate; // تعديل هنا ليصبح اختياري
+  final String? vacRequestDate;
   final int empCode;
   final int reqDecideState;
   final String requestDesc;
@@ -46,7 +46,7 @@ class RequestItem extends Equatable {
   factory RequestItem.fromJson(Map<String, dynamic> json) {
     return RequestItem(
       vacRequestId: json['VacRequestId'] as int,
-      vacRequestDate: json['VacrequestDate'] as String?, // دعم null
+      vacRequestDate: json['VacrequestDate'] as String?,
       empCode: json['EmpCode'] as int,
       reqDecideState: json['ReqDecideState'] as int,
       requestDesc: json['RequestDesc'] as String,

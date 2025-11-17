@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:my_template/core/routes/routes_name.dart';
 import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
@@ -92,7 +93,7 @@ class CustomGridViewList extends StatelessWidget {
               height: 60,
               color: AppColor.primaryColor(context),
             ),
-            const SizedBox(height: 10),
+            const Gap(10),
             Text(
               service.getName(langCode),
               textAlign: TextAlign.center,
@@ -101,7 +102,6 @@ class CustomGridViewList extends StatelessWidget {
                 color: AppColor.blackColor(context),
               ).copyWith(fontWeight: FontWeight.bold, fontSize: 15.sp),
             ),
-            
           ],
         ),
       ),

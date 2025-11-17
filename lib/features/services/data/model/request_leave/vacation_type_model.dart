@@ -23,7 +23,6 @@ class VacationTypeModel extends Equatable {
     this.vacJobcase,
   });
 
-  /// تحويل JSON إلى موديل
   factory VacationTypeModel.fromJson(Map<String, dynamic> json) {
     return VacationTypeModel(
       codeGpf: json['CODE_GPF'] is int

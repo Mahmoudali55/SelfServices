@@ -10,7 +10,6 @@ import 'package:my_template/core/routes/routes_name.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/auth/data/repository/auth_repo.dart';
-import 'package:my_template/features/auth/presentation/view/screen/widget/normalize_arabic_Input.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/show_change_password_sheet_widget.dart';
 
 import '../../../data/model/user_model.dart';
@@ -50,8 +49,8 @@ class AuthCubit extends Cubit<AuthState> {
       );
       return;
     }
-    final normalizedMobile = normalizeArabicInput(mobileController.text);
-    final normalizedPassword = normalizeArabicInput(passwordController.text);
+    final normalizedMobile = mobileController.text;
+    final normalizedPassword = passwordController.text;
 
     emit(state.copyWith(loginStatus: const StatusState.loading()));
 

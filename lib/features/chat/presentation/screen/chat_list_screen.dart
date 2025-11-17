@@ -118,7 +118,7 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
             : Text(
                 selectedEmployees.isEmpty
                     ? AppLocalKay.chat.tr()
-                    : 'تم تحديد ${selectedEmployees.length}',
+                    : '${AppLocalKay.selected.tr()}  ${selectedEmployees.length}',
                 style: AppTextStyle.text18MSecond(context),
               ),
         leading: isSearching
@@ -141,7 +141,7 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
                   });
                 },
               )
-            : const SizedBox(), // بدل null
+            : const SizedBox(),
 
         actions: [
           if (!isSearching && selectedEmployees.isEmpty) ...[
@@ -169,7 +169,6 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
 
             return BlocBuilder<ChatCubit, ChatState>(
               builder: (context, chatState) {
-                // آخر رسالة لكل موظف
                 final lastMessageMap = <int, ChatMessage>{};
                 for (var msg in chatState.lastMessages) {
                   int otherId = msg.senderId == currentUserId ? msg.receiverId : msg.senderId;
@@ -198,44 +197,70 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
 
                 return Column(
                   children: [
-                    if (nonChattedEmployees.isEmpty)
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              AppImages.assetsGlobalIconEmptyFolderIcon,
-                              height: 200,
-                              width: 200,
-                              color: AppColor.primaryColor(context),
-                            ),
-                            const Gap(10),
-                            Text(AppLocalKay.no_requests.tr()),
-                          ],
+                    if (allEmployees.isEmpty)
+                      Expanded(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                AppImages.assetsGlobalIconEmptyFolderIcon,
+                                height: 200,
+                                width: 200,
+                                color: AppColor.primaryColor(context),
+                              ),
+                              Gap(10.h),
+                              Text(
+                                AppLocalKay.no_employees.tr(),
+                                style: AppTextStyle.text16MSecond(context),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    else if (chattedEmployees.isEmpty)
+                      Expanded(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                AppImages.assetsGlobalIconEmptyFolderIcon,
+                                height: 200,
+                                width: 200,
+                                color: AppColor.primaryColor(context),
+                              ),
+                              Gap(10.h),
+                              Text(
+                                AppLocalKay.no_conversations.tr(),
+                                style: AppTextStyle.text16MSecond(context),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.all(12),
+                          itemCount: chattedEmployees.length,
+                          itemBuilder: (context, index) {
+                            final emp = chattedEmployees[index];
+                            final lastMsg = lastMessageMap[emp.empCode];
+                            final unreadCount = chatState.chatMessages
+                                .where(
+                                  (msg) =>
+                                      !msg.isRead &&
+                                      msg.receiverId == currentUserId &&
+                                      msg.senderId == emp.empCode,
+                                )
+                                .length;
+                            final isSelected = selectedEmployees.contains(emp.empCode);
+
+                            return _employeeItem(emp, lastMsg, unreadCount, isSelected);
+                          },
                         ),
                       ),
-
-                    Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(12),
-                        itemCount: chattedEmployees.length,
-                        itemBuilder: (context, index) {
-                          final emp = chattedEmployees[index];
-                          final lastMsg = lastMessageMap[emp.empCode];
-                          final isSelected = selectedEmployees.contains(emp.empCode);
-                          final unreadCount = chatState.chatMessages
-                              .where(
-                                (msg) =>
-                                    !msg.isRead &&
-                                    msg.receiverId == currentUserId &&
-                                    msg.senderId == emp.empCode,
-                              )
-                              .length;
-
-                          return _employeeItem(emp, lastMsg, unreadCount, isSelected);
-                        },
-                      ),
-                    ),
                   ],
                 );
               },
@@ -348,7 +373,7 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
               ),
               if (lastMsg != null)
                 Padding(
-                  padding: const EdgeInsets.only(top: 20),
+                  padding: EdgeInsets.only(top: 20.h),
                   child: Text(
                     formatMessageTime(lastMsg.timestamp),
                     style: AppTextStyle.text14RGrey(
@@ -426,7 +451,6 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
   }
 
   String _cleanName(String name) {
-    // إزالة أي أرقام في البداية ومسافات زائدة
     return name.replaceFirst(RegExp(r'^\d+\s*'), '').trim();
   }
 
@@ -440,7 +464,6 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
   }
 
   void _showAllEmployeesBottomSheet(List<EmployeeModel> allEmployees) {
-    // ترتيب الموظفين حسب EMP_CODE تصاعديًا
     final sortedEmployees = List<EmployeeModel>.from(allEmployees)
       ..sort((a, b) => a.empCode.compareTo(b.empCode));
 
@@ -479,7 +502,7 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
                     context.locale == const Locale('ar') ? 'قائمة الموظفين' : 'Employee List',
                     style: AppTextStyle.text16MSecond(context),
                   ),
-                  const SizedBox(height: 10),
+                  const Gap(10),
                   CustomFormField(
                     controller: searchController,
                     hintText: context.locale == const Locale('ar')
@@ -494,7 +517,7 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
                       }).toList();
                     },
                   ),
-                  const SizedBox(height: 10),
+                  const Gap(10),
                   Expanded(
                     child: ValueListenableBuilder<List<EmployeeModel>>(
                       valueListenable: filteredEmployeesNotifier,
@@ -510,7 +533,7 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
                                   width: 120.w,
                                   color: AppColor.primaryColor(context),
                                 ),
-                                const SizedBox(height: 10),
+                                const Gap(10),
                                 Text(
                                   AppLocalKay.no_results.tr(),
                                   style: AppTextStyle.text16MSecond(context),

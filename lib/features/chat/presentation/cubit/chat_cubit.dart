@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/chat/data/model/chat_model.dart';
 import 'package:my_template/features/chat/data/repo/chat_repository.dart';
 import 'package:my_template/features/chat/presentation/cubit/chat_state.dart';
@@ -17,7 +19,6 @@ class ChatCubit extends Cubit<ChatState> {
   final Set<String> _selectedMessageIds = {};
 
   ChatCubit({required this.repository, required this.currentUserId}) : super(ChatState()) {
-    // عند إنشاء الكيوبت، نعتبر المستخدم متصل
     repository.updateUserStatus(currentUserId, isOnline: true);
     startHeartbeat();
     listenToLastMessages();
@@ -31,11 +32,9 @@ class ChatCubit extends Cubit<ChatState> {
     _incomingMessagesSubscription = repository.listenToIncomingMessages(currentUserId).listen((
       newMessages,
     ) {
-      // دمج الرسائل الجديدة مع الرسائل الحالية
       final updated = List<ChatMessage>.from(state.chatMessages);
 
       for (var msg in newMessages) {
-        // لو الرسالة جديدة ولم تكن موجودة، نضيفها
         if (!updated.any((m) => m.id == msg.id)) {
           updated.add(msg);
         }
@@ -45,7 +44,6 @@ class ChatCubit extends Cubit<ChatState> {
     });
   }
 
-  // ------------------- إدارة المستخدم الآخر -------------------
   void setOtherUserId(int id) async {
     if (id == currentUserId || otherUserId == id) return;
 
@@ -55,14 +53,12 @@ class ChatCubit extends Cubit<ChatState> {
 
     final initialMessages = await repository.getChatMessages(currentUserId, otherUserId!).first;
 
-    // الترتيب من الأحدث للأقدم
     emit(
       state.copyWith(
         chatMessages: initialMessages..sort((a, b) => b.timestamp.compareTo(a.timestamp)),
       ),
     );
 
-    // متابعة الرسائل الجديدة
     _messagesSubscription = repository.getChatMessages(currentUserId, otherUserId!).skip(1).listen((
       messages,
     ) {
@@ -74,7 +70,6 @@ class ChatCubit extends Cubit<ChatState> {
       );
     });
 
-    // متابعة حالة المستخدم الآخر
     _otherUserStatusSubscription = repository.getUserStatus(otherUserId!).listen((status) {
       emit(
         state.copyWith(
@@ -85,7 +80,6 @@ class ChatCubit extends Cubit<ChatState> {
     });
   }
 
-  // ------------------- إرسال الرسائل -------------------
   Future<void> sendMessage(
     String content, {
     MessageType type = MessageType.text,
@@ -150,10 +144,12 @@ class ChatCubit extends Cubit<ChatState> {
     }
   }
 
-  // ------------------- تعديل وحذف الرسائل -------------------
   Future<void> deleteMessage(ChatMessage message) async {
     if (message.id == null) return;
-    final deletedMessage = message.copyWith(message: 'تم حذف الرسالة', isDeleted: true);
+    final deletedMessage = message.copyWith(
+      message: AppLocalKay.message_deletedes.tr(),
+      isDeleted: true,
+    );
     await repository.updateMessageModel(deletedMessage);
   }
 
@@ -163,7 +159,6 @@ class ChatCubit extends Cubit<ChatState> {
     await repository.updateMessageModel(editedMessage);
   }
 
-  // ------------------- اختيار الرسائل -------------------
   void toggleMessageSelection(String messageId) {
     if (_selectedMessageIds.contains(messageId)) {
       _selectedMessageIds.remove(messageId);
@@ -180,7 +175,6 @@ class ChatCubit extends Cubit<ChatState> {
     emit(state.copyWith());
   }
 
-  // ------------------- آخر الرسائل -------------------
   void listenToLastMessages() {
     _lastMessagesSubscription?.cancel();
     _lastMessagesSubscription = repository.getLastMessagesForUser(currentUserId).listen((messages) {
@@ -207,7 +201,6 @@ class ChatCubit extends Cubit<ChatState> {
     emit(state.copyWith(chatMessages: updatedMessages));
   }
 
-  // ------------------- إدارة حالة الاتصال -------------------
   Timer? _heartbeatTimer;
 
   void startHeartbeat() {
@@ -256,7 +249,6 @@ class ChatCubit extends Cubit<ChatState> {
     _lastMessagesSubscription?.cancel();
     _otherUserStatusSubscription?.cancel();
 
-    // عند غلق التطبيق / الخروج من الدردشة، نحدث الحالة كـ offline
     stopHeartbeat();
 
     return super.close();

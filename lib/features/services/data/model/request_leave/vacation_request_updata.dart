@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
 
 class VacationRequestUpdateModel extends Equatable {
-  final int requestId; // ✅ أضف هذا الحقل
+  final int requestId;
   final int empCode;
   final String vacRequestDate;
   final String? vacRequestDateH;
@@ -17,7 +17,7 @@ class VacationRequestUpdateModel extends Equatable {
   final int? adminEmpCode;
   final int alternativeEmpCode;
   final List<Map<String, Object>> service;
-  final List<AttachmentModel> attachment; // 🔹 Object بدل String
+  final List<AttachmentModel> attachment;
 
   const VacationRequestUpdateModel({
     required this.requestId,

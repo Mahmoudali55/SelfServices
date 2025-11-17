@@ -9,7 +9,7 @@ class UpdateTicketsRequestModel extends Equatable {
   final String travelDate;
   final String? travelDateH;
   final String ticketPath;
-  final int goBack; // 1 = ذهاب وعودة ، 2 = ذهاب فقط
+  final int goBack;
   final String strNotes;
 
   const UpdateTicketsRequestModel({

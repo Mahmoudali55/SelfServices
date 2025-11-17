@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:my_template/core/custom_widgets/custom_form_field/custom_form_field.dart';
 import 'package:my_template/core/theme/app_colors.dart';
-import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/custom_app_bar_services_widget.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/custom_bottom_nav_button_widget.dart';
@@ -30,7 +29,7 @@ class _RequestAtrainingCourseScreenState extends State<RequestAtrainingCourseScr
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: CustomBottomNavButtonWidget(),
+      bottomNavigationBar: const CustomBottomNavButtonWidget(),
       appBar: CustomAppBarServicesWidget(context, title: AppLocalKay.training.tr()),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),

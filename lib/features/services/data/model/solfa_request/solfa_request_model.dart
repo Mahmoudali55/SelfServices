@@ -17,19 +17,15 @@ class SolfaTypeModel extends Equatable {
     );
   }
 
-  /// تحويل الـ API response لقائمة من SolfaTypeModel
   static List<SolfaTypeModel> listFromResponse(dynamic response) {
-    // إذا response جاي String → نعمل decode
     final Map<String, dynamic> map = response is String ? json.decode(response) : response;
 
-    // Data ممكن يكون String JSON أو List<dynamic>
     final dynamic data = map['Data'];
     final List<dynamic> list = data is String ? json.decode(data) : data;
 
     return list.map((e) => SolfaTypeModel.fromJson(e)).toList();
   }
 
-  /// ترجع الاسم حسب اللغة
   String getName(String langCode) {
     if (langCode == 'en' && paNameE != null && paNameE!.isNotEmpty) {
       return paNameE!;

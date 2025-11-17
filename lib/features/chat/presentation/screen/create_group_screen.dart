@@ -10,8 +10,7 @@ import 'package:my_template/features/chat/presentation/cubit/group_cubit.dart';
 import 'package:my_template/features/chat/presentation/cubit/group_state.dart';
 
 class CreateGroupScreen extends StatefulWidget {
-  final List<Map<String, dynamic>> members; // id + name
-
+  final List<Map<String, dynamic>> members;
   const CreateGroupScreen({super.key, required this.members});
 
   @override
