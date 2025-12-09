@@ -144,6 +144,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           signOutDate: todayDate,
           signOutTime: nowTime,
           mobileSerNo: mobileser ?? '',
+          projectCode: int.tryParse(projectIdController.text) ?? 1,
         );
         await settingCubit.addTimeSheetOut(request);
         _handleResponse(settingCubit.state.timeSheetOutStatus, isCheckIn: false);
@@ -391,9 +392,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                     ),
                                   ),
                                 );
-                              } else if (mobileSerNo == HiveMethods.getDeviceId()) {
+                              } else if (mobileSerNo == currentDeviceId) {
                                 await _markAttendance(true, empId, currentDeviceId);
-                              } else if (mobileSerNo != HiveMethods.getDeviceId()) {
+                              } else if (mobileSerNo != currentDeviceId) {
                                 CommonMethods.showToast(
                                   message: context.locale.languageCode == 'ar'
                                       ? 'عذرا ، يوجد جهاز اخر مسجل لهذا المستخدم'
@@ -485,9 +486,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                     ),
                                   ),
                                 );
-                              } else if (mobileSerNo == HiveMethods.getDeviceId()) {
-                                await _markAttendance(true, empId, currentDeviceId);
-                              } else if (mobileSerNo != HiveMethods.getDeviceId()) {
+                              } else if (mobileSerNo == currentDeviceId) {
+                                await _markAttendance(false, empId, currentDeviceId);
+                              } else if (mobileSerNo != currentDeviceId) {
                                 CommonMethods.showToast(
                                   message: context.locale.languageCode == 'ar'
                                       ? 'عذرا ، يوجد جهاز اخر مسجل لهذا المستخدم'
@@ -658,9 +659,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 ),
               ),
             );
-          } else if (mobileSerNo == HiveMethods.getDeviceId()) {
+          } else if (mobileSerNo == currentDeviceId) {
             await _markAttendance(false, empId, currentDeviceId);
-          } else if (mobileSerNo != HiveMethods.getDeviceId()) {
+          } else if (mobileSerNo != currentDeviceId) {
             CommonMethods.showToast(
               message: context.locale.languageCode == 'ar'
                   ? 'عذرا ، يوجد جهاز اخر مسجل لهذا المستخدم'
@@ -764,9 +765,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 ),
               ),
             );
-          } else if (mobileSerNo == HiveMethods.getDeviceId()) {
+          } else if (mobileSerNo == currentDeviceId) {
             await _markAttendance(true, empId, currentDeviceId);
-          } else if (mobileSerNo != HiveMethods.getDeviceId()) {
+          } else if (mobileSerNo != currentDeviceId) {
             CommonMethods.showToast(
               message: context.locale.languageCode == 'ar'
                   ? 'عذرا ، يوجد جهاز اخر مسجل لهذا المستخدم'

@@ -417,5 +417,11 @@
   "file_deleted": "file_deleted",
   "voice_deleted": "voice_deleted",
   "no_conversations": "No conversations",
-  "selected": "Selected"
+  "selected": "Selected",
+  "microphone_permission_denied": "Microphone permission denied",
+  "branchRiyadh": "Branch Riyadh",
+  "branchJeddah": "Branch Jeddah",
+  "branchDammam": "Branch Dammam",
+  "AppInfo": "AppInfo",
+  "AppVersion": "AppVersion"
 }

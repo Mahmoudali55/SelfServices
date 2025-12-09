@@ -78,6 +78,7 @@ dependencies:
   jailbreak_root_detection: ^1.2.0+1
   flutter_secure_storage:
   badges: ^3.1.2
+  package_info_plus:
   flutter:
     sdk: flutter
   # The following adds the Cupertino Icons font to your application.

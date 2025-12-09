@@ -413,5 +413,11 @@
   "file_deleted": "تم حذف الملف",
   "voice_deleted": " تم حذف الصوت",
   "no_conversations": "لا توجد محادثات",
-  "selected": "تم تحديد"
+  "selected": "تم تحديد",
+  "microphone_permission_denied": "تم رفض إذن الميكروفون",
+  "branchRiyadh": "فرغ الرياض",
+  "branchJeddah": "فرغ جده",
+  "branchDammam": "فرغ الدمام",
+  "AppInfo": "معلومات التطبيق",
+  "AppVersion": "اصدار التطبيق"
 }

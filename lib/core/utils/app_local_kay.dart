@@ -410,4 +410,10 @@ class AppLocalKay {
   static const String exitAppMessage = 'exitAppMessage';
   static const String yes = 'yes';
   static const String no = 'no';
+  static const String microphone_permission_denied = 'microphone_permission_denied';
+  static const String branchRiyadh = 'branchRiyadh';
+  static const String branchJeddah = 'branchJeddah';
+  static const String branchDammam = 'branchDammam';
+  static const String AppInfo = 'AppInfo';
+  static const String AppVersion = 'AppVersion';
 }

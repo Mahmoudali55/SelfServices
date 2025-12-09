@@ -114,7 +114,7 @@ class _SesidChangeRequestScreenState extends State<SesidChangeRequestScreen> {
               ? context.watch<ServicesCubit>().state.addnewGeneralStatus.isLoading
               : context.watch<ServicesCubit>().state.updataGeneralStatus.isLoading,
           title: widget.dynamicOrderModel == null ? AppLocalKay.save.tr() : AppLocalKay.edit.tr(),
-          color: widget.dynamicOrderModel == null ? AppColor.primaryColor(context) : Colors.orange, 
+          color: widget.dynamicOrderModel == null ? AppColor.primaryColor(context) : Colors.orange,
           save: () async {
             final checkResult = await context.read<ServicesCubit>().checkEmpGeneral(
               empCode: int.parse(_employeeId.text),
@@ -144,8 +144,8 @@ class _SesidChangeRequestScreenState extends State<SesidChangeRequestScreen> {
                     empCode: int.parse(_employeeId.text),
                     requestDate: _dateController.text,
                     requestTypeId: 5008,
-                    strField1: _newSesid.text,
-                    strField2: _reason.text,
+                    strField1: _reason.text,
+                    strField2: _newSesid.text,
                     strNotes: '',
                   ),
                 );

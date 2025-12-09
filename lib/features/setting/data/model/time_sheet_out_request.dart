@@ -6,7 +6,8 @@ class TimeSheetOutRequestModel extends Equatable {
   final double latitude;
   final String signOutDate;
   final String signOutTime;
-  final String mobileSerNo; // حقل جديد
+  final String mobileSerNo;
+  final int projectCode;
 
   const TimeSheetOutRequestModel({
     required this.empId,
@@ -14,7 +15,8 @@ class TimeSheetOutRequestModel extends Equatable {
     required this.latitude,
     required this.signOutDate,
     required this.signOutTime,
-    required this.mobileSerNo, // مضاف هنا
+    required this.mobileSerNo,
+    required this.projectCode,
   });
 
   factory TimeSheetOutRequestModel.fromJson(Map<String, dynamic> json) {
@@ -24,7 +26,8 @@ class TimeSheetOutRequestModel extends Equatable {
       latitude: (json['latitude'] as num).toDouble(),
       signOutDate: json['signoutdate'] as String,
       signOutTime: json['signouttime'] as String,
-      mobileSerNo: json['Mobile_SerNo'] as String? ?? '', // التعامل مع null
+      mobileSerNo: json['Mobile_SerNo'] as String? ?? '',
+      projectCode: json['projectcode'] as int, // التعامل مع null
     );
   }
 
@@ -35,7 +38,8 @@ class TimeSheetOutRequestModel extends Equatable {
       'latitude': latitude,
       'signoutdate': signOutDate,
       'signouttime': signOutTime,
-      'Mobile_SerNo': mobileSerNo, // مضاف هنا
+      'Mobile_SerNo': mobileSerNo,
+      'projectcode': projectCode, // مضاف هنا
     };
   }
 

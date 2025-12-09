@@ -14,6 +14,7 @@ import 'package:my_template/features/setting/presentation/screen/rate_app_screen
 import 'package:my_template/features/setting/presentation/screen/suggestions_screen.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/show_change_password_sheet_widget.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/show_language_sheet.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class MoreScreen extends StatefulWidget {
   const MoreScreen({super.key});
@@ -25,6 +26,21 @@ class MoreScreen extends StatefulWidget {
 class _MoreScreenState extends State<MoreScreen> {
   bool isNotificationOn = true;
   bool isEmailOn = false;
+  String appVersion = '';
+  String buildNumber = '';
+  @override
+  void initState() {
+    super.initState();
+    _loadAppInfo();
+  }
+
+  Future<void> _loadAppInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      appVersion = info.version;
+      buildNumber = info.buildNumber;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +144,24 @@ class _MoreScreenState extends State<MoreScreen> {
               ),
             ),
           ]),
+          _sectionTitle(AppLocalKay.AppInfo.tr(), textColor),
+          _settingCard([
+            ListTile(
+              leading: _circleIcon(Icons.info_outline, Colors.blue),
+              title: Text(
+                AppLocalKay.AppVersion.tr(),
+                style: TextStyle(color: AppColor.blackColor(context), fontWeight: FontWeight.w500),
+              ),
+              subtitle: Text('$appVersion '),
+            ),
+            ListTile(
+              leading: _circleIcon(Icons.copyright, Colors.grey),
+              title: Text(
+                '© 2025 Delta Company',
+                style: TextStyle(color: AppColor.blackColor(context), fontWeight: FontWeight.w500),
+              ),
+            ),
+          ]),
           Gap(20.h),
           _settingCard([
             _listTile(
@@ -151,7 +185,7 @@ class _MoreScreenState extends State<MoreScreen> {
 
   Widget _settingCard(List<Widget> children) => Container(
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: AppColor.whiteColor(context),
       borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 8, offset: const Offset(0, 3)),
@@ -201,7 +235,6 @@ class _MoreScreenState extends State<MoreScreen> {
     decoration: BoxDecoration(color: color.withOpacity(0.15), shape: BoxShape.circle),
     child: Icon(icon, color: color, size: 20),
   );
-
   Future<void> _logoutDialog(BuildContext context) async {
     final shouldLogout = await showDialog<bool>(
       context: context,
@@ -229,19 +262,16 @@ class _MoreScreenState extends State<MoreScreen> {
 
     if (shouldLogout ?? false) {
       await HiveMethods.deleteEmpCode();
-
       await HiveMethods.deleteToken();
       final empId = HiveMethods.getEmpCode();
       await HiveMethods.deleteBoxFromDisk('chat_messages_$empId');
       if (!context.mounted) return;
-
       CommonMethods.showToast(
         message: context.locale.languageCode == 'ar'
             ? 'تم تسجيل الخروج بنجاح'
             : 'Logout successful',
         type: ToastType.success,
       );
-
       Navigator.of(context).pushNamedAndRemoveUntil(RoutesName.loginScreen, (route) => false);
     }
   }

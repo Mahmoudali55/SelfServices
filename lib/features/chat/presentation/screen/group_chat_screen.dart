@@ -37,43 +37,101 @@ class GroupChatScreen extends StatefulWidget {
   State<GroupChatScreen> createState() => _GroupChatScreenState();
 }
 
-class _GroupChatScreenState extends State<GroupChatScreen> {
+class _GroupChatScreenState extends State<GroupChatScreen> with WidgetsBindingObserver {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _inputFocus = FocusNode();
+
   FlutterSoundRecorder? _audioRecorder;
   bool _isRecording = false;
   String? _recordedFilePath;
-  late CloudinaryService _cloudinaryService;
+  late final CloudinaryService _cloudinaryService;
   Timer? _recordingTimer;
   int _recordingSeconds = 0;
   bool isUploading = false;
+
   ChatMessage? repliedMessage;
   String? editingMessageId;
   String? selectedMessageId;
   bool _showEmojiPicker = false;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _cloudinaryService = CloudinaryService();
     _audioRecorder = FlutterSoundRecorder();
-    _initRecorder();
+    _initRecorderSafe();
+    // start listening to messages
     context.read<GroupCubit>().listenToGroupMessages(widget.groupId);
+
+    // auto scroll when new messages arrive: use BlocListener below
     _controller.addListener(() => setState(() {}));
+    _inputFocus.addListener(() {
+      if (_inputFocus.hasFocus && _showEmojiPicker) {
+        setState(() => _showEmojiPicker = false);
+      }
+    });
   }
 
-  Future<void> _initRecorder() async {
-    await _audioRecorder!.openRecorder();
-    await Permission.microphone.request();
+  Future<void> _initRecorderSafe() async {
+    try {
+      await _audioRecorder!.openRecorder();
+      final status = await Permission.microphone.status;
+      if (!status.isGranted) {
+        final result = await Permission.microphone.request();
+        if (!result.isGranted) {
+          // permission denied, handle gracefully
+          CommonMethods.showToast(
+            message: AppLocalKay.microphone_permission_denied.tr(),
+            type: ToastType.error,
+          );
+        }
+      }
+    } catch (e) {
+      // recorder init failed — log + notify
+      CommonMethods.showToast(message: 'Recorder init error: $e', type: ToastType.error);
+    }
   }
 
-  void _scrollToBottom() {
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _audioRecorder?.closeRecorder();
+    _audioRecorder = null;
+    _recordingTimer?.cancel();
+    _controller.dispose();
+    _scrollController.dispose();
+    _inputFocus.dispose();
+    super.dispose();
+  }
+
+  // Ensure we only perform side-effects outside build
+  void _markAsReadIfNeeded(List<ChatMessage> messages, GroupCubit cubit) {
+    // mark unread messages that are not from me
+    final unread = messages.where((m) => !m.isRead && m.senderId != cubit.currentUserId).toList();
+    if (unread.isNotEmpty) {
+      // do in next frame to avoid modifying during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        for (final m in unread) {
+          cubit.markMessageAsRead(widget.groupId, m);
+        }
+      });
+    }
+  }
+
+  void _scrollToBottom({bool animated = true}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
+      if (!_scrollController.hasClients) return;
+      final pos = _scrollController.position.maxScrollExtent;
+      if (animated) {
         _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
+          pos,
+          duration: const Duration(milliseconds: 250),
           curve: Curves.easeOut,
         );
+      } else {
+        _scrollController.jumpTo(pos);
       }
     });
   }
@@ -85,53 +143,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       orElse: () => ChatUser(id: userId, name: '${AppLocalKay.user.tr()} $userId'),
     );
     return user?.name ?? '${AppLocalKay.user.tr()} $userId';
-  }
-
-  void _showMessageOptions(ChatMessage msg) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => SafeArea(
-        child: Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.edit),
-              title: Text(AppLocalKay.edit.tr(), style: AppTextStyle.text16MSecond(context)),
-              onTap: () {
-                Navigator.pop(context);
-                if (!msg.isDeleted && msg.senderId == context.read<GroupCubit>().currentUserId) {
-                  _controller.text = msg.message ?? '';
-                  editingMessageId = msg.id;
-                  _controller.selection = TextSelection.fromPosition(
-                    TextPosition(offset: _controller.text.length),
-                  );
-                }
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red),
-              title: Text(AppLocalKay.delete.tr(), style: AppTextStyle.text16MSecond(context)),
-              onTap: () {
-                Navigator.pop(context);
-                context.read<GroupCubit>().deleteMessage(widget.groupId, msg);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.reply, color: Colors.blue),
-              title: Text(AppLocalKay.reply.tr(), style: AppTextStyle.text16MSecond(context)),
-              onTap: () {
-                Navigator.pop(context);
-                setState(() => repliedMessage = msg);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Future<void> _sendMessage() async {
@@ -153,7 +164,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       final msg = ChatMessage(
         senderId: cubit.currentUserId,
         receiverId: 0,
-        message: text,
+        message: text.isEmpty ? null : text,
         conversationId: widget.groupId,
         repliedTo: repliedMessage?.id,
         repliedText: repliedMessage?.message,
@@ -171,43 +182,69 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   }
 
   Future<void> _startRecording() async {
-    final tempDir = await getTemporaryDirectory();
-    final path = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.aac';
-    await _audioRecorder!.startRecorder(toFile: path, codec: Codec.aacADTS);
-    _recordingSeconds = 0;
-    _recordingTimer?.cancel();
-    _recordingTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() => _recordingSeconds++);
-    });
-    setState(() => _isRecording = true);
+    try {
+      final micStatus = await Permission.microphone.status;
+      if (!micStatus.isGranted) {
+        final r = await Permission.microphone.request();
+        if (!r.isGranted) {
+          CommonMethods.showToast(
+            message: AppLocalKay.microphone_permission_denied.tr(),
+            type: ToastType.error,
+          );
+          return;
+        }
+      }
+      final tempDir = await getTemporaryDirectory();
+      final path = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.aac';
+      await _audioRecorder!.startRecorder(toFile: path, codec: Codec.aacADTS);
+      _recordingSeconds = 0;
+      _recordingTimer?.cancel();
+      _recordingTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (mounted) setState(() => _recordingSeconds++);
+      });
+      setState(() => _isRecording = true);
+    } catch (e) {
+      CommonMethods.showToast(message: 'Recording error: $e', type: ToastType.error);
+    }
   }
 
   Future<void> _stopRecording() async {
-    final path = await _audioRecorder!.stopRecorder();
-    _recordingTimer?.cancel();
-    _recordingSeconds = 0;
-    setState(() => _isRecording = false);
-    _recordedFilePath = path;
-
-    if (_recordedFilePath != null) {
-      final file = File(_recordedFilePath!);
-      await _uploadAndSendFile(file, MessageType.audio);
+    try {
+      final path = await _audioRecorder!.stopRecorder();
+      _recordingTimer?.cancel();
+      _recordingSeconds = 0;
+      setState(() => _isRecording = false);
+      _recordedFilePath = path;
+      if (_recordedFilePath != null) {
+        final file = File(_recordedFilePath!);
+        await _uploadAndSendFile(file, MessageType.audio);
+      }
+    } catch (e) {
+      CommonMethods.showToast(message: 'Stop recording error: $e', type: ToastType.error);
     }
   }
 
   Future<void> _sendImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked == null) return;
-    final file = File(picked.path);
-    await _uploadAndSendFile(file, MessageType.image);
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+      if (picked == null) return;
+      final file = File(picked.path);
+      await _uploadAndSendFile(file, MessageType.image);
+    } catch (e) {
+      CommonMethods.showToast(message: e.toString(), type: ToastType.error);
+    }
   }
 
   Future<void> _sendFile() async {
-    final result = await FilePicker.platform.pickFiles();
-    if (result == null || result.files.isEmpty) return;
-    final file = File(result.files.first.path!);
-    await _uploadAndSendFile(file, MessageType.file);
+    try {
+      final result = await FilePicker.platform.pickFiles();
+      if (result == null || result.files.isEmpty) return;
+      final file = File(result.files.first.path!);
+      await _uploadAndSendFile(file, MessageType.file);
+    } catch (e) {
+      CommonMethods.showToast(message: e.toString(), type: ToastType.error);
+    }
   }
 
   Future<void> _uploadAndSendFile(File file, MessageType type) async {
@@ -245,14 +282,57 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     }
   }
 
+  void _showMessageOptions(ChatMessage msg) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => SafeArea(
+        child: Wrap(
+          children: [
+            if (!msg.isDeleted && msg.senderId == context.read<GroupCubit>().currentUserId)
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: Text(AppLocalKay.edit.tr(), style: AppTextStyle.text16MSecond(context)),
+                onTap: () {
+                  Navigator.pop(context);
+                  _controller.text = msg.message ?? '';
+                  editingMessageId = msg.id;
+                  _controller.selection = TextSelection.fromPosition(
+                    TextPosition(offset: _controller.text.length),
+                  );
+                },
+              ),
+            ListTile(
+              leading: const Icon(Icons.delete, color: Colors.red),
+              title: Text(AppLocalKay.delete.tr(), style: AppTextStyle.text16MSecond(context)),
+              onTap: () {
+                Navigator.pop(context);
+                context.read<GroupCubit>().deleteMessage(widget.groupId, msg);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.reply, color: Colors.blue),
+              title: Text(AppLocalKay.reply.tr(), style: AppTextStyle.text16MSecond(context)),
+              onTap: () {
+                Navigator.pop(context);
+                setState(() => repliedMessage = msg);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _addMemberToGroup(String groupId) {
     final cubit = context.read<GroupCubit>();
-
     final serviceState = context.read<ServicesCubit>().state;
     if (!serviceState.employeesStatus.isSuccess) return;
-
     final employees = serviceState.employeesStatus.data ?? [];
-
     List<dynamic> filteredEmployees = List.from(employees);
 
     showModalBottomSheet(
@@ -264,7 +344,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
       ),
       builder: (context) {
         final searchController = TextEditingController();
-
         return StatefulBuilder(
           builder: (context, setState) {
             void _filterEmployees(String query) {
@@ -296,7 +375,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 10),
-
                       CustomFormField(
                         controller: searchController,
                         hintText: context.locale.languageCode == 'ar'
@@ -305,7 +383,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         onChanged: _filterEmployees,
                       ),
                       const SizedBox(height: 10),
-
                       Expanded(
                         child: filteredEmployees.isEmpty
                             ? Center(
@@ -331,17 +408,16 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                                 shrinkWrap: true,
                                 itemCount: filteredEmployees.length,
                                 itemBuilder: (context, index) {
-                                  String _cleanName(String name) {
-                                    return name.replaceFirst(RegExp(r'^\d+\s*'), '').trim();
-                                  }
-
+                                  String _cleanName(String name) =>
+                                      name.replaceFirst(RegExp(r'^\d+\s*'), '').trim();
                                   final emp = filteredEmployees[index];
                                   final empName = context.locale.languageCode == 'ar'
                                       ? _cleanName(emp.empName ?? 'الموظف')
                                       : _cleanName(emp.empNameE ?? 'Employee');
-
                                   return ListTile(
-                                    leading: CircleAvatar(child: Text(empName[0])),
+                                    leading: CircleAvatar(
+                                      child: Text(empName.isNotEmpty ? empName[0] : '?'),
+                                    ),
                                     title: Text(_cleanName(empName)),
                                     onTap: () async {
                                       try {
@@ -350,7 +426,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                                           final group = state.groups.firstWhere(
                                             (g) => g.id == groupId,
                                           );
-
                                           final exists = group.members.any(
                                             (m) => m['id'] == emp.empCode,
                                           );
@@ -366,7 +441,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                                               emp.empCode,
                                               empName,
                                             );
-
                                             CommonMethods.showToast(
                                               message: AppLocalKay.employee_added_success.tr(),
                                               seconds: 3,
@@ -406,29 +480,124 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         (g) => g.id == widget.groupId,
         orElse: () => GroupModel(id: '', name: '', members: [], adminId: 0, memberIds: []),
       );
-
       return group.adminId == cubit.currentUserId;
     }
     return false;
   }
 
-  @override
-  void dispose() {
-    _audioRecorder?.closeRecorder();
-    _audioRecorder = null;
-    _recordingTimer?.cancel();
-    super.dispose();
+  Widget _buildMessageItem(ChatMessage msg, bool isMe) {
+    final isSelected = msg.id == selectedMessageId;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedMessageId = (selectedMessageId == msg.id) ? null : msg.id;
+        });
+      },
+      onLongPress: () {
+        _showMessageOptions(msg);
+        setState(() => selectedMessageId = msg.id);
+      },
+      child: Container(
+        key: ValueKey(msg.id),
+        color: isSelected ? Colors.greenAccent.withOpacity(0.3) : Colors.transparent,
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Align(
+          alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+          child: Container(
+            margin: EdgeInsets.only(left: isMe ? 35 : 8, right: isMe ? 8 : 35, top: 4, bottom: 4),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: msg.isDeleted
+                  ? Colors.grey.shade300
+                  : isMe
+                  ? const Color(0xFF056162)
+                  : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (msg.repliedText != null)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 4),
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '${getUserNameById(msg.repliedSenderId ?? 0)}: ${msg.repliedText}',
+                      style: AppTextStyle.text16MSecond(
+                        context,
+                        color: isMe ? Colors.white70 : Colors.black54,
+                      ),
+                    ),
+                  ),
+                if (msg.type == MessageType.text)
+                  Text(
+                    msg.isDeleted ? 'تم الحذف' : (msg.message ?? ''),
+                    style: AppTextStyle.text16MSecond(
+                      context,
+                      color: isMe ? Colors.white : Colors.black,
+                    ),
+                  ),
+                if (msg.type == MessageType.image && msg.message != null)
+                  CustomNetworkImage(imageUrl: msg.message!),
+                if (msg.type == MessageType.file)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.insert_drive_file, size: 20),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          msg.fileName ?? 'ملف',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: isMe ? Colors.white70 : Colors.black54,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                if (msg.type == MessageType.audio && msg.message != null)
+                  AudioMessageWidget(audioUrl: msg.message!, isReading: !isMe),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        DateFormat('hh:mm a').format(msg.timestamp),
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: isMe ? Colors.white70 : Colors.black54,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      if (isMe)
+                        Icon(
+                          msg.isRead ? Icons.done_all : Icons.check,
+                          size: 18,
+                          color: msg.isRead ? Colors.blue : Colors.white70,
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<GroupCubit>();
-    final state = cubit.state;
-    GroupModel? groupData;
-
-    if (state is GroupLoaded && state.groups.any((g) => g.id == widget.groupId)) {
-      groupData = state.groups.firstWhere((g) => g.id == widget.groupId);
-    }
 
     return Scaffold(
       appBar: PreferredSize(
@@ -464,7 +633,6 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         GroupModel(id: '', name: '', members: [], adminId: 0, memberIds: []),
                   );
                   if (group.members.isEmpty) return const SizedBox.shrink();
-
                   return SizedBox(
                     height: 24,
                     child: ListView.separated(
@@ -502,7 +670,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 final groupData = (state is GroupLoaded)
                     ? state.groups.firstWhere((g) => g.id == widget.groupId)
                     : null;
-                final isAdmin = cubit.currentUserId == groupData?.adminId;
+                final isAdminLocal = cubit.currentUserId == groupData?.adminId;
 
                 switch (value) {
                   case 'add_member':
@@ -510,7 +678,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                     break;
                   case 'leave_group':
                     if (groupData == null) return;
-                    bool confirmLeave = await showDialog(
+                    final confirmLeave = await showDialog<bool>(
                       context: context,
                       builder: (_) => AlertDialog(
                         title: Text(AppLocalKay.leave_group.tr()),
@@ -527,14 +695,14 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         ],
                       ),
                     );
-                    if (confirmLeave) {
+                    if (confirmLeave == true) {
                       cubit.leaveGroup(widget.groupId);
                       Navigator.pop(context);
                     }
                     break;
                   case 'delete_group':
-                    if (!isAdmin || groupData == null) return;
-                    bool confirmDelete = await showDialog(
+                    if (!isAdminLocal || groupData == null) return;
+                    final confirmDelete = await showDialog<bool>(
                       context: context,
                       builder: (_) => AlertDialog(
                         title: Text(AppLocalKay.delete_group.tr()),
@@ -551,13 +719,13 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                         ],
                       ),
                     );
-                    if (confirmDelete) {
+                    if (confirmDelete == true) {
                       await cubit.deleteGroup(widget.groupId);
                       Navigator.pop(context);
                     }
                     break;
                   case 'remove_member':
-                    if (!isAdmin || groupData == null) return;
+                    if (!isAdminLocal || groupData == null) return;
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
@@ -570,8 +738,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                           shrinkWrap: true,
                           children: groupData.members
                               .where((m) => m['id'] != cubit.currentUserId)
-                              .map(
-                                (member) => ListTile(
+                              .map((member) {
+                                return ListTile(
                                   title: Text(member['name']),
                                   trailing: Text(
                                     AppLocalKay.delete.tr(),
@@ -584,8 +752,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                                     await cubit.removeMemberFromGroup(widget.groupId, member['id']);
                                     Navigator.pop(context);
                                   },
-                                ),
-                              )
+                                );
+                              })
                               .toList(),
                         );
                       },
@@ -599,20 +767,19 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 final groupData = (state is GroupLoaded)
                     ? state.groups.firstWhere((g) => g.id == widget.groupId)
                     : null;
-                final isAdmin = cubit.currentUserId == groupData?.adminId;
-
+                final isAdminLocal = cubit.currentUserId == groupData?.adminId;
                 return [
                   PopupMenuItem(value: 'add_member', child: Text(AppLocalKay.add_member.tr())),
                   PopupMenuItem(
                     value: 'leave_group',
                     child: Text(AppLocalKay.leave_group_menu.tr()),
                   ),
-                  if (isAdmin)
+                  if (isAdminLocal)
                     PopupMenuItem(
                       value: 'remove_member',
                       child: Text(AppLocalKay.remove_member.tr()),
                     ),
-                  if (isAdmin)
+                  if (isAdminLocal)
                     PopupMenuItem(
                       value: 'delete_group',
                       child: Text(AppLocalKay.delete_group_menu.tr()),
@@ -623,72 +790,73 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           ],
         ),
       ),
-
       body: SafeArea(
         child: Column(
           children: [
             Expanded(
-              child: BlocBuilder<GroupCubit, GroupState>(
-                builder: (context, state) {
-                  List<ChatMessage> messages =
-                      state is GroupLoaded && state.groupMessages.containsKey(widget.groupId)
-                      ? state.groupMessages[widget.groupId]!
-                      : [];
+              child: BlocListener<GroupCubit, GroupState>(
+                listenWhen: (previous, current) => previous != current,
+                listener: (context, state) {
+                  if (state is GroupLoaded && state.groupMessages.containsKey(widget.groupId)) {
+                    final messages = state.groupMessages[widget.groupId]!;
+                    _markAsReadIfNeeded(messages, context.read<GroupCubit>());
+                    _scrollToBottom();
+                  }
+                },
+                child: BlocBuilder<GroupCubit, GroupState>(
+                  builder: (context, state) {
+                    final messages =
+                        state is GroupLoaded && state.groupMessages.containsKey(widget.groupId)
+                        ? state.groupMessages[widget.groupId]!
+                        : <ChatMessage>[];
 
-                  if (messages.isEmpty)
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.message, size: 100, color: AppColor.primaryColor(context)),
-                          Text(
-                            AppLocalKay.start_chat.tr(),
-                            style: AppTextStyle.text16MSecond(context),
-                          ),
-                        ],
-                      ),
-                    );
-
-                  DateTime? previousDate;
-
-                  return ListView.builder(
-                    controller: _scrollController,
-                    itemCount: messages.length,
-                    itemBuilder: (_, index) {
-                      final msg = messages[index];
-                      final isMe = msg.senderId == cubit.currentUserId;
-                      final msgDate = msg.timestamp;
-                      final isSelected = msg.id == selectedMessageId;
-
-                      if (!isMe && !msg.isRead) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          cubit.markMessageAsRead(widget.groupId, msg);
-                        });
-                      }
-
-                      String dateLabel;
-                      final now = DateTime.now();
-                      if (msgDate.year == now.year &&
-                          msgDate.month == now.month &&
-                          msgDate.day == now.day) {
-                        dateLabel = context.locale.languageCode == 'ar' ? 'اليوم' : 'Today';
-                      } else {
-                        dateLabel = DateFormat('dd/MM/yyyy').format(msgDate);
-                      }
-
-                      bool showDate =
-                          previousDate == null ||
-                          previousDate?.year != msgDate.year ||
-                          previousDate?.month != msgDate.month ||
-                          previousDate?.day != msgDate.day;
-                      previousDate = msgDate;
-
-                      return SingleChildScrollView(
+                    if (messages.isEmpty) {
+                      return Center(
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.message, size: 100, color: AppColor.primaryColor(context)),
+                            Text(
+                              AppLocalKay.start_chat.tr(),
+                              style: AppTextStyle.text16MSecond(context),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    DateTime? previousDate;
+                    return ListView.separated(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      itemCount: messages.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 2),
+                      itemBuilder: (context, index) {
+                        final msg = messages[index];
+                        final isMe = msg.senderId == context.read<GroupCubit>().currentUserId;
+                        final msgDate = msg.timestamp;
+                        String dateLabel;
+                        final now = DateTime.now();
+                        if (msgDate.year == now.year &&
+                            msgDate.month == now.month &&
+                            msgDate.day == now.day) {
+                          dateLabel = context.locale.languageCode == 'ar' ? 'اليوم' : 'Today';
+                        } else {
+                          dateLabel = DateFormat('dd/MM/yyyy').format(msgDate);
+                        }
+
+                        bool showDate =
+                            previousDate == null ||
+                            previousDate?.year != msgDate.year ||
+                            previousDate?.month != msgDate.month ||
+                            previousDate?.day != msgDate.day;
+                        previousDate = msgDate;
+
+                        return Column(
                           children: [
                             if (showDate)
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 2),
+                                padding: const EdgeInsets.symmetric(vertical: 6),
                                 child: Center(
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
@@ -702,115 +870,16 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                                   ),
                                 ),
                               ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  if (selectedMessageId == msg.id) {
-                                    selectedMessageId = null;
-                                  } else {
-                                    selectedMessageId = msg.id;
-                                  }
-                                });
-                              },
-                              onLongPress: () {
-                                _showMessageOptions(msg);
-                                setState(() => selectedMessageId = msg.id);
-                              },
-                              child: Container(
-                                key: ValueKey(msg.id),
-                                color: isSelected
-                                    ? Colors.greenAccent.withOpacity(0.3)
-                                    : Colors.transparent,
-                                padding: const EdgeInsets.symmetric(vertical: 4),
-                                child: Align(
-                                  alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                      left: isMe ? 35 : 8,
-                                      right: isMe ? 8 : 35,
-                                      top: 4,
-                                      bottom: 4,
-                                    ),
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: msg.isDeleted
-                                          ? Colors.grey.shade300
-                                          : isMe
-                                          ? const Color(0xFF056162)
-                                          : Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        if (msg.repliedText != null)
-                                          Container(
-                                            margin: const EdgeInsets.only(bottom: 4),
-                                            padding: const EdgeInsets.all(6),
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey.shade300,
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                            child: Text(
-                                              '${getUserNameById(msg.repliedSenderId ?? 0)}: ${msg.repliedText}',
-                                              style: AppTextStyle.text16MSecond(
-                                                context,
-                                                color: isMe ? Colors.white70 : Colors.black54,
-                                              ),
-                                            ),
-                                          ),
-                                        if (msg.type == MessageType.text)
-                                          Text(
-                                            msg.isDeleted ? 'تم الحذف' : msg.message ?? '',
-                                            style: AppTextStyle.text16MSecond(
-                                              context,
-                                              color: isMe ? Colors.white : Colors.black,
-                                            ),
-                                          ),
-                                        if (msg.type == MessageType.image && msg.message != null)
-                                          CustomNetworkImage(imageUrl: msg.message!),
-                                        if (msg.type == MessageType.audio && msg.message != null)
-                                          AudioMessageWidget(
-                                            audioUrl: msg.message!,
-                                            isReading: !isMe,
-                                          ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(top: 2),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                DateFormat('hh:mm a').format(msg.timestamp),
-                                                style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: isMe ? Colors.white70 : Colors.black54,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 5),
-                                              if (isMe)
-                                                Icon(
-                                                  msg.isRead ? Icons.done_all : Icons.check,
-                                                  size: 18,
-                                                  color: msg.isRead ? Colors.blue : Colors.white70,
-                                                ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            _buildMessageItem(msg, isMe),
                           ],
-                        ),
-                      );
-                    },
-                  );
-                },
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
+
             if (repliedMessage != null)
               Container(
                 color: Colors.grey.shade200,
@@ -825,14 +894,27 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   ],
                 ),
               ),
+
             if (isUploading) const LinearProgressIndicator(),
+
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
               color: Colors.white,
               child: Row(
                 children: [
                   InkWell(
-                    onTap: () => setState(() => _showEmojiPicker = !_showEmojiPicker),
+                    onTap: () {
+                      // toggle emoji - also unfocus keyboard
+                      if (!_showEmojiPicker) {
+                        _inputFocus.unfocus();
+                        Future.delayed(const Duration(milliseconds: 100), () {
+                          if (mounted) setState(() => _showEmojiPicker = true);
+                        });
+                      } else {
+                        _inputFocus.requestFocus();
+                        setState(() => _showEmojiPicker = false);
+                      }
+                    },
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       child: const Icon(Icons.emoji_emotions),
@@ -852,14 +934,12 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                       child: const Icon(Icons.image),
                     ),
                   ),
-
                   Expanded(
                     child: CustomFormField(
                       controller: _controller,
                       hintText: AppLocalKay.message_placeholder.tr(),
                     ),
                   ),
-
                   _controller.text.isEmpty
                       ? IconButton(
                           icon: Icon(_isRecording ? Icons.stop : Icons.mic),

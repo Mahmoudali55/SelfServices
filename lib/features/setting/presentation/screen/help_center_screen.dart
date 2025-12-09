@@ -64,7 +64,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 ),
                 if (isExpanded)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     child: index == _helpOptions.length - 1
                         ? Column(
                             children: [
@@ -74,17 +74,106 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                                 onTap: () =>
                                     UrlLauncherMethods.makeMailMessage(' erp@delta-asg.com'),
                               ),
-                              const Divider(),
-                              ListTile(
-                                leading: const Icon(Icons.phone),
-                                title: const Text(' 580926448 966+'),
-                                onTap: () => UrlLauncherMethods.makePhoneCall('+966 580926448'),
+                              const Divider(thickness: 2),
+                              Column(
+                                children: [
+                                  ListTile(
+                                    leading: const Icon(Icons.phone),
+                                    title: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                                      children: [
+                                        const Text(' 580926448 966+'),
+                                        Text(
+                                          AppLocalKay.branchRiyadh.tr(),
+                                          style: AppTextStyle.text16MSecond(context),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () => UrlLauncherMethods.makePhoneCall('+966 580926448'),
+                                  ),
+                                  ListTile(
+                                    leading: const Icon(Icons.phone),
+                                    title: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                                      children: [
+                                        const Text(' 503605031 966+'),
+                                        Text(
+                                          AppLocalKay.branchJeddah.tr(),
+                                          style: AppTextStyle.text16MSecond(context),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () => UrlLauncherMethods.makePhoneCall('+966 503605031'),
+                                  ),
+                                  ListTile(
+                                    leading: const Icon(Icons.phone),
+                                    title: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                                      children: [
+                                        const Text(' 507409010 966+'),
+                                        Text(
+                                          AppLocalKay.branchDammam.tr(),
+                                          style: AppTextStyle.text16MSecond(context),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () => UrlLauncherMethods.makePhoneCall('+966 507409010'),
+                                  ),
+                                ],
                               ),
-                              const Divider(),
-                              ListTile(
-                                leading: const Icon(Icons.chat),
-                                title: Text(AppLocalKay.supportwhatsapp.tr()),
-                                onTap: () => UrlLauncherMethods.launchWhatsApp('+966 580926448'),
+                              const Divider(thickness: 2),
+                              Column(
+                                children: [
+                                  ListTile(
+                                    leading: const Icon(Icons.chat),
+                                    title: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(AppLocalKay.supportwhatsapp.tr()),
+                                        Text(
+                                          AppLocalKay.branchRiyadh.tr(),
+                                          style: AppTextStyle.text16MSecond(context),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () =>
+                                        UrlLauncherMethods.launchWhatsApp('+966 580926448'),
+                                  ),
+
+                                  ListTile(
+                                    leading: const Icon(Icons.chat),
+                                    title: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(AppLocalKay.supportwhatsapp.tr()),
+                                        Text(
+                                          AppLocalKay.branchJeddah.tr(),
+                                          style: AppTextStyle.text16MSecond(context),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () =>
+                                        UrlLauncherMethods.launchWhatsApp('+966 503605031'),
+                                  ),
+                                  ListTile(
+                                    leading: const Icon(Icons.chat),
+                                    title: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(AppLocalKay.supportwhatsapp.tr()),
+                                        Text(
+                                          AppLocalKay.branchDammam.tr(),
+                                          style: AppTextStyle.text16MSecond(context),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () =>
+                                        UrlLauncherMethods.launchWhatsApp('+966 507409010'),
+                                  ),
+                                ],
                               ),
                             ],
                           )
