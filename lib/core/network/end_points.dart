@@ -1,5 +1,6 @@
 class EndPoints {
   static const String login = '/token';
+  static const String empLogin = '/DeltagroupService/Users/Emp_login';
   static const String users = 'users';
   static String detailsUser(int id) => '$users/$id';
   static const String vacationAdditionalPrivilagesPath =

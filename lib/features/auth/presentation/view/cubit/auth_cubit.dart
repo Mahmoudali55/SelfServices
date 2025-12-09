@@ -9,6 +9,7 @@ import 'package:my_template/core/network/status.state.dart';
 import 'package:my_template/core/routes/routes_name.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
+import 'package:my_template/features/auth/data/model/emp_login_model.dart';
 import 'package:my_template/features/auth/data/repository/auth_repo.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/show_change_password_sheet_widget.dart';
 
@@ -70,10 +71,23 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
-  void submitLogin(BuildContext context) {
-    if (formKey.currentState!.validate()) {
-      login(context: context);
-    }
+  Future<void> submitLogin(BuildContext context) async {
+    if (!formKey.currentState!.validate()) return;
+
+    final result = await authRepo.empLogin(emp_id: int.parse(mobileController.text));
+
+    result.fold(
+      (error) {
+        CommonMethods.showToast(message: error.errMessage, type: ToastType.error);
+      },
+      (success) {
+        if (success.success) {
+          login(context: context);
+        } else {
+          CommonMethods.showToast(message: success.success.toString(), type: ToastType.error);
+        }
+      },
+    );
   }
 
   String? validatePassword(value, BuildContext context) {
