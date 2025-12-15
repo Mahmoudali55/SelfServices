@@ -25,11 +25,8 @@ class _RequestHistoryScreenState extends State<RequestHistoryScreen> {
   String searchQuery = '';
   RequestFilterType filterType = RequestFilterType.all;
 
-  void onSearchChanged(String value) {
-    setState(() {
-      searchQuery = value.trim().toLowerCase();
-    });
-  }
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -37,81 +34,129 @@ class _RequestHistoryScreenState extends State<RequestHistoryScreen> {
     context.read<HomeCubit>().loadVacationAdditionalPrivilages(pageID: 14, empId: widget.empCode);
   }
 
+  void onSearchChanged(String value) {
+    setState(() {
+      searchQuery = value.trim().toLowerCase();
+    });
+  }
+
+  void _openSearch() {
+    setState(() {
+      showSearch = true;
+    });
+
+    Future.delayed(const Duration(milliseconds: 100), () {
+      FocusScope.of(context).requestFocus(_focusNode);
+    });
+  }
+
+  void _closeSearch() {
+    _searchController.clear();
+    onSearchChanged('');
+    _focusNode.unfocus();
+
+    setState(() {
+      showSearch = false;
+    });
+  }
+
+  void _toggleSearch() {
+    showSearch ? _closeSearch() : _openSearch();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: CustomAppBar(
-        context,
-        centerTitle: false,
-        automaticallyImplyLeading: true,
-        actions: [
-          BlocBuilder<HomeCubit, HomeState>(
-            builder: (context, state) {
-              final showFilter = state.vacationStatus.data?.pagePrivID == 1;
+    return WillPopScope(
+      onWillPop: () async {
+        if (showSearch) {
+          _closeSearch();
+          return false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: CustomAppBar(
+          context,
+          centerTitle: false,
+          automaticallyImplyLeading: true,
+          actions: [
+            BlocBuilder<HomeCubit, HomeState>(
+              builder: (context, state) {
+                final showFilter = state.vacationStatus.data?.pagePrivID == 1;
 
-              return Row(
-                children: [
-                  if (showFilter)
-                    PopupMenuButton<RequestFilterType>(
-                      icon: const Icon(Icons.filter_list),
-                      initialValue: filterType,
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: RequestFilterType.all,
-                          child: Text(AppLocalKay.all.tr()),
-                        ),
-                        PopupMenuItem(
-                          value: RequestFilterType.myRequests,
-                          child: Text(AppLocalKay.myRequests.tr()),
-                        ),
-                        PopupMenuItem(
-                          value: RequestFilterType.submittedRequests,
-                          child: Text(AppLocalKay.submittedRequests.tr()),
-                        ),
-                      ],
-                      onSelected: (value) {
-                        setState(() {
-                          filterType = value;
-                        });
-                      },
+                return Row(
+                  children: [
+                    if (showFilter)
+                      PopupMenuButton<RequestFilterType>(
+                        icon: const Icon(Icons.filter_list),
+                        initialValue: filterType,
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: RequestFilterType.all,
+                            child: Text(AppLocalKay.all.tr()),
+                          ),
+                          PopupMenuItem(
+                            value: RequestFilterType.myRequests,
+                            child: Text(AppLocalKay.myRequests.tr()),
+                          ),
+                          PopupMenuItem(
+                            value: RequestFilterType.submittedRequests,
+                            child: Text(AppLocalKay.submittedRequests.tr()),
+                          ),
+                        ],
+                        onSelected: (value) {
+                          setState(() {
+                            filterType = value;
+                          });
+                        },
+                      ),
+
+                    IconButton(
+                      icon: Icon(showSearch ? Icons.close : Icons.search),
+                      onPressed: _toggleSearch,
                     ),
-
-                  IconButton(
-                    icon: Icon(showSearch ? Icons.close : Icons.search),
-                    onPressed: () {
-                      setState(() {
-                        showSearch = !showSearch;
-                        if (!showSearch) {
-                          onSearchChanged('');
-                        }
-                      });
-                    },
+                  ],
+                );
+              },
+            ),
+          ],
+          bottom: showSearch
+              ? PreferredSize(
+                  preferredSize: Size.fromHeight(70.h),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: CustomFormField(
+                      controller: _searchController,
+                      prefixIcon: const Icon(Icons.search),
+                      hintText: AppLocalKay.search.tr(),
+                      onChanged: onSearchChanged,
+                    ),
                   ),
-                ],
-              );
-            },
+                )
+              : null,
+        ),
+        body: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            if (showSearch) {
+              _closeSearch();
+            }
+          },
+          child: RequestHistoryBody(
+            empCode: widget.empCode,
+            initialType: widget.initialType,
+            searchQuery: searchQuery,
+            filterType: filterType,
           ),
-        ],
-        bottom: showSearch
-            ? PreferredSize(
-                preferredSize: Size.fromHeight(70.h),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: CustomFormField(
-                    prefixIcon: const Icon(Icons.search),
-                    hintText: AppLocalKay.search.tr(),
-                    onChanged: onSearchChanged,
-                  ),
-                ),
-              )
-            : null,
-      ),
-      body: RequestHistoryBody(
-        empCode: widget.empCode,
-        initialType: widget.initialType,
-        searchQuery: searchQuery,
-        filterType: filterType,
+        ),
       ),
     );
   }
