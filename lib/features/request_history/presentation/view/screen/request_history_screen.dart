@@ -6,6 +6,7 @@ import 'package:my_template/core/custom_widgets/custom_app_bar/custom_app_bar.da
 import 'package:my_template/core/custom_widgets/custom_form_field/custom_form_field.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/home/presentation/cubit/home_cubit.dart';
+import 'package:my_template/features/home/presentation/cubit/home_state.dart';
 import 'package:my_template/features/request_history/presentation/view/screen/widget/request_history_body.dart';
 
 class RequestHistoryScreen extends StatefulWidget {
@@ -30,24 +31,10 @@ class _RequestHistoryScreenState extends State<RequestHistoryScreen> {
     });
   }
 
-  bool showFilter = false;
   @override
   void initState() {
     super.initState();
-    final homeCubit = context.read<HomeCubit>();
-    homeCubit.loadVacationAdditionalPrivilages(pageID: 14, empId: widget.empCode);
-
-    homeCubit.stream.listen((state) {
-      if (state.vacationStatus.data?.pagePrivID == 1) {
-        setState(() {
-          showFilter = true;
-        });
-      } else {
-        setState(() {
-          showFilter = false;
-        });
-      }
-    });
+    context.read<HomeCubit>().loadVacationAdditionalPrivilages(pageID: 14, empId: widget.empCode);
   }
 
   @override
@@ -59,36 +46,50 @@ class _RequestHistoryScreenState extends State<RequestHistoryScreen> {
         centerTitle: false,
         automaticallyImplyLeading: true,
         actions: [
-          if (showFilter)
-            PopupMenuButton<RequestFilterType>(
-              icon: const Icon(Icons.filter_list),
-              initialValue: filterType,
-              itemBuilder: (context) => [
-                PopupMenuItem(value: RequestFilterType.all, child: Text(AppLocalKay.all.tr())),
-                PopupMenuItem(
-                  value: RequestFilterType.myRequests,
-                  child: Text(AppLocalKay.myRequests.tr()),
-                ),
-                PopupMenuItem(
-                  value: RequestFilterType.submittedRequests,
-                  child: Text(AppLocalKay.submittedRequests.tr()),
-                ),
-              ],
-              onSelected: (value) {
-                setState(() {
-                  filterType = value;
-                });
-              },
-            ),
-          IconButton(
-            icon: Icon(showSearch ? Icons.close : Icons.search),
-            onPressed: () {
-              setState(() {
-                showSearch = !showSearch;
-                if (!showSearch) {
-                  onSearchChanged('');
-                }
-              });
+          BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              final showFilter = state.vacationStatus.data?.pagePrivID == 1;
+
+              return Row(
+                children: [
+                  if (showFilter)
+                    PopupMenuButton<RequestFilterType>(
+                      icon: const Icon(Icons.filter_list),
+                      initialValue: filterType,
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: RequestFilterType.all,
+                          child: Text(AppLocalKay.all.tr()),
+                        ),
+                        PopupMenuItem(
+                          value: RequestFilterType.myRequests,
+                          child: Text(AppLocalKay.myRequests.tr()),
+                        ),
+                        PopupMenuItem(
+                          value: RequestFilterType.submittedRequests,
+                          child: Text(AppLocalKay.submittedRequests.tr()),
+                        ),
+                      ],
+                      onSelected: (value) {
+                        setState(() {
+                          filterType = value;
+                        });
+                      },
+                    ),
+
+                  IconButton(
+                    icon: Icon(showSearch ? Icons.close : Icons.search),
+                    onPressed: () {
+                      setState(() {
+                        showSearch = !showSearch;
+                        if (!showSearch) {
+                          onSearchChanged('');
+                        }
+                      });
+                    },
+                  ),
+                ],
+              );
             },
           ),
         ],

@@ -454,4 +454,27 @@ class AppLocalKay {
   static const String all = 'all';
   static const String myRequests = 'myRequests';
   static const String submittedRequests = 'submittedRequests';
+  static const String vacation_request_details = 'vacation_request_details';
+  static const String employee_data = 'employee_data';
+  static const String employee_name = 'employee_name';
+  static const String employee_name_en = 'employee_name_en';
+  static const String employee_code = 'employee_code';
+  static const String department_name = 'department_name';
+  static const String department_name_en = 'department_name_en';
+  static const String vacation_data = 'vacation_data';
+  static const String request_number = 'request_number';
+  static const String vacation_type = 'vacation_type';
+  static const String request_date = 'request_date';
+  static const String from_date = 'from_date';
+  static const String to_date = 'to_date';
+  static const String days_count = 'days_count';
+  static const String request_status = 'request_status';
+  static const String status_description = 'status_description';
+  static const String status_number = 'status_number';
+  static const String alternative_employee = 'alternative_employee';
+  static const String alternative_name = 'alternative_name';
+  static const String alternative_name_en = 'alternative_name_en';
+  static const String alternative_code = 'alternative_code';
+  static const String attachment_name = 'attachment_name';
+  static const String no_attachment = 'no_attachment';
 }

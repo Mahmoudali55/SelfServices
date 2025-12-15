@@ -20,59 +20,52 @@ import 'package:my_template/features/setting/presentation/screen/attendance_scre
 import 'package:my_template/features/setting/presentation/screen/more_screen.dart';
 
 class LayoutScreen extends StatelessWidget {
-  const LayoutScreen({super.key, this.restoreIndex = 0, this.emd, this.initialType});
-  final int? emd;
+  const LayoutScreen({super.key, this.restoreIndex = 0, this.initialType});
+
   final int restoreIndex;
   final String? initialType;
 
   @override
   Widget build(BuildContext context) {
     final lang = context.locale.languageCode;
-    final String empName = lang == 'ar'
+    final empName = lang == 'ar'
         ? HiveMethods.getEmpNameAR() ?? ''
         : HiveMethods.getEmpNameEn() ?? '';
-    final String empCode = HiveMethods.getEmpCode() ?? '0';
 
-    final List<Widget> screens = [
-      HomeScreen(name: empName, empId: int.tryParse(empCode) ?? 0),
-      RequestHistoryScreen(empCode: int.tryParse(empCode) ?? 0, initialType: initialType),
-      BlocProvider(
-        create: (_) =>
-            ChatCubit(repository: sl<ChatRepository>(), currentUserId: int.tryParse(empCode) ?? 0),
-        child: UnifiedEmployeesPage(
-          currentUserId: int.tryParse(empCode) ?? 0,
-          empCode: int.tryParse(empCode) ?? 0,
-          pagePrivID: 1,
-        ),
-      ),
-      const AttendanceScreen(),
-      const MoreScreen(),
-    ];
+    final empCode = int.tryParse(HiveMethods.getEmpCode() ?? '0') ?? 0;
 
     return BlocProvider(
       create: (_) => LayoutCubit()..changePage(restoreIndex),
       child: BlocBuilder<LayoutCubit, LayoutState>(
         builder: (context, state) {
           final cubit = context.read<LayoutCubit>();
+
           return WillPopScope(
             onWillPop: () async {
-              if (cubit.state.currentIndex != 0) {
+              if (state.currentIndex != 0) {
                 cubit.changePage(0);
                 return false;
               }
-
-              final shouldExit = await _showExitDialog(context);
-              return shouldExit;
+              return await _showExitDialog(context);
             },
             child: Scaffold(
               extendBody: true,
-              body: IndexedStack(index: state.currentIndex, children: screens),
+
+              /// ✅ BODY بدون IndexedStack
+              body: _buildCurrentScreen(
+                context: context,
+                index: state.currentIndex,
+                empCode: empCode,
+                empName: empName,
+              ),
+
               bottomNavigationBar: ConvexAppBar(
                 height: 55.h,
                 style: TabStyle.react,
                 backgroundColor: Colors.white,
                 activeColor: AppColor.primaryColor(context),
                 color: AppColor.greyColor(context),
+                initialActiveIndex: state.currentIndex,
                 items: [
                   TabItem(icon: Icons.home, title: AppLocalKay.home.tr()),
                   TabItem(icon: Icons.request_quote, title: AppLocalKay.orderhistory.tr()),
@@ -80,15 +73,12 @@ class LayoutScreen extends StatelessWidget {
                   TabItem(icon: Icons.fingerprint, title: AppLocalKay.fingerprint.tr()),
                   TabItem(icon: Icons.grid_view, title: AppLocalKay.more.tr()),
                 ],
-                initialActiveIndex: state.currentIndex,
                 onTap: (index) {
-                  if (index == cubit.state.currentIndex) {
+                  if (index == state.currentIndex) {
                     if (index == 0) {
                       context.read<HomeCubit>().loadHomeData();
                     } else if (index == 1) {
-                      context.read<VacationRequestsCubit>().getVacationRequests(
-                        empcode: int.tryParse(empCode) ?? 0,
-                      );
+                      context.read<VacationRequestsCubit>().getVacationRequests(empcode: empCode);
                     }
                   } else {
                     cubit.changePage(index);
@@ -100,6 +90,37 @@ class LayoutScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  /// ✅ بناء الشاشة الحالية فقط
+  Widget _buildCurrentScreen({
+    required BuildContext context,
+    required int index,
+    required int empCode,
+    required String empName,
+  }) {
+    switch (index) {
+      case 0:
+        return HomeScreen(name: empName, empId: empCode);
+
+      case 1:
+        return RequestHistoryScreen(empCode: empCode, initialType: initialType);
+
+      case 2:
+        return BlocProvider(
+          create: (_) => ChatCubit(repository: sl<ChatRepository>(), currentUserId: empCode),
+          child: UnifiedEmployeesPage(currentUserId: empCode, empCode: empCode, pagePrivID: 1),
+        );
+
+      case 3:
+        return const AttendanceScreen();
+
+      case 4:
+        return const MoreScreen();
+
+      default:
+        return const SizedBox.shrink();
+    }
   }
 
   Future<bool> _showExitDialog(BuildContext context) async {
@@ -115,15 +136,12 @@ class LayoutScreen extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: Text(AppLocalKay.no.tr(), style: AppTextStyle.text14RGrey(context)),
+                child: Text(AppLocalKay.no.tr()),
               ),
               ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: Text(
-                  AppLocalKay.yes.tr(),
-                  style: AppTextStyle.text14RGrey(context, color: Colors.white),
-                ),
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(AppLocalKay.yes.tr(), style: const TextStyle(color: Colors.white)),
               ),
             ],
           ),

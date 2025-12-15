@@ -464,5 +464,35 @@
   "requestStatus": "Request Status",
   "all": "All",
   "myRequests": "My Requests",
-  "submittedRequests": "Requests Submitted for Others"
+  "submittedRequests": "Requests Submitted for Others",
+   "vacation_request_details": "Vacation Request Details",
+
+  "employee_data": "Employee Data",
+  "employee_name": "Employee Name",
+  "employee_name_en": "Employee Name (EN)",
+  "employee_code": "Employee Code",
+  "department_name": "Department Name",
+  "department_name_en": "Department Name (EN)",
+
+  "vacation_data": "Vacation Data",
+  "request_number": "Request Number",
+  "vacation_type": "Vacation Type",
+  "request_date": "Request Date",
+  "from_date": "From Date",
+  "to_date": "To Date",
+  "days_count": "Days Count",
+
+
+  "request_status": "Request Status",
+  "status_description": "Description",
+  "status_number": "Status Number",
+
+  "alternative_employee": "Alternative Employee",
+  "alternative_name": "Alternative Name",
+  "alternative_name_en": "Alternative Name (EN)",
+  "alternative_code": "Alternative Code",
+
+
+  "attachment_name": "Attachment Name",
+  "no_attachment": "No attachment"
 }

@@ -459,5 +459,35 @@
   "requestStatus": "حالة الطلب",
   "all": "الجميع",
   "myRequests": "طلباتي",
-  "submittedRequests": "الطلبات المقدمة للآخرين"
+  "submittedRequests": "الطلبات المقدمة للآخرين",
+    "vacation_request_details": "تفاصيل طلب الإجازة",
+
+  "employee_data": "بيانات الموظف",
+  "employee_name": "اسم الموظف",
+  "employee_name_en": "اسم الموظف (EN)",
+  "employee_code": "الكود الوظيفي",
+  "department_name": "اسم القسم",
+  "department_name_en": "اسم القسم (EN)",
+
+  "vacation_data": "بيانات الإجازة",
+  "request_number": "رقم الطلب",
+  "vacation_type": "نوع الإجازة",
+  "request_date": "تاريخ الطلب",
+  "from_date": "من تاريخ",
+  "to_date": "إلى تاريخ",
+  "days_count": "عدد الأيام",
+
+
+  "request_status": "حالة الطلب",
+  "status_description": "الوصف",
+  "status_number": "رقم الحالة",
+
+  "alternative_employee": "الموظف البديل",
+  "alternative_name": "اسم البديل",
+  "alternative_name_en": "اسم البديل (EN)",
+  "alternative_code": "كود البديل",
+
+
+  "attachment_name": "اسم المرفق",
+  "no_attachment": "لا يوجد"
 }

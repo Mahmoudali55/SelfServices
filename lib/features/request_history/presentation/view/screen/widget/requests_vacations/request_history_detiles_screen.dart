@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:my_template/core/custom_widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
+import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/services/data/model/request_leave/vacation_requests_response_model.dart';
 
 class RequestHistoryDetilesScreen extends StatelessWidget {
@@ -14,7 +15,7 @@ class RequestHistoryDetilesScreen extends StatelessWidget {
       appBar: CustomAppBar(
         context,
         title: Text(
-          context.locale.languageCode == "en" ? "Vacation Request Details" : "تفاصيل طلب الإجازة",
+          AppLocalKay.vacation_request_details.tr(),
           style: AppTextStyle.text18MSecond(context),
         ),
         centerTitle: true,
@@ -28,44 +29,44 @@ class RequestHistoryDetilesScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           _section(
-            title: context.locale.languageCode == "en" ? "Employee Data" : "بيانات الموظف",
+            title: AppLocalKay.employee_data.tr(),
             items: {
-              "اسم الموظف": request.empName,
-              "اسم الموظف (EN)": request.empNameE,
-              "الكود الوظيفي": request.empCode?.toString(),
-              "اسم القسم": request.dName,
-              "اسم القسم (EN)": request.dNameE,
+              AppLocalKay.employee_name.tr(): request.empName,
+              AppLocalKay.employee_name_en.tr(): request.empNameE,
+              AppLocalKay.employee_code.tr(): request.empCode?.toString(),
+              AppLocalKay.department_name.tr(): request.dName,
+              AppLocalKay.department_name_en.tr(): request.dNameE,
             },
           ),
           _section(
-            title: "بيانات الإجازة",
+            title: AppLocalKay.vacation_data.tr(),
             items: {
-              "رقم الطلب": request.vacRequestId?.toString(),
-              "نوع الإجازة": request.vacTypeName,
-              "تاريخ الطلب": request.vacRequestDate,
-              "من تاريخ": request.vacRequestDateFrom,
-              "إلى تاريخ": request.vacRequestDateTo,
-              "عدد الأيام": request.vacDayCount?.toString(),
-              "ملاحظات": request.strNotes,
+              AppLocalKay.request_number.tr(): request.vacRequestId?.toString(),
+              AppLocalKay.vacation_type.tr(): request.vacTypeName,
+              AppLocalKay.request_date.tr(): request.vacRequestDate,
+              AppLocalKay.from_date.tr(): request.vacRequestDateFrom,
+              AppLocalKay.to_date.tr(): request.vacRequestDateTo,
+              AppLocalKay.days_count.tr(): request.vacDayCount?.toString(),
+              AppLocalKay.notes.tr(): request.strNotes,
             },
           ),
           _section(
-            title: "حالة الطلب",
-            items: {"الوصف": request.requestDesc, "رقم الحالة": request.reqDecideState?.toString()},
+            title: AppLocalKay.request_status.tr(),
+            items: {AppLocalKay.status.tr(): request.requestDesc},
           ),
           _section(
-            title: "الموظف البديل",
+            title: AppLocalKay.alternative_employee.tr(),
             items: {
-              "اسم البديل": request.alternativeEmpName,
-              "اسم البديل (EN)": request.alternativeEmpNameE,
-              "كود البديل": request.alternativeEmpCode?.toString(),
+              AppLocalKay.alternative_name.tr(): request.alternativeEmpName,
+              AppLocalKay.alternative_name_en.tr(): request.alternativeEmpNameE,
+              AppLocalKay.alternative_code.tr(): request.alternativeEmpCode?.toString(),
             },
           ),
           _section(
-            title: "المرفقات",
+            title: AppLocalKay.attachments.tr(),
             items: {
-              "اسم المرفق": (request.attachFileName?.isEmpty ?? true)
-                  ? "لا يوجد"
+              AppLocalKay.attachments.tr(): (request.attachFileName?.isEmpty ?? true)
+                  ? AppLocalKay.no_attachment.tr()
                   : request.attachFileName,
             },
           ),
