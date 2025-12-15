@@ -20,7 +20,12 @@ class RequestsListViewAllCars extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: requests.length,
-      itemBuilder: (context, index) => CarRequestItem(request: requests[index], empcoded: empcoded),
+      itemBuilder: (context, index) => GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, RoutesName.carDetailsScreen, arguments: requests[index]);
+        },
+        child: CarRequestItem(request: requests[index], empcoded: empcoded),
+      ),
     );
   }
 }

@@ -36,8 +36,16 @@ class RequestsListViewAllResignation extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: requests.length,
-      itemBuilder: (context, index) =>
-          ResignationRequestItem(request: requests[index], empcoded: empcoded),
+      itemBuilder: (context, index) => GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            RoutesName.resignationDetailsScreen,
+            arguments: requests[index],
+          );
+        },
+        child: ResignationRequestItem(request: requests[index], empcoded: empcoded),
+      ),
     );
   }
 }

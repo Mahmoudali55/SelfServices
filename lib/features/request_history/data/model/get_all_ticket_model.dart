@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 
 class AllTicketModel extends Equatable {
@@ -47,85 +48,62 @@ class AllTicketModel extends Equatable {
     required this.reqDicidState,
     required this.actionMakerEmpID,
   });
-
   factory AllTicketModel.fromJson(Map<String, dynamic> json) {
-    return AllTicketModel(
-      requestID: json['RequestID'],
-      empDeptID: json['EmpDeptID'],
-      empCode: json['EmpCode'],
-      requestDate: json['requestDate'],
-      requestDateH: json['RequestDateH'],
-      ticketcount: json['Ticketcount'],
-      travelDate: json['TravelDate'],
-      travelDateH: json['TravelDateH'],
-      ticketPath: json['TicketPath'],
-      goback: json['Goback'],
-      strGoback: json['strGoback'],
-      strNotes: json['strNotes'],
-      requestAuditorID: json['RequestAuditorID'],
-      empName: json['EMP_NAME'],
-      empNameE: json['EMP_NAME_E'],
-      dName: json['D_NAME'],
-      dNameE: json['D_NAME_E'],
-      reqDecideState: json['ReqDecideState'],
-      requestDesc: json['RequestDesc'],
-      reqDicidState: json['ReqDicidState'],
-      actionMakerEmpID: json['ActionMakerEmpID'],
-    );
-  }
+    int parseInt(dynamic value) {
+      if (value == null) return 0;
+      return int.tryParse(value.toString()) ?? 0;
+    }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'RequestID': requestID,
-      'EmpDeptID': empDeptID,
-      'EmpCode': empCode,
-      'requestDate': requestDate,
-      'RequestDateH': requestDateH,
-      'Ticketcount': ticketcount,
-      'TravelDate': travelDate,
-      'TravelDateH': travelDateH,
-      'TicketPath': ticketPath,
-      'Goback': goback,
-      'strGoback': strGoback,
-      'strNotes': strNotes,
-      'RequestAuditorID': requestAuditorID,
-      'EMP_NAME': empName,
-      'EMP_NAME_E': empNameE,
-      'D_NAME': dName,
-      'D_NAME_E': dNameE,
-      'ReqDecideState': reqDecideState,
-      'RequestDesc': requestDesc,
-      'ReqDicidState': reqDicidState,
-      'ActionMakerEmpID': actionMakerEmpID,
-    };
+    return AllTicketModel(
+      requestID: parseInt(json['RequestID']),
+      empDeptID: parseInt(json['EmpDeptID']),
+      empCode: parseInt(json['EmpCode']),
+      requestDate: json['requestDate']?.toString() ?? '',
+      requestDateH: json['RequestDateH']?.toString(),
+      ticketcount: parseInt(json['Ticketcount']),
+      travelDate: json['TravelDate']?.toString() ?? '',
+      travelDateH: json['TravelDateH']?.toString(),
+      ticketPath: json['TicketPath']?.toString() ?? '',
+      goback: parseInt(json['Goback']),
+      strGoback: json['strGoback']?.toString() ?? '',
+      strNotes: json['strNotes']?.toString() ?? '',
+      requestAuditorID: parseInt(json['RequestAuditorID']),
+      empName: json['EMP_NAME']?.toString() ?? '',
+      empNameE: json['EMP_NAME_E']?.toString() ?? '',
+      dName: json['D_NAME']?.toString() ?? '',
+      dNameE: json['D_NAME_E']?.toString(),
+      reqDecideState: parseInt(json['ReqDecideState']),
+      requestDesc: json['RequestDesc']?.toString() ?? '',
+      reqDicidState: parseInt(json['ReqDicidState']),
+      actionMakerEmpID: parseInt(json['ActionMakerEmpID']),
+    );
   }
 
   @override
   List<Object?> get props => [
-        requestID,
-        empDeptID,
-        empCode,
-        requestDate,
-        requestDateH,
-        ticketcount,
-        travelDate,
-        travelDateH,
-        ticketPath,
-        goback,
-        strGoback,
-        strNotes,
-        requestAuditorID,
-        empName,
-        empNameE,
-        dName,
-        dNameE,
-        reqDecideState,
-        requestDesc,
-        reqDicidState,
-        actionMakerEmpID,
-      ];
+    requestID,
+    empDeptID,
+    empCode,
+    requestDate,
+    requestDateH,
+    ticketcount,
+    travelDate,
+    travelDateH,
+    ticketPath,
+    goback,
+    strGoback,
+    strNotes,
+    requestAuditorID,
+    empName,
+    empNameE,
+    dName,
+    dNameE,
+    reqDecideState,
+    requestDesc,
+    reqDicidState,
+    actionMakerEmpID,
+  ];
 }
-
 
 List<AllTicketModel> parseTicketRequests(String jsonString) {
   final Map<String, dynamic> decoded = json.decode(jsonString);

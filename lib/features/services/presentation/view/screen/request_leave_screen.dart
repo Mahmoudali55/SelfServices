@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_template/core/custom_widgets/buttons/custom_button.dart';
 import 'package:my_template/core/custom_widgets/custom_form_field/custom_form_field.dart';
 import 'package:my_template/core/custom_widgets/custom_toast/custom_toast.dart';
 import 'package:my_template/core/routes/routes_name.dart';
@@ -285,6 +286,20 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
         }
       },
       builder: (context, state) {
+        final formattedServices = _services
+            .map(
+              (e) => {
+                'id': int.tryParse(e['id']?.toString() ?? '') ?? 0,
+                'servcdesc': e['servcdesc']?.toString() ?? '',
+              },
+            )
+            .toList();
+        final List<AttachmentModel> attachmentList = selectedFilesMap.map((file) {
+          return AttachmentModel(
+            attachmentName: file['AttatchmentName'] ?? '',
+            attachmentFileName: file['AttchmentFileName'] ?? '',
+          );
+        }).toList();
         return Form(
           key: _formKey,
           child: Scaffold(
@@ -372,13 +387,91 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                         );
                         return;
                       } else if (checkResult != null && checkResult.column1 == 148) {
-                        CommonMethods.showToast(
-                          message: context.locale.languageCode == 'ar'
-                              ? 'عفوا ... لا يمكن عمل طلب الاجازة ... الموظف بديل لموظف اخر لم يعد من اجازته بعد'
-                              : 'Employee already has a pending leave request',
-                          type: ToastType.error,
+                        bool? confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            content: Text(
+                              context.locale.languageCode == 'ar'
+                                  ? 'هل تريد الاستمرار في عمل طلب الاجازة؟'
+                                  : 'Do you want to continue with the leave request?',
+                              style: AppTextStyle.text14RGrey(context),
+                            ),
+                            title: Text(
+                              context.locale.languageCode == 'ar'
+                                  ? 'عفوا ... لا يمكن عمل طلب الاجازة ... الموظف بديل لموظف اخر لم يعد من اجازته بعد'
+                                  : 'Employee already has a pending leave request',
+                              style: AppTextStyle.text16MSecond(context),
+                            ),
+                            actions: [
+                              CustomButton(
+                                color: Colors.red,
+                                onPressed: () => Navigator.pop(context, false),
+                                text: context.locale.languageCode == 'ar' ? 'لا' : 'No',
+                                radius: 12.r,
+                              ),
+                              SizedBox(height: 10.w),
+                              CustomButton(
+                                onPressed: () async {
+                                  if (widget.vacationRequestOrdersModel != null) {
+                                    await context.read<ServicesCubit>().updataVacationRequest(
+                                      VacationRequestUpdateModel(
+                                        requestId: int.tryParse(_requestNumber.text) ?? 0,
+                                        empCode: widget.pagePrivID != 1
+                                            ? widget.empCode ?? 0
+                                            : int.tryParse(ownerEmpIdController.text) ?? 0,
+                                        vacRequestDate: _dateController.text,
+                                        vacRequestDateH: '',
+                                        vacTypeId: int.tryParse(leaveIdController.text) ?? 0,
+                                        vacRequestDateFrom: _startDateController.text,
+                                        vacRequestDateFromH: '',
+                                        vacRequestDateTo: _endDateController.text,
+                                        vacRequestDateToH: '',
+                                        vacDayCount: int.tryParse(_daysController.text) ?? 0,
+                                        strNotes: _notesController.text,
+                                        serviceTypeDesc: _servicesController.text,
+                                        adminEmpCode: widget.empCode ?? 0,
+                                        alternativeEmpCode:
+                                            int.tryParse(transferEmpIdController.text) ?? 0,
+                                        service: formattedServices,
+                                        attachment: attachmentList,
+                                      ),
+                                    );
+                                  } else {
+                                    await context.read<ServicesCubit>().submitVacationRequest(
+                                      VacationRequestModel(
+                                        empCode: widget.pagePrivID != 1
+                                            ? widget.empCode ?? 0
+                                            : int.tryParse(ownerEmpIdController.text) ?? 0,
+                                        vacRequestDate: _dateController.text,
+                                        vacRequestDateH: '',
+                                        vacTypeId: int.tryParse(leaveIdController.text) ?? 0,
+                                        vacRequestDateFrom: _startDateController.text,
+                                        vacRequestDateFromH: '',
+                                        vacRequestDateTo: _endDateController.text,
+                                        vacRequestDateToH: '',
+                                        vacDayCount: int.tryParse(_daysController.text) ?? 0,
+                                        strNotes: _notesController.text,
+                                        serviceTypeDesc: _servicesController.text,
+                                        adminEmpCode: widget.empCode ?? 0,
+                                        alternativeEmpCode:
+                                            int.tryParse(transferEmpIdController.text) ?? 0,
+                                        service: formattedServices,
+                                        attachment: attachmentList,
+                                      ),
+                                    );
+                                  }
+                                },
+                                text: context.locale.languageCode == 'ar' ? 'نعم' : 'Yes',
+                                radius: 12.r,
+                              ),
+                            ],
+                          ),
                         );
-                        return;
+
+                        if (confirm != true) return;
                       } else if (checkResult != null && checkResult.column1 == 149) {
                         CommonMethods.showToast(
                           message: context.locale.languageCode == 'ar'
@@ -389,21 +482,8 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                         return;
                       }
                     }
-                    final formattedServices = _services
-                        .map(
-                          (e) => {
-                            'id': int.tryParse(e['id']?.toString() ?? '') ?? 0,
-                            'servcdesc': e['servcdesc']?.toString() ?? '',
-                          },
-                        )
-                        .toList();
+
                     // تحويل قائمة الملفات إلى List<Map<String, String>>
-                    final List<AttachmentModel> attachmentList = selectedFilesMap.map((file) {
-                      return AttachmentModel(
-                        attachmentName: file['AttatchmentName'] ?? '',
-                        attachmentFileName: file['AttchmentFileName'] ?? '',
-                      );
-                    }).toList();
 
                     if (widget.vacationRequestOrdersModel != null) {
                       await context.read<ServicesCubit>().updataVacationRequest(
@@ -494,7 +574,6 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                         _ballController.text = balData
                             .fold<double>(0, (sum, e) => sum + (e.column1 ?? 0))
                             .toString();
-                       
                       }
                     }
 
@@ -505,7 +584,6 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                         _balanceController.text = vacData
                             .fold<double>(0, (sum, e) => sum + (e.empVacBal ?? 0))
                             .toString();
-                       
                       }
                     }
                   },
@@ -590,20 +668,26 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                       EmployeePickerField(
                         empCode: widget.empCode ?? 0,
                         pagePrivID: 1,
-                        validator: (p0) {
-                          if (p0 == null || p0.isEmpty) {
-                            return AppLocalKay.employeetransfername.tr();
-                          }
-                          return null;
-                        },
+                        validator:
+                            (context.read<ServicesCubit>().selectedLeave?.nameGpf?.contains(
+                                  'مرضية',
+                                ) ??
+                                false)
+                            ? null
+                            : (p0) {
+                                if (p0 == null || p0.isEmpty) {
+                                  return AppLocalKay.employeetransfername.tr();
+                                }
+                                return null;
+                              },
                         title: AppLocalKay.employeetransfername.tr(),
                         idController: transferEmpIdController,
                         nameController: transferEmpNameController,
                         onEmployeeSelected: (emp) {
                           transferEmpIdController.text = emp.empCode.toString();
                           transferEmpNameController.text = context.locale.languageCode == 'ar'
-                              ? emp.empName.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? '' ?? ''
-                              : emp.empNameE.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? '' ?? '';
+                              ? emp.empName.replaceFirst(RegExp(r'^[0-9]+\s*'), '')
+                              : emp.empNameE.replaceFirst(RegExp(r'^[0-9]+\s*'), '');
                           context.read<ServicesCubit>().selectedEmployee = emp;
                         },
                       ),
@@ -970,10 +1054,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
 
       await file.writeAsBytes(bytes, flush: true);
 
-     
       await OpenFilex.open(file.path);
-    } catch (e) {
-    
-    }
+    } catch (e) {}
   }
 }

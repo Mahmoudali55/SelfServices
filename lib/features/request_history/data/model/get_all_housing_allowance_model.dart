@@ -49,7 +49,7 @@ class GetAllHousingAllowanceModel extends Equatable {
       empDeptID: json['EmpDeptID'] ?? 0,
       empCode: json['EmpCode'] ?? 0,
       requestDate: json['requestDate'] ?? '',
-      requestDateH: json['RequestDateH'],
+      requestDateH: json['RequestDateH']?.toString(),
       sakanAmount: (json['SakanAmount'] ?? 0).toDouble(),
       amountType: json['AmountType'] ?? 0,
       strAmountType: json['strAmountType'] ?? '',
@@ -58,7 +58,7 @@ class GetAllHousingAllowanceModel extends Equatable {
       empName: json['EMP_NAME'] ?? '',
       empNameE: json['EMP_NAME_E'] ?? '',
       dName: json['D_NAME'] ?? '',
-      dNameE: json['D_NAME_E'],
+      dNameE: json['D_NAME_E']?.toString(),
       reqDecideState: json['ReqDecideState'] ?? 0,
       requestDesc: json['RequestDesc'] ?? '',
       reqDicidState: json['ReqDicidState'] ?? 0,
@@ -112,9 +112,13 @@ class GetAllHousingAllowanceModel extends Equatable {
   ];
 }
 
+/// الدالة لتحويل JSON إلى List<GetAllHousingAllowanceModel>
 List<GetAllHousingAllowanceModel> getAllHousingAllowanceFromJson(String str) {
   final jsonData = json.decode(str);
-  final dataString = jsonData['Data'] as String;
-  final List<dynamic> list = jsonDecode(dataString);
+  final dataString = jsonData['Data'];
+
+  // تحويل String إلى List<dynamic>
+  final List<dynamic> list = dataString is String ? jsonDecode(dataString) : dataString;
+
   return list.map((e) => GetAllHousingAllowanceModel.fromJson(e)).toList();
 }

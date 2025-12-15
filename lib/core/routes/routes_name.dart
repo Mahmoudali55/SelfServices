@@ -38,4 +38,12 @@ class RoutesName {
   static const String requestgeneral = 'requestgeneral';
   static const String rateApp = 'rate_app';
   static const String suggestions = 'suggestions';
+  static const String resignationDetailsScreen = 'resignationDetailsScreen';
+  static const String transferDetailsScreen = 'transferDetailsScreen';
+  static const String solfaDetailsScreen = 'solfaDetailsScreen';
+  static const String backFromVacationDetailsScreen = 'backFromVacationDetailsScreen';
+  static const String ticketDetailsScreen = 'TicketDetailsScreen';
+  static const String carDetailsScreen = 'CarDetailsScreen';
+  static const String housingAllowanceDetailsScreen = 'housingAllowanceDetailsScreen';
+  static const String generalRequestDetailsScreen = 'generalRequestDetailsScreen';
 }

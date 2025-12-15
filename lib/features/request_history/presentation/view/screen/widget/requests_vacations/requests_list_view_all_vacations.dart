@@ -22,8 +22,16 @@ class RequestsListViewAllVacations extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 120),
       itemCount: requests.length,
-      itemBuilder: (context, index) =>
-          VacationRequestItem(request: requests[index], empcoded: empcoded),
+      itemBuilder: (context, index) => GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            RoutesName.requestHistoryDetilesScreen,
+            arguments: requests[index],
+          );
+        },
+        child: VacationRequestItem(request: requests[index], empcoded: empcoded),
+      ),
     );
   }
 }

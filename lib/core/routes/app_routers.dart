@@ -121,10 +121,54 @@ class AppRouters {
         return MaterialPageRoute(
           builder: (_) => RequestGeneralScreen(dynamicOrderModel: args?['request']),
         );
+      case RoutesName.solfaDetailsScreen:
+        return MaterialPageRoute(
+          builder: (_) => SolfaDetailsScreen(request: settings.arguments as SolfaItem),
+        );
       case RoutesName.rateApp:
         return MaterialPageRoute(builder: (_) => const RateAppScreen());
       case RoutesName.suggestions:
         return MaterialPageRoute(builder: (_) => const SuggestionsScreen());
+      case RoutesName.requestHistoryDetilesScreen:
+        return MaterialPageRoute(
+          builder: (_) => RequestHistoryDetilesScreen(
+            request: settings.arguments as VacationRequestOrdersModel,
+          ),
+        );
+      case RoutesName.resignationDetailsScreen:
+        return MaterialPageRoute(
+          builder: (_) =>
+              ResignationDetailsScreen(request: settings.arguments as GetAllResignationModel),
+        );
+      case RoutesName.transferDetailsScreen:
+        return MaterialPageRoute(
+          builder: (_) => TransferDetailsScreen(request: settings.arguments as GetAllTransferModel),
+        );
+      case RoutesName.backFromVacationDetailsScreen:
+        return MaterialPageRoute(
+          builder: (_) => BackFromVacationDetailsScreen(
+            request: settings.arguments as GetRequestVacationBackModel,
+          ),
+        );
+      case RoutesName.ticketDetailsScreen:
+        return MaterialPageRoute(
+          builder: (_) => TicketDetailsScreen(request: settings.arguments as AllTicketModel),
+        );
+      case RoutesName.carDetailsScreen:
+        return MaterialPageRoute(
+          builder: (_) => CarDetailsScreen(request: settings.arguments as GetAllCarsModel),
+        );
+      case RoutesName.housingAllowanceDetailsScreen:
+        return MaterialPageRoute(
+          builder: (_) => HousingAllowanceDetailsScreen(
+            request: settings.arguments as GetAllHousingAllowanceModel,
+          ),
+        );
+      case RoutesName.generalRequestDetailsScreen:
+        return MaterialPageRoute(
+          builder: (_) =>
+              GeneralRequestDetailsScreen(request: settings.arguments as DynamicOrderModel),
+        );
       default:
         return null;
     }

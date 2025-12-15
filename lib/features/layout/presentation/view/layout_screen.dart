@@ -25,33 +25,6 @@ class LayoutScreen extends StatelessWidget {
   final int restoreIndex;
   final String? initialType;
 
-  Widget _getScreen(int index, BuildContext context, String empName, String empCode) {
-    switch (index) {
-      case 0:
-        return HomeScreen(name: empName, empId: int.tryParse(empCode) ?? 0);
-      case 1:
-        return RequestHistoryScreen(empCode: int.tryParse(empCode) ?? 0, initialType: initialType);
-      case 2:
-        return BlocProvider(
-          create: (_) => ChatCubit(
-            repository: sl<ChatRepository>(),
-            currentUserId: int.tryParse(empCode) ?? 0,
-          ),
-          child: UnifiedEmployeesPage(
-            currentUserId: int.tryParse(empCode) ?? 0,
-            empCode: int.tryParse(empCode) ?? 0,
-            pagePrivID: 1,
-          ),
-        );
-      case 3:
-        return const AttendanceScreen();
-      case 4:
-        return const MoreScreen();
-      default:
-        return const SizedBox();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final lang = context.locale.languageCode;
@@ -59,6 +32,22 @@ class LayoutScreen extends StatelessWidget {
         ? HiveMethods.getEmpNameAR() ?? ''
         : HiveMethods.getEmpNameEn() ?? '';
     final String empCode = HiveMethods.getEmpCode() ?? '0';
+
+    final List<Widget> screens = [
+      HomeScreen(name: empName, empId: int.tryParse(empCode) ?? 0),
+      RequestHistoryScreen(empCode: int.tryParse(empCode) ?? 0, initialType: initialType),
+      BlocProvider(
+        create: (_) =>
+            ChatCubit(repository: sl<ChatRepository>(), currentUserId: int.tryParse(empCode) ?? 0),
+        child: UnifiedEmployeesPage(
+          currentUserId: int.tryParse(empCode) ?? 0,
+          empCode: int.tryParse(empCode) ?? 0,
+          pagePrivID: 1,
+        ),
+      ),
+      const AttendanceScreen(),
+      const MoreScreen(),
+    ];
 
     return BlocProvider(
       create: (_) => LayoutCubit()..changePage(restoreIndex),
@@ -77,7 +66,7 @@ class LayoutScreen extends StatelessWidget {
             },
             child: Scaffold(
               extendBody: true,
-              body: _getScreen(state.currentIndex, context, empName, empCode),
+              body: IndexedStack(index: state.currentIndex, children: screens),
               bottomNavigationBar: ConvexAppBar(
                 height: 55.h,
                 style: TabStyle.react,

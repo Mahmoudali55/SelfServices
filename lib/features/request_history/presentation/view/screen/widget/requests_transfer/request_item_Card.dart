@@ -183,7 +183,7 @@ class _EditButton extends StatelessWidget {
           RoutesName.transferrequest,
           arguments: {
             'PagePrivID': pageItem?.pagePrivID ?? 0,
-            'empId': request.empCd,
+            'empId': request.empCode,
             'getAllTransferModel': request,
           },
         );

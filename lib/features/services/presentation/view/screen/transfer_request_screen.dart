@@ -84,7 +84,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
     final model = widget.transferModel!;
     requestIdController.text = model.requestId.toString();
     _dateController.text = model.requestDate ?? '';
-    ownerEmpIdController.text = model.empCd.toString();
+    ownerEmpIdController.text = model.empCode.toString();
     ownerEmpNameController.text = context.locale.languageCode == 'ar'
         ? model.empName ?? ''
         : model.empNameE ?? '';

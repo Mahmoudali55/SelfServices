@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_template/core/routes/routes_name.dart';
 import 'package:my_template/features/request_history/data/model/get_requests_vacation_back.dart';
 import 'package:my_template/features/request_history/presentation/view/screen/widget/requests_back/request_back_card.dart';
 
@@ -13,7 +14,16 @@ class RequestsBackListView extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: requests.length,
-      itemBuilder: (_, index) => RequestBackCard(request: requests[index], empcoded: empcoded),
+      itemBuilder: (_, index) => GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            RoutesName.backFromVacationDetailsScreen,
+            arguments: requests[index],
+          );
+        },
+        child: RequestBackCard(request: requests[index], empcoded: empcoded),
+      ),
     );
   }
 }

@@ -1,29 +1,37 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
 import 'package:my_template/core/custom_widgets/custom_loading/custom_shimmer_list.dart';
 import 'package:my_template/core/network/status.state.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/request_history/presentation/view/cubit/vacation_requests_cubit.dart';
 import 'package:my_template/features/request_history/presentation/view/cubit/vacation_requests_state.dart';
+import 'package:my_template/features/request_history/presentation/view/screen/request_history_screen.dart';
 import 'package:my_template/features/request_history/presentation/view/screen/widget/request_type_dropdown.dart';
 import 'package:my_template/features/request_history/presentation/view/screen/widget/requests_tabView.dart';
 
 class RequestHistoryBody extends StatefulWidget {
   final int empCode;
   final String? initialType;
+  final String searchQuery;
+  final RequestFilterType filterType;
 
-  const RequestHistoryBody({super.key, required this.empCode, this.initialType});
+  const RequestHistoryBody({
+    super.key,
+    required this.empCode,
+    this.initialType,
+    this.searchQuery = '',
+    required this.filterType,
+  });
 
   @override
-  State<RequestHistoryBody> createState() => _RequestHistoryBodyState();
+  State<RequestHistoryBody> createState() => RequestHistoryBodyState();
 }
 
-class _RequestHistoryBodyState extends State<RequestHistoryBody> {
+class RequestHistoryBodyState extends State<RequestHistoryBody> {
   late String selectedType;
   late final List<String> requestTypes;
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +47,7 @@ class _RequestHistoryBodyState extends State<RequestHistoryBody> {
       AppLocalKay.requestgenerals.tr(),
       AppLocalKay.requestchangePhone.tr(),
     ];
+
     final Map<String, String> requestTypeKeys = {
       'leavesRequest': AppLocalKay.leavesRequest.tr(),
       'backleave': AppLocalKay.backleave.tr(),
@@ -51,8 +60,10 @@ class _RequestHistoryBodyState extends State<RequestHistoryBody> {
       'requestgenerals': AppLocalKay.requestgenerals.tr(),
       'requestchangePhone': AppLocalKay.requestchangePhone.tr(),
     };
+
     final incomingKey = widget.initialType?.trim() ?? 'leavesRequest';
     selectedType = requestTypeKeys[incomingKey] ?? AppLocalKay.leavesRequest.tr();
+
     WidgetsBinding.instance.addPostFrameCallback((_) => _fetchRequests());
   }
 
@@ -85,7 +96,7 @@ class _RequestHistoryBodyState extends State<RequestHistoryBody> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return SafeArea(
       child: Column(
         children: [
           RequestTypeDropdown(
@@ -96,8 +107,8 @@ class _RequestHistoryBodyState extends State<RequestHistoryBody> {
               _fetchRequests();
             },
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.7,
+
+          Expanded(
             child: BlocBuilder<VacationRequestsCubit, VacationRequestsState>(
               builder: (context, state) {
                 final status = _mapStatus(state);
@@ -116,8 +127,24 @@ class _RequestHistoryBodyState extends State<RequestHistoryBody> {
                   return Center(child: Text(status.error ?? 'Something went wrong'));
                 }
 
-                final data = (status.data is List) ? status.data as List : [];
-                final classified = _classifyRequests(data, selectedType == AppLocalKay.leave.tr());
+                var data = (status.data is List) ? status.data as List : [];
+
+                // فلترة البحث
+                if (widget.searchQuery.isNotEmpty) {
+                  data = data.where((r) {
+                    final name = (r.empName ?? '').toString().toLowerCase();
+                    final nameE = (r.empNameE ?? '').toString().toLowerCase();
+                    return name.contains(widget.searchQuery) || nameE.contains(widget.searchQuery);
+                  }).toList();
+                }
+
+                // فلترة حسب اختيار الفلتر
+                data = _applyRequestFilter(data);
+
+                final classified = _classifyRequests(
+                  data,
+                  selectedType == AppLocalKay.leavesRequest.tr(),
+                );
 
                 return RequestsTabView(
                   empCode: widget.empCode,
@@ -128,7 +155,6 @@ class _RequestHistoryBodyState extends State<RequestHistoryBody> {
               },
             ),
           ),
-          Gap(90.h),
         ],
       ),
     );
@@ -152,6 +178,18 @@ class _RequestHistoryBodyState extends State<RequestHistoryBody> {
         : selectedType == AppLocalKay.tickets.tr()
         ? state.getAllTicketsStatus
         : state.dynamicOrderStatus;
+  }
+
+  List<dynamic> _applyRequestFilter(List<dynamic> requests) {
+    if (widget.filterType == RequestFilterType.all) return requests;
+
+    final empCode = widget.empCode;
+    if (widget.filterType == RequestFilterType.myRequests) {
+      return requests.where((r) => r.empCode == empCode).toList();
+    } else if (widget.filterType == RequestFilterType.submittedRequests) {
+      return requests.where((r) => r.empCode != empCode).toList();
+    }
+    return requests;
   }
 
   Map<String, List<dynamic>> _classifyRequests(List<dynamic> requests, bool isLeave) {

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:my_template/core/custom_widgets/custom_toast/custom_toast.dart';
 
-
 import '../services/services_locator.dart';
 
 class CommonMethods {
@@ -15,6 +14,7 @@ class CommonMethods {
       return false;
     }
   }
+
   static void showToast({
     required String message,
     String? title,
@@ -22,7 +22,7 @@ class CommonMethods {
     ToastType type = ToastType.success,
     Color? backgroundColor,
     Color? textColor,
-    int seconds = 3,
+    int seconds = 7,
   }) {
     BotToast.showCustomText(
       duration: Duration(seconds: seconds),

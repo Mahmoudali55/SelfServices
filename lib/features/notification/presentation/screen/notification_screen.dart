@@ -128,7 +128,6 @@ class NotificationScreen extends StatelessWidget {
                           dynamicRequests5007: state.requestDynamic5007.data ?? [],
                           dynamicRequests5008: state.requestDynamic5008.data ?? [],
                         ),
-
                         ModernNotificationScreen(data: requestStatuses.data?.data ?? []),
                       ],
                     ),

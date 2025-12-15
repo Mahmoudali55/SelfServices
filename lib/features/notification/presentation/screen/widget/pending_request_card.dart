@@ -38,7 +38,7 @@ class PendingRequestCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                   Icon(Icons.list, color: AppColor.blackColor(context)),
+                  Icon(Icons.list, color: AppColor.blackColor(context)),
                   const SizedBox(width: 8),
                   Text(
                     request.strRequestType ?? '',
@@ -56,9 +56,17 @@ class PendingRequestCard extends StatelessWidget {
               ),
               CustomTitelCardPendingWidget(
                 icon: Icons.calendar_month,
-                title: AppLocalKay.start_date.tr(),
+                title: AppLocalKay.requestDate.tr(),
                 description: request.insrtDate ?? '',
               ),
+              (request.cAUSES == null || request.cAUSES!.trim().isEmpty)
+                  ? const SizedBox()
+                  : CustomTitelCardPendingWidget(
+                      icon: Icons.calendar_month,
+                      title: AppLocalKay.reason.tr(),
+                      description: request.cAUSES!,
+                    ),
+
               CustomTitelCardPendingWidget(
                 icon: Icons.apartment,
                 title: AppLocalKay.management.tr(),

@@ -34,18 +34,20 @@ class RequestListView extends StatelessWidget {
   Widget build(BuildContext context) {
     if (requests.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              AppImages.assetsGlobalIconEmptyFolderIcon,
-              height: 200,
-              width: 200,
-              color: AppColor.primaryColor(context),
-            ),
-            const Gap(10),
-            Text(AppLocalKay.no_requests.tr()),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                AppImages.assetsGlobalIconEmptyFolderIcon,
+                height: 200,
+                width: 200,
+                color: AppColor.primaryColor(context),
+              ),
+              const Gap(10),
+              Text(AppLocalKay.no_requests.tr()),
+            ],
+          ),
         ),
       );
     }
@@ -87,7 +89,7 @@ class RequestListView extends StatelessWidget {
         requests: requests.cast<DynamicOrderModel>(),
         empcoded: empCode,
       );
-    } else  {
+    } else {
       return const SizedBox();
     }
   }

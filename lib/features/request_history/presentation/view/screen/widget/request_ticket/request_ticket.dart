@@ -36,8 +36,12 @@ class RequestsListViewTicket extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: requests.length,
-      itemBuilder: (context, index) =>
-          HousingAllowanceRequestItem(request: requests[index], empcoded: empcoded),
+      itemBuilder: (context, index) => GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, RoutesName.ticketDetailsScreen, arguments: requests[index]);
+        },
+        child: HousingAllowanceRequestItem(request: requests[index], empcoded: empcoded),
+      ),
     );
   }
 }
@@ -138,11 +142,18 @@ class _Details extends StatelessWidget {
           title: AppLocalKay.travel_place.tr(),
           description: request.ticketPath.toString(),
         ),
+
         CustomTitelCardWidget(
           icon: Icons.airplane_ticket,
           request: request,
           title: context.locale.languageCode == 'en' ? 'Ticket Type' : 'نوع التذاكر',
           description: request.strGoback,
+        ),
+        CustomTitelCardWidget(
+          icon: Icons.notes,
+          request: request,
+          title: AppLocalKay.reason.tr(),
+          description: request.strNotes.toString(),
         ),
       ],
     );

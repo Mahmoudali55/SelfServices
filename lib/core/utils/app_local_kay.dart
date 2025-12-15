@@ -416,4 +416,42 @@ class AppLocalKay {
   static const String branchDammam = 'branchDammam';
   static const String AppInfo = 'AppInfo';
   static const String AppVersion = 'AppVersion';
+  static const String status = 'status';
+  static const String statusNumber = 'statusNumber';
+  static const String alternativeEmployee = 'alternativeEmployee';
+  static const String employeeCode = 'employeeCode';
+  static const String attachment = 'attachment';
+  static const String fileName = 'fileName';
+  static const String noAttachment = 'noAttachment';
+  static const String employeeNameEn = 'employeeNameEn';
+  static const String employeeNameAr = 'employeeNameAr';
+  static const String solfa = 'solfa';
+  static const String solfaType = 'solfaType';
+  static const String solfaRequestScreen = 'solfaRequestScreen';
+
+  static const String loaninstallmentscount = 'loaninstallmentscount';
+  static const String installmentamounttitle = 'installmentamounttitle';
+  static const String loanDetails = 'loanDetails';
+
+  static const String employeeData = 'employeeData';
+  static const String vacationData = 'vacationData';
+  static const String requestStatusData = 'requestStatusData';
+  static const String alternativeEmployeeData = 'alternativeEmployeeData';
+  static const String attachmentsData = 'attachmentsData';
+  static const String departmentNameEn = 'departmentNameEn';
+  static const String vacationRequestNumber = 'vacationRequestNumber';
+  static const String vacationType = 'vacationType';
+  static const String vacationDate = 'vacationDate';
+  static const String vacationFrom = 'vacationFrom';
+  static const String vacationTo = 'vacationTo';
+  static const String vacationDays = 'vacationDays';
+  static const String statusDescription = 'statusDescription';
+  static const String alternativeName = 'alternativeName';
+  static const String alternativeNameEn = 'alternativeNameEn';
+  static const String alternativeCode = 'alternativeCode';
+  static const String ticketType = 'ticketType';
+  static const String requestStatus = 'requestStatus';
+  static const String all = 'all';
+  static const String myRequests = 'myRequests';
+  static const String submittedRequests = 'submittedRequests';
 }

@@ -80,7 +80,7 @@ class PendingRequestDetailScreen extends StatelessWidget {
                 ),
                 buildInfoRow(
                   icon: Icons.calendar_month,
-                  title: AppLocalKay.start_date.tr(),
+                  title: AppLocalKay.requestDate.tr(),
                   value: request.insrtDate ?? '',
                 ),
                 buildInfoRow(
@@ -106,6 +106,11 @@ class PendingRequestDetailScreen extends StatelessWidget {
                   icon: Icons.notes,
                   title: AppLocalKay.notes.tr(),
                   value: request.strNotes ?? '-',
+                ),
+                buildInfoRow(
+                  icon: Icons.notes,
+                  title: AppLocalKay.reason.tr(),
+                  value: request.cAUSES ?? '-',
                 ),
               ],
             ),

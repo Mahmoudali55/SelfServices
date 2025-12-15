@@ -444,7 +444,19 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                             controller: empNameController,
                             readOnly: true,
                             hintText: AppLocalKay.collateralname.tr(),
-                            validator: (p0) => p0!.isEmpty ? AppLocalKay.collateral.tr() : null,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return AppLocalKay.collateralname.tr();
+                              }
+
+                              if (empIdController.text == widget.empId.toString()) {
+                                return context.locale.languageCode == 'ar'
+                                    ? 'لا يمكن لصاحب الطلب أن يكون ضامنًا لنفسه'
+                                    : 'The applicant cannot be a guarantor for himself';
+                              }
+
+                              return null;
+                            },
                           ),
                         ),
                         GestureDetector(
@@ -489,12 +501,27 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                         ),
                         Expanded(
                           flex: 4,
-                          child: CustomFormField(
-                            controller: emp2NameController,
-                            onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-                            readOnly: true,
-                            hintText: AppLocalKay.collateralname2.tr(),
-                            validator: (p0) => p0!.isEmpty ? AppLocalKay.collateral2.tr() : null,
+                          child: Expanded(
+                            flex: 4,
+                            child: CustomFormField(
+                              controller: emp2NameController,
+                              readOnly: true,
+                              hintText: AppLocalKay.collateralname2.tr(),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return AppLocalKay.collateral2.tr();
+                                }
+
+                                if (empIdController.text.isNotEmpty &&
+                                    empIdController.text == emp2IdController.text) {
+                                  return context.locale.languageCode == 'ar'
+                                      ? 'لا يمكن اختيار نفس الضامن مرتين'
+                                      : 'First and second guarantor cannot be the same';
+                                }
+
+                                return null;
+                              },
+                            ),
                           ),
                         ),
                         GestureDetector(

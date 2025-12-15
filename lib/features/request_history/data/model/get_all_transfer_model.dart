@@ -7,7 +7,7 @@ class GetAllTransferModel extends Equatable {
   final int fDep;
   final int branchCode;
   final int projId;
-  final int empCd;
+  final int empCode;
   final String requestDate;
   final String causes;
   final String dName;
@@ -39,7 +39,7 @@ class GetAllTransferModel extends Equatable {
     required this.fDep,
     required this.branchCode,
     required this.projId,
-    required this.empCd,
+    required this.empCode,
     required this.requestDate,
     required this.causes,
     required this.dName,
@@ -73,7 +73,7 @@ class GetAllTransferModel extends Equatable {
       fDep: json['F_DEP'] ?? 0,
       branchCode: json['BranchCode'] ?? 0,
       projId: json['PROJ_ID'] ?? 0,
-      empCd: json['EMP_CD'] ?? 0,
+      empCode: json['EMP_CD'] ?? 0,
       requestDate: json['requestDate']?.toString() ?? '',
       causes: json['CAUSES']?.toString() ?? '',
       dName: json['D_NAME']?.toString() ?? '',
@@ -115,7 +115,7 @@ class GetAllTransferModel extends Equatable {
     fDep,
     branchCode,
     projId,
-    empCd,
+    empCode,
     requestDate,
     causes,
     dName,

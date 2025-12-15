@@ -76,6 +76,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Column(
                             children: [
                               CustomTittelAndSubTittelWidget(
+                                icon: Icons.code,
+                                title: AppLocalKay.empCode.tr(),
+                                value: item.empCode.toString() ?? '',
+                              ),
+                              const Divider(),
+                              CustomTittelAndSubTittelWidget(
                                 icon: Icons.email,
                                 title: AppLocalKay.email.tr(),
                                 value: item.emailAddress ?? '',

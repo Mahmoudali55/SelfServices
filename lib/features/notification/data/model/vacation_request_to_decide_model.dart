@@ -23,6 +23,7 @@ class VacationRequestToDecideModel extends Equatable {
   final int? attachCount;
   final int? isDelayed;
   final String? manipulationNote;
+  final String? cAUSES;
 
   const VacationRequestToDecideModel({
     this.requestId,
@@ -47,6 +48,7 @@ class VacationRequestToDecideModel extends Equatable {
     this.attachCount,
     this.isDelayed,
     this.manipulationNote,
+    this.cAUSES,
   });
 
   factory VacationRequestToDecideModel.fromJson(Map<String, dynamic> json) {
@@ -73,6 +75,7 @@ class VacationRequestToDecideModel extends Equatable {
       attachCount: json['AttachCount'] as int?,
       isDelayed: json['IsDelayed'] as int?,
       manipulationNote: json['ManipulationNote'] as String?,
+      cAUSES: json['CAUSES'] as String?,
     );
   }
 
@@ -100,6 +103,7 @@ class VacationRequestToDecideModel extends Equatable {
       'AttachCount': attachCount,
       'IsDelayed': isDelayed,
       'ManipulationNote': manipulationNote,
+      'CAUSES': cAUSES,
     };
   }
 
@@ -127,5 +131,6 @@ class VacationRequestToDecideModel extends Equatable {
     attachCount,
     isDelayed,
     manipulationNote,
+    cAUSES,
   ];
 }

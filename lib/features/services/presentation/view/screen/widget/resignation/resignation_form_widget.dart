@@ -51,12 +51,31 @@ class ResignationForm extends StatelessWidget {
               ),
             ],
           ),
-          _buildDateField(
-            context,
-            lastWorkController,
-            AppLocalKay.trainingDay.tr(),
-            (value) => value!.isEmpty ? AppLocalKay.trainingDay.tr() : null,
-          ),
+          _buildDateField(context, lastWorkController, AppLocalKay.trainingDay.tr(), (value) {
+            if (value == null || value.isEmpty) {
+              return AppLocalKay.trainingDay.tr();
+            }
+
+            if (dateController.text.isEmpty) {
+              return context.locale.languageCode == 'ar'
+                  ? 'اختر تاريخ الطلب أولاً'
+                  : 'Select request date first';
+            }
+
+            final requestDate = DateTime.parse(dateController.text);
+            final lastWorkDate = DateTime.parse(value);
+
+            // ❌ لو تاريخ آخر يوم أقل من تاريخ الطلب
+            if (lastWorkDate.isBefore(requestDate)) {
+              return context.locale.languageCode == 'ar'
+                  ? 'تاريخ آخر يوم عمل لا يمكن أن يكون قبل تاريخ الطلب'
+                  : 'Last working day cannot be before request date';
+            }
+
+            // ✅ نفس اليوم أو بعده
+            return null;
+          }),
+
           CustomFormField(title: AppLocalKay.resignationReason.tr(), controller: notesController),
         ],
       ),

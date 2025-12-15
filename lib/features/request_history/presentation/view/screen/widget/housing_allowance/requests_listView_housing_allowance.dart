@@ -40,8 +40,16 @@ class RequestsListViewAllHousingAllowance extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: requests.length,
-      itemBuilder: (context, index) =>
-          HousingAllowanceRequestItem(request: requests[index], empcoded: empcoded),
+      itemBuilder: (context, index) => GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            RoutesName.housingAllowanceDetailsScreen,
+            arguments: requests[index],
+          );
+        },
+        child: HousingAllowanceRequestItem(request: requests[index], empcoded: empcoded),
+      ),
     );
   }
 }
@@ -147,6 +155,12 @@ class _Details extends StatelessWidget {
           request: request,
           title: AppLocalKay.vacationPeriod.tr(),
           description: request.strAmountType.toString(),
+        ),
+        CustomTitelCardWidget(
+          icon: Icons.notes,
+          request: request,
+          title: AppLocalKay.reason.tr(),
+          description: request.strNotes.toString(),
         ),
       ],
     );

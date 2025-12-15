@@ -36,8 +36,16 @@ class RequestsListViewRequestGeneral extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: requests.length,
-      itemBuilder: (context, index) =>
-          HousingAllowanceRequestItem(request: requests[index], empcoded: empcoded),
+      itemBuilder: (context, index) => GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            RoutesName.generalRequestDetailsScreen,
+            arguments: requests[index],
+          );
+        },
+        child: HousingAllowanceRequestItem(request: requests[index], empcoded: empcoded),
+      ),
     );
   }
 }
@@ -137,13 +145,13 @@ class _Details extends StatelessWidget {
         CustomTitelCardWidget(
           icon: Icons.request_quote,
           request: request,
-          title: request.strField2.isEmpty ? AppLocalKay.reason.tr() : AppLocalKay.newDevice.tr(),
+          title: AppLocalKay.reason.tr(),
           description: request.strField1.toString(),
         ),
         CustomTitelCardWidget(
           icon: Icons.notes,
           request: request,
-          title: request.strField2.isEmpty ? AppLocalKay.notes.tr() : AppLocalKay.reason.tr(),
+          title: request.strField2.isEmpty ? AppLocalKay.notes.tr() : AppLocalKay.newDevice.tr(),
           description: request.strField2.isEmpty
               ? request.strNotes.toString()
               : request.strField2.toString(),
