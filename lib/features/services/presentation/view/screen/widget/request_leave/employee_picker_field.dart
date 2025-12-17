@@ -86,7 +86,10 @@ class EmployeePickerField extends StatelessWidget {
       builder: (ctx) {
         final cubit = context.read<ServicesCubit>();
 
-        cubit.getEmployees(empcode: empCode ?? 0, privid: pagePrivID ?? 0, refresh: true);
+        // تحميل البيانات فقط إذا كانت القائمة فارغة
+        if (cubit.state.employeesStatus.data?.isEmpty ?? true) {
+          cubit.getEmployees(empcode: empCode ?? 0, privid: pagePrivID ?? 0, refresh: true);
+        }
 
         return BlocProvider.value(
           value: cubit,

@@ -115,7 +115,11 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
   }
 
   void _openEmployeeSearch() {
-    context.read<ServicesCubit>().getEmployeeList();
+    final cubit = context.read<ServicesCubit>();
+    // تحميل البيانات فقط إذا كانت القائمة فارغة
+    if (cubit.state.employeeListStatus.data?.isEmpty ?? true) {
+      cubit.getEmployeeList();
+    }
 
     showModalBottomSheet(
       context: context,
@@ -137,7 +141,11 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
   final TextEditingController emp2NameController = TextEditingController();
 
   void _openEmployee2Search() {
-    context.read<ServicesCubit>().getEmployeeList();
+    final cubit = context.read<ServicesCubit>();
+    // تحميل البيانات فقط إذا كانت القائمة فارغة
+    if (cubit.state.employeeListStatus.data?.isEmpty ?? true) {
+      cubit.getEmployeeList();
+    }
 
     showModalBottomSheet(
       context: context,

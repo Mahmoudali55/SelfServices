@@ -28,8 +28,14 @@ class CustomProjectPickerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<ServicesCubit>();
+    // تحميل البيانات فقط إذا كانت القائمة فارغة
+    if (cubit.state.projectStatus.data?.isEmpty ?? true) {
+      cubit.getProjectData();
+    }
+
     return BlocProvider.value(
-      value: context.read<ServicesCubit>()..getProjectData(),
+      value: cubit,
       child: SizedBox(
         height: 600,
         child: BlocBuilder<ServicesCubit, ServicesState>(

@@ -28,8 +28,14 @@ class CustomDepartmentPickerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<ServicesCubit>();
+    // تحميل البيانات فقط إذا كانت القائمة فارغة
+    if (cubit.state.departmentStatus.data?.isEmpty ?? true) {
+      cubit.getDepartmentData();
+    }
+
     return BlocProvider.value(
-      value: context.read<ServicesCubit>()..getDepartmentData(),
+      value: cubit,
       child: SizedBox(
         height: 600,
         child: BlocBuilder<ServicesCubit, ServicesState>(
