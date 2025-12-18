@@ -36,17 +36,18 @@ class CarRequestItem extends StatelessWidget {
 
   const CarRequestItem({super.key, required this.request, required this.empcoded});
 
-  Color _getStatusColor(String status) {
-    if (status.contains('تحت الاجراء')) return const Color.fromARGB(255, 200, 194, 26);
-    if (status.contains('تمت الموافقة علي الطلب')) return const Color.fromARGB(255, 2, 217, 9);
-    if (status.contains('تم رفض الطلب') || status.contains('تم الرفض')) return Colors.red;
+  Color _getStatusColor(int status) {
+    if (status == 3) return const Color.fromARGB(255, 200, 194, 26);
+    if (status == 1) return const Color.fromARGB(255, 2, 217, 9);
+    if (status == 2) return Colors.red;
     return Colors.grey.shade300;
   }
 
   @override
   Widget build(BuildContext context) {
-    final statusText = request.requestDesc ?? '';
-    final statusColor = _getStatusColor(statusText);
+    final int status = request.reqDecideState as int? ?? 0;
+    final statusColor = _getStatusColor(status);
+
     final isEditable = request.reqDecideState == 3;
     final isEn = context.locale.languageCode == 'en';
 
@@ -69,7 +70,7 @@ class CarRequestItem extends StatelessWidget {
               _HeaderRow(context),
               const Divider(height: 20, thickness: 1),
               _Details(request: request, isEn: isEn),
-              _StatusLabel(status: statusText, color: statusColor),
+              _StatusLabel(status: request.requestDesc ?? '', color: statusColor),
               if (isEditable) _ActionButtons(request: request, empcoded: empcoded),
             ],
           ),

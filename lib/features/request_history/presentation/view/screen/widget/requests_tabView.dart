@@ -27,7 +27,7 @@ class RequestsTabView extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            margin: const EdgeInsets.all(18),
+            margin: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.grey.shade200,
               borderRadius: BorderRadius.circular(12),
@@ -42,7 +42,7 @@ class RequestsTabView extends StatelessWidget {
               ),
               labelColor: AppColor.whiteColor(context),
               unselectedLabelColor: AppColor.blackColor(context),
-              labelStyle: AppTextStyle.text16MSecond(context),
+              labelStyle: AppTextStyle.text16MSecond(context).copyWith(fontSize: 14.sp),
               tabs: [
                 _buildTab(context, AppLocalKay.under_review.tr(), underReview.length),
                 _buildTab(context, AppLocalKay.approved.tr(), approved.length),
@@ -74,7 +74,7 @@ class RequestsTabView extends StatelessWidget {
           Text(text, overflow: TextOverflow.ellipsis),
           SizedBox(width: 2.w),
           Container(
-            padding: const EdgeInsets.all(4),
+            padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(color: AppColor.whiteColor(context), shape: BoxShape.circle),
             child: Text(
               textAlign: TextAlign.center,
@@ -82,7 +82,7 @@ class RequestsTabView extends StatelessWidget {
               style: AppTextStyle.text14MPrimary(
                 context,
                 color: AppColor.blackColor(context),
-              ).copyWith(fontWeight: FontWeight.bold, fontSize: 12.sp),
+              ).copyWith(fontWeight: FontWeight.bold, fontSize: 10.sp),
             ),
           ),
         ],

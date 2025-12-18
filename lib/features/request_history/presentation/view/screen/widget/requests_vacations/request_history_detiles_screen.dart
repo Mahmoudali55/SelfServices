@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_template/core/custom_widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
+import 'package:my_template/features/request_history/presentation/view/screen/widget/section_widget.dart';
 import 'package:my_template/features/services/data/model/request_leave/vacation_requests_response_model.dart';
 
 class RequestHistoryDetilesScreen extends StatelessWidget {
@@ -28,41 +29,46 @@ class RequestHistoryDetilesScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _section(
+          SectionWidget(
             title: AppLocalKay.employee_data.tr(),
             items: {
               AppLocalKay.employee_name.tr(): request.empName,
-              AppLocalKay.employee_name_en.tr(): request.empNameE,
-              AppLocalKay.employee_code.tr(): request.empCode?.toString(),
+              AppLocalKay.employee_name_en.tr(): request.empNameE ?? '',
+              AppLocalKay.employee_code.tr(): request.empCode?.toString() ?? '',
               AppLocalKay.department_name.tr(): request.dName,
-              AppLocalKay.department_name_en.tr(): request.dNameE,
+              AppLocalKay.department_name_en.tr(): request.dNameE ?? '',
             },
           ),
-          _section(
+          SectionWidget(
             title: AppLocalKay.vacation_data.tr(),
             items: {
-              AppLocalKay.request_number.tr(): request.vacRequestId?.toString(),
+              AppLocalKay.request_number.tr(): request.vacRequestId?.toString() ?? '',
               AppLocalKay.vacation_type.tr(): request.vacTypeName,
               AppLocalKay.request_date.tr(): request.vacRequestDate,
               AppLocalKay.from_date.tr(): request.vacRequestDateFrom,
               AppLocalKay.to_date.tr(): request.vacRequestDateTo,
-              AppLocalKay.days_count.tr(): request.vacDayCount?.toString(),
+              AppLocalKay.days_count.tr(): request.vacDayCount?.toString() ?? '',
               AppLocalKay.notes.tr(): request.strNotes,
             },
           ),
-          _section(
+          SectionWidget(
             title: AppLocalKay.request_status.tr(),
+            color: request.reqDecideState == 2
+                ? Colors.red
+                : request.reqDecideState == 1
+                ? Color.fromARGB(255, 2, 217, 9)
+                : const Color.fromARGB(255, 200, 194, 26),
             items: {AppLocalKay.status.tr(): request.requestDesc},
           ),
-          _section(
+          SectionWidget(
             title: AppLocalKay.alternative_employee.tr(),
             items: {
               AppLocalKay.alternative_name.tr(): request.alternativeEmpName,
-              AppLocalKay.alternative_name_en.tr(): request.alternativeEmpNameE,
-              AppLocalKay.alternative_code.tr(): request.alternativeEmpCode?.toString(),
+              AppLocalKay.alternative_name_en.tr(): request.alternativeEmpNameE ?? '',
+              AppLocalKay.alternative_code.tr(): request.alternativeEmpCode?.toString() ?? '',
             },
           ),
-          _section(
+          SectionWidget(
             title: AppLocalKay.attachments.tr(),
             items: {
               AppLocalKay.attachments.tr(): (request.attachFileName?.isEmpty ?? true)
@@ -70,39 +76,6 @@ class RequestHistoryDetilesScreen extends StatelessWidget {
                   : request.attachFileName,
             },
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _section({required String title, required Map<String, String?> items}) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            ...items.entries.map((e) => _row(e.key, e.value)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _row(String label, String? value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-          ),
-          Expanded(flex: 5, child: Text(value ?? "-")),
         ],
       ),
     );

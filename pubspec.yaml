@@ -63,7 +63,7 @@ dependencies:
   geolocator: ^14.0.2
   url_launcher: ^6.3.2
   connectivity_plus: ^7.0.0
-  google_generative_ai:
+  google_generative_ai: ^0.4.0
   open_filex:
   google_maps_flutter:
   device_info_plus: ^12.1.0

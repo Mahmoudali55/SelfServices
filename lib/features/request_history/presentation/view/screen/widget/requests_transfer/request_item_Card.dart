@@ -16,12 +16,12 @@ class RequestItemCard extends StatelessWidget {
 
   const RequestItemCard({super.key, required this.request, required this.empcoded});
 
-  Color _getStatusColor(String statusText) {
-    if (statusText.contains('تحت الاجراء')) {
+  Color _getStatusColor(int statusText) {
+    if (statusText == 3) {
       return const Color.fromARGB(255, 200, 194, 26);
-    } else if (statusText.contains('تمت الموافقة علي الطلب')) {
+    } else if (statusText == 1) {
       return const Color.fromARGB(255, 2, 217, 9);
-    } else if (statusText.contains('تم رفض الطلب') || statusText.contains('تم الرفض')) {
+    } else if (statusText == 2) {
       return Colors.red;
     }
     return Colors.grey.shade300;
@@ -29,7 +29,7 @@ class RequestItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String statusText = request.requestDesc ?? '';
+    final int statusText = request.reqDicidState ?? 0;
     final Color statusColor = _getStatusColor(statusText);
     final bool canEdit = request.reqDecideState == 3;
 
@@ -52,7 +52,7 @@ class RequestItemCard extends StatelessWidget {
               const _HeaderRow(),
               const Divider(height: 20, thickness: 1),
               _RequestDetails(request: request),
-              _StatusLabel(statusText: statusText, statusColor: statusColor),
+              _StatusLabel(statusText: request.requestDesc ?? '', statusColor: statusColor),
               if (canEdit) _ActionButtons(request: request, empcoded: empcoded),
             ],
           ),

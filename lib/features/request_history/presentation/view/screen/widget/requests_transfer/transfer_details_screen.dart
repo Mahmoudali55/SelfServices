@@ -4,6 +4,7 @@ import 'package:my_template/core/custom_widgets/custom_app_bar/custom_app_bar.da
 import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/request_history/data/model/get_all_transfer_model.dart';
+import 'package:my_template/features/request_history/presentation/view/screen/widget/section_widget.dart';
 
 class TransferDetailsScreen extends StatelessWidget {
   final GetAllTransferModel request;
@@ -28,8 +29,7 @@ class TransferDetailsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _section(
-            context,
+          SectionWidget(
             title: AppLocalKay.employee.tr(),
             items: {
               AppLocalKay.employeeName.tr(): isEn
@@ -38,8 +38,7 @@ class TransferDetailsScreen extends StatelessWidget {
               AppLocalKay.empCode.tr(): request.empCode?.toString() ?? '-',
             },
           ),
-          _section(
-            context,
+          SectionWidget(
             title: AppLocalKay.transfer.tr(),
             items: {
               AppLocalKay.requestDate.tr(): request.requestDate ?? '-',
@@ -52,55 +51,20 @@ class TransferDetailsScreen extends StatelessWidget {
               AppLocalKay.projectTo.tr(): isEn
                   ? (request.toProjNameE ?? '-')
                   : (request.toProjName ?? '-'),
-              AppLocalKay.status.tr(): request.requestDesc ?? '-',
+
               AppLocalKay.statusNumber.tr(): request.reqDecideState?.toString() ?? '-',
               AppLocalKay.reason.tr(): request.causes ?? '-',
             },
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _section(
-    BuildContext context, {
-    required String title,
-    required Map<String, String> items,
-  }) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: AppTextStyle.text18MSecond(context).copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            ...items.entries.map((e) => _detailsRow(context, e.key, e.value)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _detailsRow(BuildContext context, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Text(
-              label,
-              style: AppTextStyle.text14RGrey(context).copyWith(fontWeight: FontWeight.bold),
-            ),
+          SectionWidget(
+            title: AppLocalKay.status.tr(),
+            color: request.reqDecideState == 2
+                ? Colors.red
+                : request.reqDecideState == 1
+                ? Color.fromARGB(255, 2, 217, 9)
+                : const Color.fromARGB(255, 200, 194, 26),
+            items: {AppLocalKay.status.tr(): request.requestDesc ?? '-'},
           ),
-          Expanded(flex: 5, child: Text(value, style: AppTextStyle.text14RGrey(context))),
         ],
       ),
     );

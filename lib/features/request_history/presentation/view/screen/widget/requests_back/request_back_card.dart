@@ -18,8 +18,8 @@ class RequestBackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusText = request.requestDesc ?? '';
-    final statusColor = _statusColor(statusText);
+    final int status = request.reqDecideState as int? ?? 0;
+    final statusColor = _statusColor(status);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -62,7 +62,7 @@ class RequestBackCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                statusText,
+                request.requestDesc ?? '',
                 style: AppTextStyle.text14RGrey(
                   context,
                   color: statusColor,
@@ -168,10 +168,10 @@ class RequestBackCard extends StatelessWidget {
     );
   }
 
-  Color _statusColor(String status) {
-    if (status.contains('تحت الاجراء')) return const Color.fromARGB(255, 200, 194, 26);
-    if (status.contains('تمت الموافقة علي الطلب')) return const Color.fromARGB(255, 2, 217, 9);
-    if (status.contains('تم رفض الطلب') || status.contains('تم الرفض')) return Colors.red;
+  Color _statusColor(int status) {
+    if (status == 3) return const Color.fromARGB(255, 200, 194, 26);
+    if (status == 1) return const Color.fromARGB(255, 2, 217, 9);
+    if (status == 2) return Colors.red;
     return Colors.grey.shade300;
   }
 }

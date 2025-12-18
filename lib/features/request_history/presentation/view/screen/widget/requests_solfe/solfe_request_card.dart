@@ -16,7 +16,8 @@ class RequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusInfo = _getStatusInfo(request.requestDesc ?? '');
+    final StatusInfo statusInfo = _getStatusInfo(request.reqDecideState ?? 0);
+
     final langCode = context.locale.languageCode;
 
     return Container(
@@ -82,7 +83,7 @@ class RequestCard extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Text(
-                  statusInfo.text,
+                  request.requestDesc ?? '',
                   style: AppTextStyle.text14RGrey(
                     context,
                     color: statusInfo.color,
@@ -98,22 +99,23 @@ class RequestCard extends StatelessWidget {
     );
   }
 
-  StatusInfo _getStatusInfo(String statusText) {
-    if (statusText.contains('تحت الاجراء')) {
-      return StatusInfo(statusText, const Color.fromARGB(255, 200, 194, 26));
-    } else if (statusText.contains('تمت الموافقة علي الطلب')) {
-      return StatusInfo(statusText, const Color.fromARGB(255, 2, 217, 9));
-    } else if (statusText.contains('تم رفض الطلب') || statusText.contains('تم الرفض')) {
-      return StatusInfo(statusText, Colors.red);
+  StatusInfo _getStatusInfo(int statusCode) {
+    switch (statusCode) {
+      case 3:
+        return StatusInfo(const Color.fromARGB(255, 200, 194, 26));
+      case 1:
+        return StatusInfo(const Color.fromARGB(255, 2, 217, 9));
+      case 2:
+        return StatusInfo(Colors.red);
+      default:
+        return StatusInfo(Colors.grey.shade300);
     }
-    return StatusInfo(statusText, Colors.grey.shade300);
   }
 }
 
 class StatusInfo {
-  final String text;
   final Color color;
-  StatusInfo(this.text, this.color);
+  StatusInfo(this.color);
 }
 
 class ActionButtons extends StatelessWidget {

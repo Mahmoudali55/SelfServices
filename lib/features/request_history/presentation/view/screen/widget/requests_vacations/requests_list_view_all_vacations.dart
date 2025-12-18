@@ -36,6 +36,8 @@ class RequestsListViewAllVacations extends StatelessWidget {
   }
 }
 
+/*────────────────── ITEM ──────────────────*/
+
 class VacationRequestItem extends StatelessWidget {
   final VacationRequestOrdersModel request;
   final int empcoded;
@@ -57,21 +59,24 @@ class VacationRequestItem extends StatelessWidget {
     }
   }
 
-  Color _getStatusColor(String desc) {
-    if (desc.contains('تحت الاجراء')) {
-      return const Color.fromARGB(255, 200, 194, 26);
-    } else if (desc.contains('تمت الموافقة علي الطلب')) {
-      return const Color.fromARGB(255, 2, 217, 9);
-    } else if (desc.contains('تم رفض الطلب') || desc.contains('تم الرفض')) {
-      return Colors.red;
+  StatusInfo _getStatusInfo(int statusCode, String desc) {
+    switch (statusCode) {
+      case 3: // تحت الإجراء
+        return StatusInfo(color: const Color.fromARGB(255, 200, 194, 26), text: desc);
+      case 1: // موافق
+        return StatusInfo(color: const Color.fromARGB(255, 2, 217, 9), text: desc);
+      case 2: // مرفوض
+        return StatusInfo(color: Colors.red, text: desc);
+      default:
+        return StatusInfo(color: Colors.grey.shade300, text: desc);
     }
-    return Colors.grey.shade300;
   }
 
   @override
   Widget build(BuildContext context) {
     final (cardColor, iconData) = _getTypeStyle();
-    final statusColor = _getStatusColor(request.requestDesc);
+    final statusInfo = _getStatusInfo(request.reqDecideState, request.requestDesc);
+
     final isEditable = request.reqDecideState == 3;
 
     return Container(
@@ -97,7 +102,7 @@ class VacationRequestItem extends StatelessWidget {
               ),
               const Divider(height: 20, thickness: 1),
               _VacationDetails(request: request),
-              _StatusLabel(status: request.requestDesc, color: statusColor),
+              _StatusLabel(status: statusInfo.text, color: statusInfo.color),
               if (isEditable) _ActionButtons(request: request, empcoded: empcoded),
             ],
           ),
@@ -106,6 +111,17 @@ class VacationRequestItem extends StatelessWidget {
     );
   }
 }
+
+/*────────────────── MODELS ──────────────────*/
+
+class StatusInfo {
+  final Color color;
+  final String text;
+
+  const StatusInfo({required this.color, required this.text});
+}
+
+/*────────────────── UI PARTS ──────────────────*/
 
 class _HeaderRow extends StatelessWidget {
   final IconData iconData;
@@ -119,7 +135,6 @@ class _HeaderRow extends StatelessWidget {
     return Row(
       children: [
         Row(
-          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(iconData, color: AppColor.blackColor(context)),
             const Gap(8),
@@ -132,7 +147,7 @@ class _HeaderRow extends StatelessWidget {
         const Spacer(),
         Row(
           children: [
-            Icon(Icons.calendar_today, size: 16, color: AppColor.blackColor(context)),
+            Icon(Icons.calendar_today, size: 16),
             const Gap(4),
             Text(
               '$vacDayCount ${AppLocalKay.days.tr()}',
@@ -147,13 +162,14 @@ class _HeaderRow extends StatelessWidget {
 
 class _VacationDetails extends StatelessWidget {
   final VacationRequestOrdersModel request;
+
   const _VacationDetails({required this.request});
 
   @override
   Widget build(BuildContext context) {
     final isEn = context.locale.languageCode == 'en';
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomTitelCardWidget(
           icon: Icons.person,
@@ -181,13 +197,13 @@ class _VacationDetails extends StatelessWidget {
 class _StatusLabel extends StatelessWidget {
   final String status;
   final Color color;
+
   const _StatusLabel({required this.status, required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Text(
         status,
         style: AppTextStyle.text14RGrey(
@@ -199,9 +215,12 @@ class _StatusLabel extends StatelessWidget {
   }
 }
 
+/*────────────────── ACTIONS ──────────────────*/
+
 class _ActionButtons extends StatelessWidget {
   final VacationRequestOrdersModel request;
   final int empcoded;
+
   const _ActionButtons({required this.request, required this.empcoded});
 
   @override
@@ -220,6 +239,7 @@ class _ActionButtons extends StatelessWidget {
 
 class _EditButton extends StatelessWidget {
   final VacationRequestOrdersModel request;
+
   const _EditButton({required this.request});
 
   @override
@@ -229,6 +249,7 @@ class _EditButton extends StatelessWidget {
       label: AppLocalKay.edit.tr(),
       onTap: () {
         final pageItem = context.read<HomeCubit>().state.vacationStatus.data;
+
         Navigator.pushNamed(
           context,
           RoutesName.requestLeaveScreen,
@@ -246,6 +267,7 @@ class _EditButton extends StatelessWidget {
 class _DeleteButton extends StatelessWidget {
   final VacationRequestOrdersModel request;
   final int empcoded;
+
   const _DeleteButton({required this.request, required this.empcoded});
 
   @override
@@ -256,8 +278,7 @@ class _DeleteButton extends StatelessWidget {
       onTap: () async {
         final confirm = await showDialog<bool>(
           context: context,
-          builder: (context) => AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          builder: (_) => AlertDialog(
             title: Text(AppLocalKay.confirm.tr()),
             content: Text(AppLocalKay.deleteConfirmation.tr()),
             actions: [
@@ -290,6 +311,7 @@ class _ActionContainer extends StatelessWidget {
   final Color color;
   final String label;
   final VoidCallback onTap;
+
   const _ActionContainer({required this.color, required this.label, required this.onTap});
 
   @override
