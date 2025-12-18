@@ -50,7 +50,7 @@ class VacationRequestOrdersModel extends Equatable {
   final int alternativeEmpCode;
   final String alternativeEmpName;
   final String? alternativeEmpNameE;
-
+  final String? actionNotes;
   const VacationRequestOrdersModel({
     required this.vacRequestId,
     required this.empDeptId,
@@ -80,6 +80,7 @@ class VacationRequestOrdersModel extends Equatable {
     required this.alternativeEmpCode,
     required this.alternativeEmpName,
     this.alternativeEmpNameE,
+    this.actionNotes,
   });
 
   factory VacationRequestOrdersModel.fromJson(Map<String, dynamic> json) {
@@ -112,6 +113,7 @@ class VacationRequestOrdersModel extends Equatable {
       alternativeEmpCode: json['AlternativeEmpCode'] ?? 0,
       alternativeEmpName: json['AlternativeEMP_NAME'] ?? '',
       alternativeEmpNameE: json['AlternativeEMP_NAME_E'],
+      actionNotes: json['actionnotes'],
     );
   }
 
@@ -144,6 +146,7 @@ class VacationRequestOrdersModel extends Equatable {
     'AlternativeEmpCode': alternativeEmpCode,
     'AlternativeEMP_NAME': alternativeEmpName,
     'AlternativeEMP_NAME_E': alternativeEmpNameE,
+    'actionnotes': actionNotes,
   };
 
   @override
@@ -176,5 +179,6 @@ class VacationRequestOrdersModel extends Equatable {
     alternativeEmpCode,
     alternativeEmpName,
     alternativeEmpNameE,
+    actionNotes,
   ];
 }

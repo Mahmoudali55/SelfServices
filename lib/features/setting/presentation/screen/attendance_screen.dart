@@ -95,10 +95,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         CommonMethods.showToast(message: status, type: ToastType.error);
         return;
       }
-
       final deviceId = await getDeviceId();
       final savedDeviceId = HiveMethods.getDeviceId();
-
       if (savedDeviceId != null && savedDeviceId != deviceId) {
         status = context.locale.languageCode == 'ar'
             ? 'عذرًا، هذا الجهاز مسجل باسم موظف غير موجود، ولا يُسمح بتسجيل البصمة من خلاله.'
@@ -106,20 +104,16 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         CommonMethods.showToast(message: status, type: ToastType.error);
         return;
       }
-
       status = AppLocalKay.loadingdata.tr();
       CommonMethods.showToast(message: status, type: ToastType.help);
-
       final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       lat = double.parse(pos.latitude.toStringAsFixed(8));
       lng = double.parse(pos.longitude.toStringAsFixed(8));
-
       final now = DateTime.now();
       final todayDate =
           '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
       final nowTime =
           '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-
       if (isCheckIn) {
         final request = TimeSheetInRequestmodel(
           empId: empcode,

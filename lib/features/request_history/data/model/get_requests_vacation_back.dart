@@ -33,6 +33,7 @@ class GetRequestVacationBackModel extends Equatable {
   final int? alternativeEmpCode;
   final String? alternativeEmpName;
   final String? alternativeEmpNameE;
+  final String? actionNotes;
 
   const GetRequestVacationBackModel({
     required this.vacRequestId,
@@ -65,6 +66,7 @@ class GetRequestVacationBackModel extends Equatable {
     this.alternativeEmpCode,
     this.alternativeEmpName,
     this.alternativeEmpNameE,
+    this.actionNotes,
   });
 
   factory GetRequestVacationBackModel.fromJson(Map<String, dynamic> json) {
@@ -99,6 +101,7 @@ class GetRequestVacationBackModel extends Equatable {
       alternativeEmpCode: json['AlternativeEmpCode'],
       alternativeEmpName: json['AlternativeEMP_NAME'],
       alternativeEmpNameE: json['AlternativeEMP_NAME_E'],
+      actionNotes: json['actionnotes'],
     );
   }
 
@@ -142,6 +145,7 @@ class GetRequestVacationBackModel extends Equatable {
     alternativeEmpCode,
     alternativeEmpName,
     alternativeEmpNameE,
+    actionNotes,
   ];
 
   Map<String, dynamic> toJson() {
@@ -176,6 +180,7 @@ class GetRequestVacationBackModel extends Equatable {
       'AlternativeEmpCode': alternativeEmpCode,
       'AlternativeEMP_NAME': alternativeEmpName,
       'AlternativeEMP_NAME_E': alternativeEmpNameE,
+      'actionnotes': actionNotes,
     };
   }
 }

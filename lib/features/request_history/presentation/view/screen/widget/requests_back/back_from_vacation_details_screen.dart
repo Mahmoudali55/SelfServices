@@ -54,7 +54,10 @@ class BackFromVacationDetailsScreen extends StatelessWidget {
                 : request.reqDecideState == 1
                 ? Color.fromARGB(255, 2, 217, 9)
                 : const Color.fromARGB(255, 200, 194, 26),
-            items: {AppLocalKay.status.tr(): statusText},
+            items: {
+              AppLocalKay.status.tr(): statusText,
+              AppLocalKay.followedActions.tr(): request.actionNotes ?? '-',
+            },
           ),
         ],
       ),

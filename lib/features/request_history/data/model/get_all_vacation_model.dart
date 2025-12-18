@@ -38,6 +38,7 @@ class VacationRequestItem extends Equatable {
   final String strNotes;
   final String actionMakerEmpName;
   final String? branchName;
+  final String? actionNotes;
 
   const VacationRequestItem({
     required this.vacRequestId,
@@ -55,6 +56,7 @@ class VacationRequestItem extends Equatable {
     required this.strNotes,
     required this.actionMakerEmpName,
     this.branchName,
+    this.actionNotes,
   });
 
   factory VacationRequestItem.fromJson(Map<String, dynamic> json) {
@@ -74,6 +76,7 @@ class VacationRequestItem extends Equatable {
       strNotes: json['strNotes'] as String,
       actionMakerEmpName: json['AlternativeEMP_NAME'] as String,
       branchName: json['B_NAME'] as String?,
+      actionNotes: json['actionnotes'] as String?,
     );
   }
 
@@ -94,6 +97,7 @@ class VacationRequestItem extends Equatable {
       'strNotes': strNotes,
       'AlternativeEMP_NAME': actionMakerEmpName,
       'B_NAME': branchName,
+      'actionnotes': actionNotes,
     };
   }
 
@@ -114,5 +118,6 @@ class VacationRequestItem extends Equatable {
     strNotes,
     actionMakerEmpName,
     branchName,
+    actionNotes,
   ];
 }

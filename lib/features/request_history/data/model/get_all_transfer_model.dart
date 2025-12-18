@@ -33,6 +33,7 @@ class GetAllTransferModel extends Equatable {
   final String requestDesc;
   final int reqDicidState;
   final int actionMakerEmpID;
+  final String actionNotes;
 
   const GetAllTransferModel({
     required this.requestId,
@@ -65,6 +66,7 @@ class GetAllTransferModel extends Equatable {
     required this.requestDesc,
     required this.reqDicidState,
     required this.actionMakerEmpID,
+    required this.actionNotes,
   });
 
   factory GetAllTransferModel.fromJson(Map<String, dynamic> json) {
@@ -99,6 +101,7 @@ class GetAllTransferModel extends Equatable {
       requestDesc: json['RequestDesc']?.toString() ?? '',
       reqDicidState: json['ReqDicidState'] ?? 0,
       actionMakerEmpID: json['ActionMakerEmpID'] ?? 0,
+      actionNotes: json['actionnotes']?.toString() ?? '',
     );
   }
 
@@ -141,5 +144,6 @@ class GetAllTransferModel extends Equatable {
     requestDesc,
     reqDicidState,
     actionMakerEmpID,
+    actionNotes,
   ];
 }

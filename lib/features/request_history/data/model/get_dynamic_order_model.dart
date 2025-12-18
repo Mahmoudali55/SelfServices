@@ -33,6 +33,7 @@ class DynamicOrderModel extends Equatable {
   final String strField13;
   final String strField14;
   final String strField15;
+  final String actionNotes;
 
   const DynamicOrderModel({
     required this.requestId,
@@ -65,6 +66,7 @@ class DynamicOrderModel extends Equatable {
     required this.strField13,
     required this.strField14,
     required this.strField15,
+    required this.actionNotes,
   });
 
   factory DynamicOrderModel.fromJson(Map<String, dynamic> json) {
@@ -99,6 +101,7 @@ class DynamicOrderModel extends Equatable {
       strField13: json['StrField13']?.toString() ?? '',
       strField14: json['StrField14']?.toString() ?? '',
       strField15: json['StrField15']?.toString() ?? '',
+      actionNotes: json['actionnotes']?.toString() ?? '',
     );
   }
 
@@ -143,6 +146,7 @@ class DynamicOrderModel extends Equatable {
       'StrField13': strField13,
       'StrField14': strField14,
       'StrField15': strField15,
+      'actionnotes': actionNotes,
     };
   }
 
@@ -178,5 +182,6 @@ class DynamicOrderModel extends Equatable {
     strField13,
     strField14,
     strField15,
+    actionNotes,
   ];
 }

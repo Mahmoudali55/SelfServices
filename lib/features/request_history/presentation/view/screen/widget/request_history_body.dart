@@ -129,7 +129,6 @@ class RequestHistoryBodyState extends State<RequestHistoryBody> {
 
                 var data = (status.data is List) ? status.data as List : [];
 
-                // فلترة البحث
                 if (widget.searchQuery.isNotEmpty) {
                   data = data.where((r) {
                     final name = (r.empName ?? '').toString().toLowerCase();
@@ -138,7 +137,6 @@ class RequestHistoryBodyState extends State<RequestHistoryBody> {
                   }).toList();
                 }
 
-                // فلترة حسب اختيار الفلتر
                 data = _applyRequestFilter(data);
 
                 final classified = _classifyRequests(
@@ -197,12 +195,12 @@ class RequestHistoryBodyState extends State<RequestHistoryBody> {
     final approved = <dynamic>[];
     final rejected = <dynamic>[];
     for (var r in requests) {
-      final status = isLeave ? r.requestDesc : (r.requestDesc ?? '');
-      if (status.contains('تحت الاجراء') || status.contains('Under Review')) {
+      final status = isLeave ? r.reqDecideState : (r.reqDecideState ?? '');
+      if (status == 3) {
         under.add(r);
-      } else if (status.contains('تمت الموافقة علي الطلب') || status.contains('Approved')) {
+      } else if (status == 1) {
         approved.add(r);
-      } else if (status.contains('تم رفض الطلب') || status.contains('Rejected')) {
+      } else if (status == 2) {
         rejected.add(r);
       }
     }

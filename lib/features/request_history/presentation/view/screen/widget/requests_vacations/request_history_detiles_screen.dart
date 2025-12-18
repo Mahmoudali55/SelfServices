@@ -58,7 +58,10 @@ class RequestHistoryDetilesScreen extends StatelessWidget {
                 : request.reqDecideState == 1
                 ? Color.fromARGB(255, 2, 217, 9)
                 : const Color.fromARGB(255, 200, 194, 26),
-            items: {AppLocalKay.status.tr(): request.requestDesc},
+            items: {
+              AppLocalKay.status.tr(): request.requestDesc,
+              AppLocalKay.followedActions.tr(): request.actionNotes ?? '-',
+            },
           ),
           SectionWidget(
             title: AppLocalKay.alternative_employee.tr(),

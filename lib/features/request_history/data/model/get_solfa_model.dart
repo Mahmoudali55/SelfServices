@@ -17,6 +17,7 @@ class GetSolfaModel extends Equatable {
   @override
   List<Object?> get props => [data];
 }
+
 class SolfaItem extends Equatable {
   final int requestId;
   final int empDeptId;
@@ -47,6 +48,7 @@ class SolfaItem extends Equatable {
   final String? scndEmpNameE;
   final String solfaTypeName;
   final String? solfaTypeNameE;
+  final String? actionNotes;
   const SolfaItem({
     required this.requestId,
     required this.empDeptId,
@@ -77,6 +79,7 @@ class SolfaItem extends Equatable {
     required this.scndEmpNameE,
     required this.solfaTypeName,
     required this.solfaTypeNameE,
+    required this.actionNotes,
   });
   factory SolfaItem.fromJson(Map<String, dynamic> json) {
     return SolfaItem(
@@ -109,6 +112,7 @@ class SolfaItem extends Equatable {
       scndEmpNameE: json['ScndEmpName_E'],
       solfaTypeName: json['SolfaTypeName'] ?? '',
       solfaTypeNameE: json['SolfaTypeName_E'],
+      actionNotes: json['actionnotes'],
     );
   }
 
@@ -143,6 +147,7 @@ class SolfaItem extends Equatable {
       'ScndEmpName_E': scndEmpNameE,
       'SolfaTypeName': solfaTypeName,
       'SolfaTypeName_E': solfaTypeNameE,
+      'actionnotes': actionNotes,
     };
   }
 
@@ -177,5 +182,6 @@ class SolfaItem extends Equatable {
     scndEmpNameE,
     solfaTypeName,
     solfaTypeNameE,
+    actionNotes,
   ];
 }

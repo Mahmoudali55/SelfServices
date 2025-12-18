@@ -61,12 +61,40 @@ class RequestBackCard extends StatelessWidget {
                 description: request.strVacRequestDateTo ?? '',
               ),
               const SizedBox(height: 8),
-              Text(
-                request.requestDesc ?? '',
-                style: AppTextStyle.text14RGrey(
-                  context,
-                  color: statusColor,
-                ).copyWith(fontWeight: FontWeight.bold),
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Column(
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          if (request.reqDicidState == 4) ...[
+                            TextSpan(
+                              text: AppLocalKay.followedActions.tr() + ': ',
+                              style: AppTextStyle.text16SDark(
+                                context,
+                                color: AppColor.darkTextColor(context).withAlpha(140),
+                              ),
+                            ),
+                            TextSpan(
+                              text: request.actionNotes ?? '',
+                              style: AppTextStyle.text16SDark(context, color: statusColor),
+                            ),
+                          ] else ...[
+                            TextSpan(
+                              text: request.requestDesc ?? '',
+                              style: AppTextStyle.text14RGrey(
+                                context,
+                                color: statusColor,
+                              ).copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
               if (request.reqDecideState == 3) ...[
                 const SizedBox(height: 10),

@@ -82,12 +82,36 @@ class RequestCard extends StatelessWidget {
               Container(
                 margin: const EdgeInsets.only(top: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: Text(
-                  request.requestDesc ?? '',
-                  style: AppTextStyle.text14RGrey(
-                    context,
-                    color: statusInfo.color,
-                  ).copyWith(fontWeight: FontWeight.bold),
+                child: Column(
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          if (request.reqDicidState == 4) ...[
+                            TextSpan(
+                              text: AppLocalKay.followedActions.tr() + ': ',
+                              style: AppTextStyle.text16SDark(
+                                context,
+                                color: AppColor.darkTextColor(context).withAlpha(140),
+                              ),
+                            ),
+                            TextSpan(
+                              text: request.actionNotes ?? '',
+                              style: AppTextStyle.text16SDark(context, color: statusInfo.color),
+                            ),
+                          ] else ...[
+                            TextSpan(
+                              text: request.requestDesc ?? '',
+                              style: AppTextStyle.text14RGrey(
+                                context,
+                                color: statusInfo.color,
+                              ).copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
 

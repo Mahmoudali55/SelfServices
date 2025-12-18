@@ -150,4 +150,13 @@ class AppColor {
       listen: listen,
     );
   }
+
+  static Color buttonColor(BuildContext context, {bool listen = true}) {
+    return AppTheme.getByTheme(
+      context,
+      light: Color.fromARGB(255, 2, 217, 9),
+      dark: const Color(0xffffffff),
+      listen: listen,
+    );
+  }
 }

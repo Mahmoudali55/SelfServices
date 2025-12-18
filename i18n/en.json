@@ -494,5 +494,6 @@
 
 
   "attachment_name": "Attachment Name",
-  "no_attachment": "No attachment"
+  "no_attachment": "No attachment",
+  "followed_actions": "Followed Actions"
 }

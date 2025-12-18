@@ -62,11 +62,11 @@ class ResignationForm extends StatelessWidget {
                   : 'Select request date first';
             }
 
-            final requestDate = DateTime.parse(dateController.text);
-            final lastWorkDate = DateTime.parse(value);
+            final requestDate = DateTime.tryParse(dateController.text);
+            final lastWorkDate = DateTime.tryParse(value);
 
             // ❌ لو تاريخ آخر يوم أقل من تاريخ الطلب
-            if (lastWorkDate.isBefore(requestDate)) {
+            if (lastWorkDate?.isBefore(requestDate ?? DateTime.now()) ?? false) {
               return context.locale.languageCode == 'ar'
                   ? 'تاريخ آخر يوم عمل لا يمكن أن يكون قبل تاريخ الطلب'
                   : 'Last working day cannot be before request date';
@@ -97,7 +97,7 @@ class ResignationForm extends StatelessWidget {
         final selectedDate = await showDatePicker(
           context: context,
           initialDate: DateTime.now(),
-          firstDate: DateTime(2000),
+          firstDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
           lastDate: DateTime(2100),
         );
         if (selectedDate != null) {

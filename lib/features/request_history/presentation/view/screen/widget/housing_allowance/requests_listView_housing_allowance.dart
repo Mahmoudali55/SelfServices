@@ -93,7 +93,41 @@ class HousingAllowanceRequestItem extends StatelessWidget {
               _HeaderRow(context),
               const Divider(height: 20, thickness: 1),
               _Details(request: request, isEn: isEn),
-              _StatusLabel(status: request.requestDesc ?? '', color: statusColor),
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Column(
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          if (request.reqDicidState == 4) ...[
+                            TextSpan(
+                              text: AppLocalKay.followedActions.tr() + ': ',
+                              style: AppTextStyle.text16SDark(
+                                context,
+                                color: AppColor.darkTextColor(context).withAlpha(140),
+                              ),
+                            ),
+                            TextSpan(
+                              text: request.actionNotes ?? '',
+                              style: AppTextStyle.text16SDark(context, color: statusColor),
+                            ),
+                          ] else ...[
+                            TextSpan(
+                              text: request.requestDesc ?? '',
+                              style: AppTextStyle.text14RGrey(
+                                context,
+                                color: statusColor,
+                              ).copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               if (isEditable) _ActionButtons(request: request, empcoded: empcoded),
             ],
           ),

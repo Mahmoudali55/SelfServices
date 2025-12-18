@@ -24,6 +24,7 @@ class AllTicketModel extends Equatable {
   final String requestDesc;
   final int reqDicidState;
   final int actionMakerEmpID;
+  final String actionNotes;
 
   const AllTicketModel({
     required this.requestID,
@@ -47,6 +48,7 @@ class AllTicketModel extends Equatable {
     required this.requestDesc,
     required this.reqDicidState,
     required this.actionMakerEmpID,
+    required this.actionNotes,
   });
   factory AllTicketModel.fromJson(Map<String, dynamic> json) {
     int parseInt(dynamic value) {
@@ -76,6 +78,7 @@ class AllTicketModel extends Equatable {
       requestDesc: json['RequestDesc']?.toString() ?? '',
       reqDicidState: parseInt(json['ReqDicidState']),
       actionMakerEmpID: parseInt(json['ActionMakerEmpID']),
+      actionNotes: json['ActionNotes']?.toString() ?? '',
     );
   }
 
@@ -102,6 +105,7 @@ class AllTicketModel extends Equatable {
     requestDesc,
     reqDicidState,
     actionMakerEmpID,
+    actionNotes,
   ];
 }
 

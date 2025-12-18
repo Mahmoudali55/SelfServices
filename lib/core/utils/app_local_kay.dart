@@ -477,4 +477,5 @@ class AppLocalKay {
   static const String alternative_code = 'alternative_code';
   static const String attachment_name = 'attachment_name';
   static const String no_attachment = 'no_attachment';
+  static const String followedActions = 'followed_actions';
 }

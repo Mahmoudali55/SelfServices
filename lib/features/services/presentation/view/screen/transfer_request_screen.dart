@@ -74,7 +74,10 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
       final cubit = context.read<ServicesCubit>();
       // تحميل البيانات فقط إذا كانت القائمة فارغة
       if (cubit.state.employeesStatus.data?.isEmpty ?? true) {
-        cubit.getEmployees(empcode: widget.empCode ?? 0, privid: widget.pagePrivID ?? 0);
+        cubit.getEmployees(
+          empcode: (widget.pagePrivID == 1 || widget.pagePrivID == 2) ? 0 : widget.empCode ?? 0,
+          privid: widget.pagePrivID ?? 0,
+        );
       }
 
       if (widget.transferModel != null) {

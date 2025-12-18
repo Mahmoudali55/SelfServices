@@ -21,8 +21,10 @@ class GetAllHousingAllowanceModel extends Equatable {
   final String requestDesc;
   final int reqDicidState;
   final int actionMakerEmpID;
+  final String? actionNotes;
 
   const GetAllHousingAllowanceModel({
+    this.actionNotes,
     required this.requestID,
     required this.empDeptID,
     required this.empCode,
@@ -63,6 +65,7 @@ class GetAllHousingAllowanceModel extends Equatable {
       requestDesc: json['RequestDesc'] ?? '',
       reqDicidState: json['ReqDicidState'] ?? 0,
       actionMakerEmpID: json['ActionMakerEmpID'] ?? 0,
+      actionNotes: json['actionnotes']?.toString(),
     );
   }
 
@@ -86,6 +89,7 @@ class GetAllHousingAllowanceModel extends Equatable {
       'RequestDesc': requestDesc,
       'ReqDicidState': reqDicidState,
       'ActionMakerEmpID': actionMakerEmpID,
+      'actionnotes': actionNotes,
     };
   }
 
@@ -109,6 +113,7 @@ class GetAllHousingAllowanceModel extends Equatable {
     requestDesc,
     reqDicidState,
     actionMakerEmpID,
+    actionNotes,
   ];
 }
 

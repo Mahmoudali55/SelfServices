@@ -27,6 +27,7 @@ class GetAllCarsModel extends Equatable {
   final String? locationName;
   final int carTypeID;
   final String carTypeName;
+  final String? actionNotes;
   final String carTypeNameEng;
 
   const GetAllCarsModel({
@@ -47,6 +48,7 @@ class GetAllCarsModel extends Equatable {
     required this.reqDicidState,
     required this.actionMakerEmpID,
     this.bName,
+    this.actionNotes,
     this.bNameE,
     this.projectName,
     this.projectNameEng,
@@ -84,6 +86,7 @@ class GetAllCarsModel extends Equatable {
       carTypeID: json['CarTypeID'] as int,
       carTypeName: json['CarTypeName'] ?? '',
       carTypeNameEng: json['CarTypeNameEng'] ?? '',
+      actionNotes: json['actionnotes'],
     );
   }
 
@@ -113,6 +116,7 @@ class GetAllCarsModel extends Equatable {
     'CarTypeID': carTypeID,
     'CarTypeName': carTypeName,
     'CarTypeNameEng': carTypeNameEng,
+    'actionnotes': actionNotes,
   };
 
   static List<GetAllCarsModel> listFromMap(Map<String, dynamic> map) {
@@ -147,5 +151,6 @@ class GetAllCarsModel extends Equatable {
     carTypeID,
     carTypeName,
     carTypeNameEng,
+    actionNotes,
   ];
 }

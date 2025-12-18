@@ -20,6 +20,7 @@ class GetAllResignationModel extends Equatable {
   final String requestDesc;
   final int reqDicidState;
   final int actionMakerEmpID;
+  final String? actionNotes;
 
   const GetAllResignationModel({
     required this.requestID,
@@ -39,6 +40,7 @@ class GetAllResignationModel extends Equatable {
     required this.requestDesc,
     required this.reqDicidState,
     required this.actionMakerEmpID,
+    this.actionNotes,
   });
 
   factory GetAllResignationModel.fromJson(Map<String, dynamic> json) {
@@ -72,6 +74,7 @@ class GetAllResignationModel extends Equatable {
       requestDesc: parseString(json['RequestDesc']),
       reqDicidState: parseInt(json['ReqDicidState']),
       actionMakerEmpID: parseInt(json['ActionMakerEmpID']),
+      actionNotes: json['actionnotes']?.toString(),
     );
   }
 
@@ -94,6 +97,7 @@ class GetAllResignationModel extends Equatable {
     requestDesc,
     reqDicidState,
     actionMakerEmpID,
+    actionNotes,
   ];
 }
 
