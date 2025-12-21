@@ -127,12 +127,10 @@ class ServicesCubit extends Cubit<ServicesState> {
     result.fold(
       (error) {
         emit(state.copyWith(submitVacationStatus: StatusState.failure(error.errMessage)));
-        emit(state.copyWith(submitVacationStatus: const StatusState.initial()));
       },
 
       (success) {
         emit(state.copyWith(submitVacationStatus: StatusState.success(success)));
-        emit(state.copyWith(submitVacationStatus: const StatusState.initial()));
       },
     );
   }
@@ -234,12 +232,10 @@ class ServicesCubit extends Cubit<ServicesState> {
     result.fold(
       (error) {
         emit(state.copyWith(updataVacationStatus: StatusState.failure(error.errMessage)));
-        emit(state.copyWith(updataVacationStatus: const StatusState.initial()));
       },
 
       (success) {
         emit(state.copyWith(updataVacationStatus: StatusState.success(success)));
-        emit(state.copyWith(updataVacationStatus: const StatusState.initial()));
       },
     );
   }
@@ -276,13 +272,9 @@ class ServicesCubit extends Cubit<ServicesState> {
     result.fold(
       (error) {
         emit(state.copyWith(vacationBackAddStatus: StatusState.failure(error.errMessage)));
-
-        emit(state.copyWith(vacationBackAddStatus: const StatusState.initial()));
       },
       (success) {
         emit(state.copyWith(vacationBackAddStatus: StatusState.success(success)));
-
-        emit(state.copyWith(vacationBackAddStatus: const StatusState.initial()));
       },
     );
   }
@@ -325,11 +317,9 @@ class ServicesCubit extends Cubit<ServicesState> {
     result.fold(
       (error) {
         emit(state.copyWith(loanRequestStatus: StatusState.failure(error.errMessage)));
-        emit(state.copyWith(loanRequestStatus: const StatusState.initial()));
       },
       (success) {
         emit(state.copyWith(loanRequestStatus: StatusState.success(success)));
-        emit(state.copyWith(loanRequestStatus: const StatusState.initial()));
       },
     );
   }
@@ -357,12 +347,10 @@ class ServicesCubit extends Cubit<ServicesState> {
     result.fold(
       (error) {
         emit(state.copyWith(updataVacationBackStatus: StatusState.failure(error.errMessage)));
-        emit(state.copyWith(updataVacationBackStatus: const StatusState.initial()));
       },
 
       (success) {
         emit(state.copyWith(updataVacationBackStatus: StatusState.success(success)));
-        emit(state.copyWith(updataVacationBackStatus: const StatusState.initial()));
       },
     );
   }
@@ -376,12 +364,10 @@ class ServicesCubit extends Cubit<ServicesState> {
     result.fold(
       (error) {
         emit(state.copyWith(updataSolfaStatus: StatusState.failure(error.errMessage)));
-        emit(state.copyWith(updataSolfaStatus: const StatusState.initial()));
       },
 
       (success) {
         emit(state.copyWith(updataSolfaStatus: StatusState.success(success)));
-        emit(state.copyWith(updataSolfaStatus: const StatusState.initial()));
       },
     );
   }
@@ -426,11 +412,9 @@ class ServicesCubit extends Cubit<ServicesState> {
     result.fold(
       (error) {
         emit(state.copyWith(housingAllowanceStatus: StatusState.failure(error.errMessage)));
-        emit(state.copyWith(housingAllowanceStatus: const StatusState.initial()));
       },
       (success) {
         emit(state.copyWith(housingAllowanceStatus: StatusState.success(success)));
-        emit(state.copyWith(housingAllowanceStatus: const StatusState.initial()));
       },
     );
   }
@@ -441,11 +425,9 @@ class ServicesCubit extends Cubit<ServicesState> {
     result.fold(
       (error) {
         emit(state.copyWith(resignationStatus: StatusState.failure(error.errMessage)));
-        emit(state.copyWith(resignationStatus: const StatusState.initial()));
       },
       (success) {
         emit(state.copyWith(resignationStatus: StatusState.success(success)));
-        emit(state.copyWith(resignationStatus: const StatusState.initial()));
       },
     );
   }
@@ -459,12 +441,10 @@ class ServicesCubit extends Cubit<ServicesState> {
     result.fold(
       (error) {
         emit(state.copyWith(updataHousingAllowanceStatus: StatusState.failure(error.errMessage)));
-        emit(state.copyWith(updataHousingAllowanceStatus: const StatusState.initial()));
       },
 
       (success) {
         emit(state.copyWith(updataHousingAllowanceStatus: StatusState.success(success)));
-        emit(state.copyWith(updataHousingAllowanceStatus: const StatusState.initial()));
       },
     );
   }
@@ -478,12 +458,10 @@ class ServicesCubit extends Cubit<ServicesState> {
     result.fold(
       (error) {
         emit(state.copyWith(updataResignationStatus: StatusState.failure(error.errMessage)));
-        emit(state.copyWith(updataResignationStatus: const StatusState.initial()));
       },
 
       (success) {
         emit(state.copyWith(updataResignationStatus: StatusState.success(success)));
-        emit(state.copyWith(updataResignationStatus: const StatusState.initial()));
       },
     );
   }
@@ -517,11 +495,9 @@ class ServicesCubit extends Cubit<ServicesState> {
     result.fold(
       (error) {
         emit(state.copyWith(addnewCarStatus: StatusState.failure(error.errMessage)));
-        emit(state.copyWith(addnewCarStatus: const StatusState.initial()));
       },
       (success) {
         emit(state.copyWith(addnewCarStatus: StatusState.success(success)));
-        emit(state.copyWith(addnewCarStatus: const StatusState.initial()));
       },
     );
   }
@@ -535,12 +511,10 @@ class ServicesCubit extends Cubit<ServicesState> {
     result.fold(
       (error) {
         emit(state.copyWith(updataCarStatus: StatusState.failure(error.errMessage)));
-        emit(state.copyWith(updataCarStatus: const StatusState.initial()));
       },
 
       (success) {
         emit(state.copyWith(updataCarStatus: StatusState.success(success)));
-        emit(state.copyWith(updataCarStatus: const StatusState.initial()));
       },
     );
   }
@@ -597,7 +571,6 @@ class ServicesCubit extends Cubit<ServicesState> {
       },
       (success) {
         emit(state.copyWith(addnewTransferStatus: StatusState.success(success)));
-        emit(state.copyWith(addnewTransferStatus: const StatusState.initial()));
       },
     );
   }
@@ -616,7 +589,6 @@ class ServicesCubit extends Cubit<ServicesState> {
 
       (success) {
         emit(state.copyWith(updataTransferStatus: StatusState.success(success)));
-        emit(state.copyWith(updataTransferStatus: const StatusState.initial()));
       },
     );
   }
@@ -646,7 +618,6 @@ class ServicesCubit extends Cubit<ServicesState> {
       },
       (success) {
         emit(state.copyWith(addnewTicketStatus: StatusState.success(success)));
-        emit(state.copyWith(addnewTicketStatus: const StatusState.initial()));
       },
     );
   }
@@ -665,7 +636,6 @@ class ServicesCubit extends Cubit<ServicesState> {
 
       (success) {
         emit(state.copyWith(updataTicketStatus: StatusState.success(success)));
-        emit(state.copyWith(updataTicketStatus: const StatusState.initial()));
       },
     );
   }
@@ -681,7 +651,6 @@ class ServicesCubit extends Cubit<ServicesState> {
       },
       (files) {
         emit(state.copyWith(uploadedFilesStatus: StatusState.success(files)));
-        emit(state.copyWith(uploadedFilesStatus: const StatusState.initial()));
       },
     );
   }
@@ -700,7 +669,6 @@ class ServicesCubit extends Cubit<ServicesState> {
       },
       (files) {
         emit(state.copyWith(imageFileNameStatus: StatusState.success(files)));
-        emit(state.copyWith(imageFileNameStatus: const StatusState.initial()));
       },
     );
   }
@@ -713,7 +681,6 @@ class ServicesCubit extends Cubit<ServicesState> {
           emit(state.copyWith(employeechangephoto: StatusState.failure(failure.errMessage))),
       (success) {
         emit(state.copyWith(employeechangephoto: StatusState.success(success)));
-        emit(state.copyWith(employeechangephoto: const StatusState.initial()));
       },
     );
   }
@@ -756,7 +723,6 @@ class ServicesCubit extends Cubit<ServicesState> {
       },
       (success) {
         emit(state.copyWith(addnewGeneralStatus: StatusState.success(success)));
-        emit(state.copyWith(addnewGeneralStatus: const StatusState.initial()));
       },
     );
   }
@@ -771,7 +737,6 @@ class ServicesCubit extends Cubit<ServicesState> {
       },
       (success) {
         emit(state.copyWith(updataGeneralStatus: StatusState.success(success)));
-        emit(state.copyWith(updataGeneralStatus: const StatusState.initial()));
       },
     );
   }

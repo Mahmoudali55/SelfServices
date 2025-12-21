@@ -1,10 +1,11 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:my_template/core/cache/hive/hive_methods.dart';
 import 'package:my_template/core/custom_widgets/custom_form_field/custom_form_field.dart';
 import 'package:my_template/core/custom_widgets/custom_toast/custom_toast.dart';
@@ -12,6 +13,7 @@ import 'package:my_template/core/routes/routes_name.dart';
 import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
+import 'package:my_template/core/utils/file_viewer_utils.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/request_history/data/model/get_dynamic_order_model.dart';
 import 'package:my_template/features/services/data/model/dynamic_orders/add_new_dynamic_order.dart';
@@ -23,8 +25,6 @@ import 'package:my_template/features/services/presentation/cubit/services_state.
 import 'package:my_template/features/services/presentation/view/screen/widget/custom_app_bar_services_widget.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/custom_bottom_nav_button_widget.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/request_leave/custom_fileForm_field_chips_widget.dart';
-import 'package:open_filex/open_filex.dart';
-import 'package:path_provider/path_provider.dart';
 
 class SesidChangeRequestScreen extends StatefulWidget {
   const SesidChangeRequestScreen({super.key, this.dynamicOrderModel});
@@ -212,6 +212,7 @@ class _SesidChangeRequestScreenState extends State<SesidChangeRequestScreen> {
                   maxLines: 3,
                   validator: (v) => (v == null || v.trim().isEmpty) ? 'السبب مطلوب' : null,
                 ),
+                Gap(10.h),
                 Row(
                   children: [
                     Expanded(
@@ -322,7 +323,8 @@ class _SesidChangeRequestScreenState extends State<SesidChangeRequestScreen> {
                                                               final base64File =
                                                                   stateStatus?.data ?? '';
 
-                                                              await openBase64File(
+                                                              await FileViewerUtils.displayFile(
+                                                                context,
                                                                 base64File,
                                                                 item.attchmentFileName,
                                                               );
@@ -479,15 +481,5 @@ class _SesidChangeRequestScreenState extends State<SesidChangeRequestScreen> {
     if (state.addnewGeneralStatus.isFailure) {
       _showToast(context, state.addnewGeneralStatus.error ?? 'Error');
     }
-  }
-
-  Future<void> openBase64File(String base64String, String fileName) async {
-    try {
-      final bytes = base64Decode(base64String);
-      final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/$fileName');
-      await file.writeAsBytes(bytes, flush: true);
-      await OpenFilex.open(file.path);
-    } catch (e) {}
   }
 }

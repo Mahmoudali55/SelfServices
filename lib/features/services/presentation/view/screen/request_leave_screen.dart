@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +10,7 @@ import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
+import 'package:my_template/core/utils/file_viewer_utils.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/services/data/model/request_leave/get_vacation_attachment_model.dart';
 import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
@@ -28,8 +26,6 @@ import 'package:my_template/features/services/presentation/view/screen/widget/re
 import 'package:my_template/features/services/presentation/view/screen/widget/request_leave/leave_selector_widget.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/request_leave/services_Input_widget.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/request_leave/vacation_balance_field.dart';
-import 'package:open_filex/open_filex.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class RequestLeaveScreen extends StatefulWidget {
@@ -960,7 +956,8 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                                                                     final base64File =
                                                                         stateStatus?.data ?? '';
 
-                                                                    await openBase64File(
+                                                                    await FileViewerUtils.displayFile(
+                                                                      context,
                                                                       base64File,
                                                                       item.attchmentFileName,
                                                                     );
@@ -973,14 +970,6 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                                                                         content: Text(
                                                                           stateStatus?.error ?? '',
                                                                         ),
-                                                                      ),
-                                                                    );
-                                                                  } else {
-                                                                    showDialog(
-                                                                      context: context,
-                                                                      builder: (_) => const AlertDialog(
-                                                                        content:
-                                                                            CircularProgressIndicator(),
                                                                       ),
                                                                     );
                                                                   }
@@ -1051,18 +1040,5 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
         );
       },
     );
-  }
-
-  Future<void> openBase64File(String base64String, String fileName) async {
-    try {
-      final bytes = base64Decode(base64String);
-
-      final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/$fileName');
-
-      await file.writeAsBytes(bytes, flush: true);
-
-      await OpenFilex.open(file.path);
-    } catch (e) {}
   }
 }

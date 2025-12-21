@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_template/core/custom_widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:my_template/core/custom_widgets/custom_form_field/custom_form_field.dart';
 import 'package:my_template/core/custom_widgets/custom_toast/custom_toast.dart';
 import 'package:my_template/core/theme/app_colors.dart';
@@ -12,6 +13,7 @@ import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/features/services/presentation/cubit/services_cubit.dart';
 import 'package:my_template/features/services/presentation/cubit/services_state.dart';
+import 'package:open_filex/open_filex.dart';
 
 class CustomFileFormFieldChips extends StatefulWidget {
   const CustomFileFormFieldChips({
@@ -35,9 +37,13 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
     FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
 
     if (result != null) {
-      final newFiles = result.files
-          .map((file) => {'AttatchmentName': file.name, 'AttchmentFileName': file.path!})
-          .toList();
+      final newFiles = result.files.map((file) {
+        return {
+          'AttatchmentName': file.name,
+          'AttchmentFileName': file.path!,
+          'LocalPath': file.path!,
+        };
+      }).toList();
 
       setState(() {
         selectedFilesMap.addAll(newFiles);
@@ -93,6 +99,31 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
                     return ListTile(
                       leading: const Icon(Icons.insert_drive_file),
                       title: Text(file['AttatchmentName'] ?? ''),
+                      onTap: () {
+                        final localPath = file['LocalPath'] ?? '';
+                        final serverPath = file['AttchmentFileName'] ?? '';
+                        final path = localPath.isNotEmpty ? localPath : serverPath;
+
+                        if (path.isEmpty) return;
+
+                        final isImage = [
+                          '.jpg',
+                          '.jpeg',
+                          '.png',
+                          '.gif',
+                          '.bmp',
+                          '.webp',
+                        ].any((ext) => path.toLowerCase().endsWith(ext));
+
+                        if (isImage) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => ImagePreviewScreen(imagePath: path)),
+                          );
+                        } else {
+                          OpenFilex.open(path);
+                        }
+                      },
                       trailing: IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
@@ -122,9 +153,21 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
 
         if (status.isSuccess) {
           // تحويل List<String> → List<Map<String,String>>
-          final responseFiles = (status.data as List<String>)
-              .map((path) => {'AttatchmentName': path.split('\\').last, 'AttchmentFileName': path})
-              .toList();
+          // مع الحفاظ على المسارات المحلية للمعاينة
+          final responseFiles = (status.data as List<String>).asMap().entries.map((entry) {
+            final index = entry.key;
+            final serverPath = entry.value;
+            String localPath = '';
+            if (index < selectedFilesMap.length) {
+              localPath = selectedFilesMap[index]['LocalPath'] ?? '';
+            }
+
+            return {
+              'AttatchmentName': serverPath.split('\\').last,
+              'AttchmentFileName': serverPath,
+              'LocalPath': localPath,
+            };
+          }).toList();
 
           setState(() {
             selectedFilesMap = responseFiles;
@@ -164,18 +207,22 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
               onPressed: _pickFiles,
             ),
           ),
-          const SizedBox(height: 12),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColor.primaryColor(context),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          if (selectedFilesMap.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColor.primaryColor(context),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              icon: const Icon(Icons.folder_open),
+              label: Text(
+                context.locale.languageCode == 'ar'
+                    ? 'عرض الملفات المختارة'
+                    : 'Show Selected Files',
+              ),
+              onPressed: () => _showSelectedFilesSheet(context),
             ),
-            icon: const Icon(Icons.folder_open),
-            label: Text(
-              context.locale.languageCode == 'ar' ? 'عرض الملفات المختارة' : 'Show Selected Files',
-            ),
-            onPressed: () => _showSelectedFilesSheet(context),
-          ),
+          ],
         ],
       ),
     );
@@ -189,7 +236,7 @@ class ImagePreviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: CustomAppBar(context),
       body: Center(child: Image.file(File(imagePath), fit: BoxFit.contain)),
     );
   }

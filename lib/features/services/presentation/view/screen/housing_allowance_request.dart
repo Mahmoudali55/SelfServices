@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +7,7 @@ import 'package:my_template/core/custom_widgets/custom_toast/custom_toast.dart';
 import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
+import 'package:my_template/core/utils/file_viewer_utils.dart';
 import 'package:my_template/features/request_history/data/model/get_all_housing_allowance_model.dart';
 import 'package:my_template/features/services/data/model/request_leave/get_vacation_attachment_model.dart';
 import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
@@ -18,8 +16,6 @@ import 'package:my_template/features/services/presentation/view/screen/widget/cu
 import 'package:my_template/features/services/presentation/view/screen/widget/housing_allowance/housing_allowance_form_widget.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/housing_allowance/housing_allowance_save_button_widget.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/request_leave/custom_fileForm_field_chips_widget.dart';
-import 'package:open_filex/open_filex.dart';
-import 'package:path_provider/path_provider.dart';
 
 class HousingAllowanceRequestScreen extends StatefulWidget {
   const HousingAllowanceRequestScreen({super.key, this.empCode, this.model});
@@ -226,7 +222,8 @@ class _HousingAllowanceRequestScreenState extends State<HousingAllowanceRequestS
                                                           final base64File =
                                                               stateStatus?.data ?? '';
 
-                                                          await openBase64File(
+                                                          await FileViewerUtils.displayFile(
+                                                            context,
                                                             base64File,
                                                             item.attchmentFileName,
                                                           );
@@ -237,13 +234,6 @@ class _HousingAllowanceRequestScreenState extends State<HousingAllowanceRequestS
                                                               content: Text(
                                                                 stateStatus?.error ?? '',
                                                               ),
-                                                            ),
-                                                          );
-                                                        } else {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (_) => const AlertDialog(
-                                                              content: CircularProgressIndicator(),
                                                             ),
                                                           );
                                                         }
@@ -324,18 +314,5 @@ class _HousingAllowanceRequestScreenState extends State<HousingAllowanceRequestS
         ),
       ),
     );
-  }
-
-  Future<void> openBase64File(String base64String, String fileName) async {
-    try {
-      final bytes = base64Decode(base64String);
-
-      final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/$fileName');
-
-      await file.writeAsBytes(bytes, flush: true);
-
-      await OpenFilex.open(file.path);
-    } catch (e) {}
   }
 }

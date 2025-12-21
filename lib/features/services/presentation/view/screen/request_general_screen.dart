@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +8,7 @@ import 'package:my_template/core/routes/routes_name.dart';
 import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
+import 'package:my_template/core/utils/file_viewer_utils.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/request_history/data/model/get_dynamic_order_model.dart';
 import 'package:my_template/features/services/data/model/dynamic_orders/add_new_dynamic_order.dart';
@@ -22,8 +20,6 @@ import 'package:my_template/features/services/presentation/cubit/services_state.
 import 'package:my_template/features/services/presentation/view/screen/widget/custom_app_bar_services_widget.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/custom_bottom_nav_button_widget.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/request_leave/custom_fileForm_field_chips_widget.dart';
-import 'package:open_filex/open_filex.dart';
-import 'package:path_provider/path_provider.dart';
 
 class RequestGeneralScreen extends StatefulWidget {
   const RequestGeneralScreen({Key? key, this.dynamicOrderModel}) : super(key: key);
@@ -303,7 +299,8 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
                                                               final base64File =
                                                                   stateStatus?.data ?? '';
 
-                                                              await openBase64File(
+                                                              await FileViewerUtils.displayFile(
+                                                                context,
                                                                 base64File,
                                                                 item.attchmentFileName,
                                                               );
@@ -460,15 +457,5 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
     if (state.addnewGeneralStatus.isFailure) {
       _showToast(context, state.addnewGeneralStatus.error ?? 'Error');
     }
-  }
-
-  Future<void> openBase64File(String base64String, String fileName) async {
-    try {
-      final bytes = base64Decode(base64String);
-      final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/$fileName');
-      await file.writeAsBytes(bytes, flush: true);
-      await OpenFilex.open(file.path);
-    } catch (e) {}
   }
 }
