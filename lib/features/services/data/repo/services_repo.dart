@@ -175,6 +175,7 @@ abstract interface class ServicesRepo {
   });
   Future<Either<Failure, List<VacationAttachmentItem>>> getVacationAttachments({
     required int vacationId,
+    required int attchmentType,
   });
   Future<Either<Failure, String>> imageFileName({required String filePath});
   Future<Either<Failure, EmployeechangephotoResponse>> employeechangephoto(
@@ -769,10 +770,13 @@ class ServicesRepoImpl implements ServicesRepo {
   @override
   Future<Either<Failure, List<VacationAttachmentItem>>> getVacationAttachments({
     required int vacationId,
+    required int attchmentType,
   }) {
     return handleDioRequest(
       request: () async {
-        final response = await apiConsumer.get(EndPoints.getattachment(requestId: vacationId));
+        final response = await apiConsumer.get(
+          EndPoints.getattachment(requestId: vacationId, attchmentType: attchmentType),
+        );
 
         final String dataString = response['Data'] ?? '[]';
         final List<dynamic> dataList = jsonDecode(dataString);

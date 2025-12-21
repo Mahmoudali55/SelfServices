@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
 
 class TicketRequest extends Equatable {
   final int empCode;
@@ -10,6 +11,7 @@ class TicketRequest extends Equatable {
   final String ticketPath;
   final int goBack;
   final String strNotes;
+  final List<AttachmentModel> attachment;
 
   const TicketRequest({
     required this.empCode,
@@ -21,6 +23,7 @@ class TicketRequest extends Equatable {
     required this.ticketPath,
     required this.goBack,
     required this.strNotes,
+    required this.attachment,
   });
 
   factory TicketRequest.fromJson(Map<String, dynamic> json) {
@@ -34,6 +37,9 @@ class TicketRequest extends Equatable {
       ticketPath: json['TicketPath'] ?? '',
       goBack: json['Goback'] ?? 1,
       strNotes: json['StrNotes'] ?? '',
+      attachment: (json['Attachment'] as List<dynamic>)
+          .map((e) => AttachmentModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -48,6 +54,7 @@ class TicketRequest extends Equatable {
       'TicketPath': ticketPath,
       'Goback': goBack,
       'StrNotes': strNotes,
+      'Attachment': attachment.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -62,6 +69,7 @@ class TicketRequest extends Equatable {
     ticketPath,
     goBack,
     strNotes,
+    attachment,
   ];
 }
 

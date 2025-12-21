@@ -9,6 +9,7 @@ import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/services/data/model/Cars/add_new_car_request_model.dart';
 import 'package:my_template/features/services/data/model/cars/update_car_request_model.dart';
+import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
 import 'package:my_template/features/services/presentation/cubit/services_cubit.dart';
 import 'package:my_template/features/services/presentation/cubit/services_state.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/custom_bottom_nav_button_widget.dart';
@@ -37,6 +38,7 @@ class CarRequestSaveButton extends StatelessWidget {
     required this.isEdit,
     required this.carRequestControllers,
     this.newrequest,
+    required this.attachmentList,
   });
 
   final GlobalKey<FormState> formKey;
@@ -44,6 +46,7 @@ class CarRequestSaveButton extends StatelessWidget {
   final bool isEdit;
   final CarRequestControllers carRequestControllers;
   final void Function()? newrequest;
+  final List<AttachmentModel> attachmentList;
   @override
   Widget build(BuildContext context) {
     return BlocListener<ServicesCubit, ServicesState>(
@@ -110,6 +113,7 @@ class CarRequestSaveButton extends StatelessWidget {
             carTypeID: int.parse(carRequestControllers.carTypeController.text),
             purpose: carRequestControllers.reasonController.text,
             strNotes: carRequestControllers.noteController.text,
+            attachment: attachmentList,
           ),
         );
       } else {
@@ -120,6 +124,7 @@ class CarRequestSaveButton extends StatelessWidget {
             carTypeID: int.parse(carRequestControllers.carTypeController.text),
             purpose: carRequestControllers.reasonController.text,
             strNotes: carRequestControllers.noteController.text,
+            attachment: attachmentList,
           ),
         );
       }

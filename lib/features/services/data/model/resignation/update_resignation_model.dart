@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
 
 class UpdateResignationModel extends Equatable {
   final int requestId;
@@ -8,7 +9,7 @@ class UpdateResignationModel extends Equatable {
   final String lastWorkDate;
   final String? lastWorkDateH;
   final String strNotes;
-
+  final List<AttachmentModel> attachment;
   const UpdateResignationModel({
     required this.requestId,
     required this.empCode,
@@ -17,6 +18,7 @@ class UpdateResignationModel extends Equatable {
     required this.lastWorkDate,
     this.lastWorkDateH,
     required this.strNotes,
+    required this.attachment,
   });
 
   factory UpdateResignationModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,9 @@ class UpdateResignationModel extends Equatable {
       lastWorkDate: json['LastWorkDate'],
       lastWorkDateH: json['LastWorkDateH'],
       strNotes: json['strNotes'],
+      attachment: (json['Attachment'] as List<dynamic>)
+          .map((e) => AttachmentModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -40,6 +45,7 @@ class UpdateResignationModel extends Equatable {
       'LastWorkDate': lastWorkDate,
       'LastWorkDateH': lastWorkDateH,
       'strNotes': strNotes,
+      'Attachment': attachment.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -52,5 +58,6 @@ class UpdateResignationModel extends Equatable {
     lastWorkDate,
     lastWorkDateH,
     strNotes,
+    attachment,
   ];
 }

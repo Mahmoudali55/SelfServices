@@ -8,6 +8,7 @@ import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/request_history/data/model/get_all_resignation_model.dart';
+import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
 import 'package:my_template/features/services/data/model/resignation/resignation_request_model.dart';
 import 'package:my_template/features/services/data/model/resignation/update_resignation_model.dart';
 import 'package:my_template/features/services/presentation/cubit/services_cubit.dart';
@@ -25,6 +26,7 @@ class ResignationSaveButton extends StatelessWidget {
     required this.notesController,
     required this.requestIdController,
     this.newrequest,
+    required this.attachmentList,
   });
 
   final GlobalKey<FormState> formKey;
@@ -35,6 +37,7 @@ class ResignationSaveButton extends StatelessWidget {
   final TextEditingController notesController;
   final TextEditingController requestIdController;
   final void Function()? newrequest;
+  final List<AttachmentModel> attachmentList;
   @override
   Widget build(BuildContext context) {
     return BlocListener<ServicesCubit, ServicesState>(
@@ -101,6 +104,7 @@ class ResignationSaveButton extends StatelessWidget {
             requestDate: dateController.text,
             lastWorkDate: lastWorkController.text,
             strNotes: notesController.text,
+            attachment: attachmentList,
           ),
         );
       } else {
@@ -110,6 +114,7 @@ class ResignationSaveButton extends StatelessWidget {
             requestDate: dateController.text,
             lastWorkDate: lastWorkController.text,
             strNotes: notesController.text,
+            attachment: attachmentList,
           ),
         );
       }

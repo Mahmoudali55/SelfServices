@@ -9,6 +9,7 @@ import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/services/data/model/housing_allowance/housing_allowance_request_model.dart';
 import 'package:my_template/features/services/data/model/housing_allowance/update_housing_allowance_model.dart';
+import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
 import 'package:my_template/features/services/presentation/cubit/services_cubit.dart';
 import 'package:my_template/features/services/presentation/cubit/services_state.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/custom_bottom_nav_button_widget.dart';
@@ -39,6 +40,7 @@ class HousingAllowanceSaveButton extends StatelessWidget {
     required this.isEdit,
     required this.controllers,
     this.newrequest,
+    required this.attachmentList,
   });
 
   final GlobalKey<FormState> formKey;
@@ -46,7 +48,7 @@ class HousingAllowanceSaveButton extends StatelessWidget {
   final bool isEdit;
   final HousingAllowanceControllers controllers;
   final void Function()? newrequest;
-
+  final List<AttachmentModel> attachmentList;
   @override
   Widget build(BuildContext context) {
     return BlocListener<ServicesCubit, ServicesState>(
@@ -138,6 +140,7 @@ class HousingAllowanceSaveButton extends StatelessWidget {
           strNotes: controllers.noteController.text,
           amountType: amountType,
           requestId: int.tryParse(controllers.requestIdController.text) ?? 0,
+          attachment: attachmentList,
         ),
       );
     } else {
@@ -148,6 +151,7 @@ class HousingAllowanceSaveButton extends StatelessWidget {
           sakanAmount: double.tryParse(controllers.amountController.text) ?? 0,
           strNotes: controllers.noteController.text,
           amountType: amountType,
+          attachment: attachmentList,
         ),
       );
     }

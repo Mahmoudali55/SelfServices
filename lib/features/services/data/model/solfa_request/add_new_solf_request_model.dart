@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
 
 class AddNewSolfaRquestModel extends Equatable {
   final int empCode;
@@ -14,6 +15,7 @@ class AddNewSolfaRquestModel extends Equatable {
   final String strNotes;
   final int requestAuditorID;
   final int solfaTypeid;
+  final List<AttachmentModel> attachment;
 
   const AddNewSolfaRquestModel({
     required this.empCode,
@@ -29,6 +31,7 @@ class AddNewSolfaRquestModel extends Equatable {
     required this.strNotes,
     required this.requestAuditorID,
     required this.solfaTypeid,
+    required this.attachment,
   });
 
   factory AddNewSolfaRquestModel.fromJson(Map<String, dynamic> json) {
@@ -46,6 +49,9 @@ class AddNewSolfaRquestModel extends Equatable {
       strNotes: json['strNotes'] ?? '',
       requestAuditorID: json['RequestAuditorID'] ?? 0,
       solfaTypeid: json['SolfaTypeid'] ?? 0,
+      attachment: (json['Attachment'] as List<dynamic>)
+          .map((e) => AttachmentModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -64,6 +70,7 @@ class AddNewSolfaRquestModel extends Equatable {
       'strNotes': strNotes,
       'RequestAuditorID': requestAuditorID,
       'SolfaTypeid': solfaTypeid,
+      'Attachment': attachment.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -82,5 +89,6 @@ class AddNewSolfaRquestModel extends Equatable {
     strNotes,
     requestAuditorID,
     solfaTypeid,
+    attachment,
   ];
 }

@@ -71,14 +71,6 @@ class RequestHistoryDetilesScreen extends StatelessWidget {
               AppLocalKay.alternative_code.tr(): request.alternativeEmpCode?.toString() ?? '',
             },
           ),
-          SectionWidget(
-            title: AppLocalKay.attachments.tr(),
-            items: {
-              AppLocalKay.attachments.tr(): (request.attachFileName?.isEmpty ?? true)
-                  ? AppLocalKay.no_attachment.tr()
-                  : request.attachFileName,
-            },
-          ),
         ],
       ),
     );

@@ -42,8 +42,8 @@ class EndPoints {
   static const String deleteServices = '/DeltagroupService/Vacation/ServiceDel';
   static const String uploadFiles = '/DeltagroupService/Vacation/UploadFiles';
   static const String deleteFile = '/DeltagroupService/Vacation/AttachmentDel';
-  static String getattachment({required int requestId}) =>
-      '/DeltagroupService/Vacation/GetVacationAttachment?RequestId=$requestId';
+  static String getattachment({required int requestId, required int attchmentType}) =>
+      '/DeltagroupService/Vacation/GetVacationAttachment?RequestId=$requestId&AttchmentTypeid=$attchmentType';
   static String imageFileName({required String imageFileName}) =>
       '/DeltagroupService/Users/userimge?imageFileName=$imageFileName';
   //العوده من الاجازه///

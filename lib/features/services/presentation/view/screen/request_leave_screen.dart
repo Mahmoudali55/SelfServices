@@ -75,7 +75,10 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
   void _loadAttachmentsToField() async {
     if (widget.vacationRequestOrdersModel != null) {
       final cubit = context.read<ServicesCubit>();
-      await cubit.getAttachments(requestId: widget.vacationRequestOrdersModel!.vacRequestId);
+      await cubit.getAttachments(
+        requestId: widget.vacationRequestOrdersModel!.vacRequestId,
+        attchmentType: 14,
+      );
 
       final state = cubit.state;
       if (state.vacationAttachmentsStatus != null && state.vacationAttachmentsStatus!.isSuccess) {
@@ -668,18 +671,20 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                       EmployeePickerField(
                         empCode: widget.empCode ?? 0,
                         pagePrivID: 1,
-                        validator:
-                            (context.read<ServicesCubit>().selectedLeave?.nameGpf?.contains(
-                                  'مرضية',
-                                ) ??
-                                false)
-                            ? null
-                            : (p0) {
-                                if (p0 == null || p0.isEmpty) {
-                                  return AppLocalKay.employeetransfername.tr();
-                                }
-                                return null;
-                              },
+                        validator: (p0) {
+                          final selectedLeave = context.read<ServicesCubit>().selectedLeave;
+
+                          if (selectedLeave?.codeGpf == 2) {
+                            return null;
+                          }
+
+                          if (p0 == null || p0.isEmpty) {
+                            return AppLocalKay.employeetransfername.tr();
+                          }
+
+                          return null;
+                        },
+
                         title: AppLocalKay.employeetransfername.tr(),
                         idController: transferEmpIdController,
                         nameController: transferEmpNameController,
@@ -852,6 +857,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
 
                                       await cubit.getAttachments(
                                         requestId: widget.vacationRequestOrdersModel!.vacRequestId,
+                                        attchmentType: 14,
                                       );
 
                                       final state = cubit.state;
@@ -878,6 +884,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                                                     requestId: widget
                                                         .vacationRequestOrdersModel!
                                                         .vacRequestId,
+                                                    attchmentType: 14,
                                                   );
                                                   final newState = cubit.state;
                                                   if (newState.vacationAttachmentsStatus != null &&
@@ -992,6 +999,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                                                                         .vacRequestId,
                                                                     attachId: item.ser,
                                                                     context: context,
+                                                                    attchmentType: 14,
                                                                   );
 
                                                                   await refreshAttachments();

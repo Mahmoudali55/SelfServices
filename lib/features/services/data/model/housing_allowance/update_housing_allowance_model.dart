@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
 
 class UpdateHousingAllowanceRequestModel extends Equatable {
   final int requestId;
@@ -8,7 +9,7 @@ class UpdateHousingAllowanceRequestModel extends Equatable {
   final double sakanAmount;
   final int amountType;
   final String strNotes;
-
+  final List<AttachmentModel> attachment;
   const UpdateHousingAllowanceRequestModel({
     required this.requestId,
     required this.empCode,
@@ -17,6 +18,7 @@ class UpdateHousingAllowanceRequestModel extends Equatable {
     required this.sakanAmount,
     required this.amountType,
     required this.strNotes,
+    required this.attachment,
   });
 
   factory UpdateHousingAllowanceRequestModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,9 @@ class UpdateHousingAllowanceRequestModel extends Equatable {
       sakanAmount: (json['SakanAmount'] ?? 0).toDouble(),
       amountType: json['AmountType'] ?? 0,
       strNotes: json['strNotes'] ?? '',
+      attachment: (json['Attachment'] as List<dynamic>)
+          .map((e) => AttachmentModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -40,6 +45,7 @@ class UpdateHousingAllowanceRequestModel extends Equatable {
       'SakanAmount': sakanAmount,
       'AmountType': amountType,
       'strNotes': strNotes,
+      'Attachment': attachment.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -60,6 +66,7 @@ class UpdateHousingAllowanceRequestModel extends Equatable {
       sakanAmount: sakanAmount ?? this.sakanAmount,
       amountType: amountType ?? this.amountType,
       strNotes: strNotes ?? this.strNotes,
+      attachment: attachment,
     );
   }
 
@@ -72,5 +79,6 @@ class UpdateHousingAllowanceRequestModel extends Equatable {
     sakanAmount,
     amountType,
     strNotes,
+    attachment,
   ];
 }

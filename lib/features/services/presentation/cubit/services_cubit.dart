@@ -188,6 +188,7 @@ class ServicesCubit extends Cubit<ServicesState> {
     required int attachId,
     required BuildContext context,
     required int requestId,
+    required int attchmentType,
   }) async {
     emit(state.copyWith(deleteattachmentStatus: const StatusState.loading()));
 
@@ -204,15 +205,18 @@ class ServicesCubit extends Cubit<ServicesState> {
           message: context.locale.languageCode == 'ar' ? 'تم الحذف بنجاح' : 'Deleted successfully',
           type: ToastType.success,
         );
-        getAttachments(requestId: requestId);
+        getAttachments(requestId: requestId, attchmentType: attchmentType);
       },
     );
   }
 
-  Future<void> getAttachments({required int requestId}) async {
+  Future<void> getAttachments({required int requestId, required int attchmentType}) async {
     emit(state.copyWith(vacationAttachmentsStatus: const StatusState.loading()));
 
-    final result = await leavesRepo.getVacationAttachments(vacationId: requestId);
+    final result = await leavesRepo.getVacationAttachments(
+      vacationId: requestId,
+      attchmentType: attchmentType,
+    );
 
     result.fold(
       (error) =>
