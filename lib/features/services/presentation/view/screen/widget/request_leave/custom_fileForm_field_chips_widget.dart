@@ -20,10 +20,12 @@ class CustomFileFormFieldChips extends StatefulWidget {
     super.key,
     required this.controller,
     required this.onFilesChanged,
+    this.initialFiles,
   });
 
   final TextEditingController controller;
   final void Function(List<Map<String, String>> files) onFilesChanged;
+  final List<Map<String, String>>? initialFiles;
 
   @override
   State<CustomFileFormFieldChips> createState() => _CustomFileFormFieldChipsState();
@@ -32,6 +34,16 @@ class CustomFileFormFieldChips extends StatefulWidget {
 class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
   List<Map<String, String>> selectedFilesMap = [];
   List<String> selectedFilesPaths = [];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialFiles != null) {
+      selectedFilesMap = List.from(widget.initialFiles!);
+      selectedFilesPaths = selectedFilesMap.map((e) => e['AttchmentFileName'] ?? '').toList();
+      widget.controller.text = selectedFilesMap.map((e) => e['AttatchmentName']).join(', ');
+    }
+  }
 
   void _pickFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);

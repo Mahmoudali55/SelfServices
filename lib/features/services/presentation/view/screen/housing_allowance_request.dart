@@ -129,7 +129,9 @@ class _HousingAllowanceRequestScreenState extends State<HousingAllowanceRequestS
                 widget.model == null
                     ? const SizedBox.shrink()
                     : Padding(
-                        padding: const EdgeInsets.only(bottom: 55),
+                        padding: EdgeInsets.only(
+                          bottom: attachmentController.text.isEmpty ? 0 : 55,
+                        ),
                         child: GestureDetector(
                           onTap: () async {
                             final cubit = context.read<ServicesCubit>();

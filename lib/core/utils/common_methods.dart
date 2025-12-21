@@ -22,7 +22,7 @@ class CommonMethods {
     ToastType type = ToastType.success,
     Color? backgroundColor,
     Color? textColor,
-    int seconds = 7,
+    int seconds = 4,
   }) {
     BotToast.showCustomText(
       duration: Duration(seconds: seconds),
