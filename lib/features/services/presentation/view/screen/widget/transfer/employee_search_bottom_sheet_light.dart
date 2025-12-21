@@ -14,8 +14,12 @@ import 'package:my_template/features/services/presentation/cubit/services_state.
 
 class EmployeeSearchBottomSheetTransfer extends StatefulWidget {
   final Function(EmployeeModel emp) onEmployeeSelected;
-
-  const EmployeeSearchBottomSheetTransfer({super.key, required this.onEmployeeSelected});
+  final int currentEmpCode;
+  const EmployeeSearchBottomSheetTransfer({
+    super.key,
+    required this.onEmployeeSelected,
+    required this.currentEmpCode,
+  });
 
   @override
   State<EmployeeSearchBottomSheetTransfer> createState() =>
@@ -33,7 +37,10 @@ class _EmployeeSearchBottomSheetTransferState extends State<EmployeeSearchBottom
           return Center(child: Text(state.employeesStatus.error ?? 'حدث خطأ'));
         }
 
-        final employees = state.employeesStatus.data ?? [];
+        final employees = (state.employeesStatus.data ?? [])
+            .where((emp) => emp.empCode == widget.currentEmpCode)
+            .toList();
+
         final filtered = employees.where((emp) {
           final name = (emp.empName ?? '').toLowerCase();
           final code = emp.empCode.toString().toLowerCase();

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
 
 class AddNewDynamicOrder extends Equatable {
   final int empCode;
@@ -8,7 +9,7 @@ class AddNewDynamicOrder extends Equatable {
   final String strField1;
   final String strField2;
   final String strNotes;
-
+  final List<AttachmentModel> attachment;
   const AddNewDynamicOrder({
     required this.empCode,
     required this.requestDate,
@@ -17,6 +18,7 @@ class AddNewDynamicOrder extends Equatable {
     required this.strField1,
     required this.strField2,
     required this.strNotes,
+    required this.attachment,
   });
 
   factory AddNewDynamicOrder.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,9 @@ class AddNewDynamicOrder extends Equatable {
       strField1: json['StrField1'] ?? '',
       strField2: json['StrField2'] ?? '',
       strNotes: json['StrNotes'] ?? '',
+      attachment: (json['Attachment'] as List<dynamic>)
+          .map((e) => AttachmentModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -40,6 +45,7 @@ class AddNewDynamicOrder extends Equatable {
       'StrField1': strField1,
       'StrField2': strField2,
       'StrNotes': strNotes,
+      'Attachment': attachment.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -51,6 +57,7 @@ class AddNewDynamicOrder extends Equatable {
     String? strField1,
     String? strNotes,
     String? strField2,
+    List<AttachmentModel>? attachment,
   }) {
     return AddNewDynamicOrder(
       empCode: empCode ?? this.empCode,
@@ -60,6 +67,7 @@ class AddNewDynamicOrder extends Equatable {
       strField1: strField1 ?? this.strField1,
       strNotes: strNotes ?? this.strNotes,
       strField2: strField2 ?? this.strField2,
+      attachment: attachment ?? this.attachment,
     );
   }
 
@@ -72,5 +80,6 @@ class AddNewDynamicOrder extends Equatable {
     strField1,
     strNotes,
     strField2,
+    attachment,
   ];
 }

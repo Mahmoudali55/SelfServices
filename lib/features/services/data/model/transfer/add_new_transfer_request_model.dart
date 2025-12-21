@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
 
 class AddNewTransferRequestModel extends Equatable {
   final int empCode;
@@ -10,7 +11,7 @@ class AddNewTransferRequestModel extends Equatable {
   final int tProj;
   final String causes;
   final int adminEmp;
-
+  final List<AttachmentModel> attachment;
   const AddNewTransferRequestModel({
     required this.empCode,
     required this.requsetDate,
@@ -19,6 +20,7 @@ class AddNewTransferRequestModel extends Equatable {
     required this.tProj,
     required this.causes,
     required this.adminEmp,
+    required this.attachment,
   });
 
   factory AddNewTransferRequestModel.fromJson(Map<String, dynamic> json) {
@@ -30,6 +32,9 @@ class AddNewTransferRequestModel extends Equatable {
       tProj: json['TPROJ'] ?? 0,
       causes: json['CAUSES'] ?? '',
       adminEmp: json['AdminEmp'] ?? 0,
+      attachment: (json['Attachment'] as List<dynamic>)
+          .map((e) => AttachmentModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -42,11 +47,21 @@ class AddNewTransferRequestModel extends Equatable {
       'TPROJ': tProj,
       'CAUSES': causes,
       'AdminEmp': adminEmp,
+      'Attachment': attachment.map((e) => e.toJson()).toList(),
     };
   }
 
   String toJsonString() => jsonEncode(toJson());
 
   @override
-  List<Object?> get props => [empCode, requsetDate, tDep, tBra, tProj, causes, adminEmp];
+  List<Object?> get props => [
+    empCode,
+    requsetDate,
+    tDep,
+    tBra,
+    tProj,
+    causes,
+    adminEmp,
+    attachment,
+  ];
 }

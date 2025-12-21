@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,10 +15,15 @@ import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/request_history/data/model/get_dynamic_order_model.dart';
 import 'package:my_template/features/services/data/model/dynamic_orders/add_new_dynamic_order.dart';
 import 'package:my_template/features/services/data/model/dynamic_orders/updata_request_general_model.dart';
+import 'package:my_template/features/services/data/model/request_leave/get_vacation_attachment_model.dart';
+import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
 import 'package:my_template/features/services/presentation/cubit/services_cubit.dart';
 import 'package:my_template/features/services/presentation/cubit/services_state.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/custom_app_bar_services_widget.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/custom_bottom_nav_button_widget.dart';
+import 'package:my_template/features/services/presentation/view/screen/widget/request_leave/custom_fileForm_field_chips_widget.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 
 class RequestGeneralScreen extends StatefulWidget {
   const RequestGeneralScreen({Key? key, this.dynamicOrderModel}) : super(key: key);
@@ -74,8 +82,16 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
     super.dispose();
   }
 
+  final attachmentController = TextEditingController();
+  List<Map<String, String>> selectedFilesMap = [];
   @override
   Widget build(BuildContext context) {
+    final List<AttachmentModel> attachmentList = selectedFilesMap.map((file) {
+      return AttachmentModel(
+        attachmentName: file['AttatchmentName'] ?? '',
+        attachmentFileName: file['AttchmentFileName'] ?? '',
+      );
+    }).toList();
     return Scaffold(
       appBar: CustomAppBarServicesWidget(
         context,
@@ -117,6 +133,7 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
                     strField1: requestDescription.text,
                     strField2: '',
                     strNotes: notes.text,
+                    attachment: attachmentList,
                   ),
                 );
               } else {
@@ -128,6 +145,7 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
                     strField1: requestDescription.text,
                     strField2: '',
                     strNotes: notes.text,
+                    attachment: attachmentList,
                   ),
                 );
               }
@@ -174,6 +192,194 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
                   title: AppLocalKay.reason.tr(),
                   maxLines: 3,
                   validator: (v) => (v == null || v.trim().isEmpty) ? 'السبب مطلوب' : null,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomFileFormFieldChips(
+                        controller: attachmentController,
+                        onFilesChanged: (files) {
+                          setState(() {
+                            selectedFilesMap = files;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    widget.dynamicOrderModel == null
+                        ? const SizedBox.shrink()
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 55),
+                            child: GestureDetector(
+                              onTap: () async {
+                                final cubit = context.read<ServicesCubit>();
+
+                                await cubit.getAttachments(
+                                  requestId: widget.dynamicOrderModel!.requestId,
+                                  attchmentType: 5007,
+                                );
+
+                                final state = cubit.state;
+                                if (state.vacationAttachmentsStatus != null &&
+                                    state.vacationAttachmentsStatus!.isSuccess) {
+                                  List<VacationAttachmentItem> attachments =
+                                      List<VacationAttachmentItem>.from(
+                                        state.vacationAttachmentsStatus!.data ?? [],
+                                      );
+
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                    ),
+                                    builder: (bottomSheetContext) {
+                                      return StatefulBuilder(
+                                        builder: (ctx, setStateSheet) {
+                                          Future<void> refreshAttachments() async {
+                                            await cubit.getAttachments(
+                                              requestId: widget.dynamicOrderModel!.requestId,
+                                              attchmentType: 5007,
+                                            );
+                                            final newState = cubit.state;
+                                            if (newState.vacationAttachmentsStatus != null &&
+                                                newState.vacationAttachmentsStatus!.isSuccess) {
+                                              setStateSheet(() {
+                                                attachments = List<VacationAttachmentItem>.from(
+                                                  newState.vacationAttachmentsStatus!.data ?? [],
+                                                );
+                                              });
+                                            } else {}
+                                          }
+
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context).viewInsets.bottom,
+                                            ),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const SizedBox(height: 12),
+                                                Text(
+                                                  context.locale.languageCode == 'ar'
+                                                      ? 'المرفقات'
+                                                      : 'Attachments',
+                                                  style: const TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 8),
+                                                if (attachments.isEmpty)
+                                                  Padding(
+                                                    padding: const EdgeInsets.all(16.0),
+                                                    child: Text(
+                                                      context.locale.languageCode == 'ar'
+                                                          ? 'لا توجد مرفقات'
+                                                          : 'No attachments',
+                                                    ),
+                                                  )
+                                                else
+                                                  ListView.builder(
+                                                    shrinkWrap: true,
+                                                    itemCount: attachments.length,
+                                                    itemBuilder: (context, index) {
+                                                      final item = attachments[index];
+                                                      return ListTile(
+                                                        leading: IconButton(
+                                                          icon: const Icon(Icons.remove_red_eye),
+                                                          onPressed: () async {
+                                                            final cubit = context
+                                                                .read<ServicesCubit>();
+
+                                                            await cubit.imageFileName(
+                                                              item.attchmentFileName,
+                                                              context,
+                                                            );
+                                                            final stateStatus =
+                                                                cubit.state.imageFileNameStatus;
+
+                                                            if (stateStatus?.isSuccess == true) {
+                                                              final base64File =
+                                                                  stateStatus?.data ?? '';
+
+                                                              await openBase64File(
+                                                                base64File,
+                                                                item.attchmentFileName,
+                                                              );
+                                                            } else if (stateStatus?.isFailure ==
+                                                                true) {
+                                                              showDialog(
+                                                                context: context,
+                                                                builder: (_) => AlertDialog(
+                                                                  content: Text(
+                                                                    stateStatus?.error ?? '',
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            } else {
+                                                              showDialog(
+                                                                context: context,
+                                                                builder: (_) => const AlertDialog(
+                                                                  content:
+                                                                      CircularProgressIndicator(),
+                                                                ),
+                                                              );
+                                                            }
+                                                          },
+                                                        ),
+                                                        title: Text(item.attatchmentName),
+                                                        trailing: IconButton(
+                                                          icon: const Icon(
+                                                            Icons.delete,
+                                                            color: Colors.red,
+                                                          ),
+                                                          onPressed: () async {
+                                                            await cubit.deleteAttachment(
+                                                              requestId: widget
+                                                                  .dynamicOrderModel!
+                                                                  .requestId,
+                                                              attachId: item.ser,
+                                                              context: context,
+                                                              attchmentType: 5007,
+                                                            );
+
+                                                            await refreshAttachments();
+                                                          },
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                const SizedBox(height: 12),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  CommonMethods.showToast(
+                                    message: context.locale.languageCode == 'ar'
+                                        ? 'حدث خطأ أثناء تحميل الملفات'
+                                        : 'Failed to load attachments',
+                                    type: ToastType.error,
+                                  );
+                                }
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 30),
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: AppColor.primaryColor(context),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(Icons.search, color: AppColor.whiteColor(context)),
+                              ),
+                            ),
+                          ),
+                  ],
                 ),
                 const SizedBox(height: 24),
               ],
@@ -254,5 +460,15 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
     if (state.addnewGeneralStatus.isFailure) {
       _showToast(context, state.addnewGeneralStatus.error ?? 'Error');
     }
+  }
+
+  Future<void> openBase64File(String base64String, String fileName) async {
+    try {
+      final bytes = base64Decode(base64String);
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/$fileName');
+      await file.writeAsBytes(bytes, flush: true);
+      await OpenFilex.open(file.path);
+    } catch (e) {}
   }
 }

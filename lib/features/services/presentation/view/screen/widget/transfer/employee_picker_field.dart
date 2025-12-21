@@ -14,7 +14,7 @@ class EmployeePickerTransferField extends StatelessWidget {
   final TextEditingController nameController;
   final Function(dynamic emp) onEmployeeSelected;
   final String? Function(String?)? validator;
-
+  final int currentEmpCode;
   const EmployeePickerTransferField({
     super.key,
     required this.title,
@@ -22,6 +22,7 @@ class EmployeePickerTransferField extends StatelessWidget {
     required this.nameController,
     required this.onEmployeeSelected,
     this.validator,
+    required this.currentEmpCode,
   });
 
   @override
@@ -86,7 +87,10 @@ class EmployeePickerTransferField extends StatelessWidget {
           value: context.read<ServicesCubit>(),
           child: SizedBox(
             height: 600,
-            child: EmployeeSearchBottomSheetTransfer(onEmployeeSelected: onEmployeeSelected),
+            child: EmployeeSearchBottomSheetTransfer(
+              onEmployeeSelected: onEmployeeSelected,
+              currentEmpCode: currentEmpCode,
+            ),
           ),
         );
       },

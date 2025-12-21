@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
 
 class UpdataRequestGeneralModel extends Equatable {
   final int requestId;
@@ -9,7 +10,7 @@ class UpdataRequestGeneralModel extends Equatable {
   final String strField1;
   final String strField2;
   final String strNotes;
-
+  final List<AttachmentModel> attachment;
   const UpdataRequestGeneralModel({
     required this.requestId,
     required this.empCode,
@@ -19,6 +20,7 @@ class UpdataRequestGeneralModel extends Equatable {
     required this.strField1,
     required this.strField2,
     required this.strNotes,
+    required this.attachment,
   });
 
   factory UpdataRequestGeneralModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,9 @@ class UpdataRequestGeneralModel extends Equatable {
       strField1: json['StrField1'] ?? '',
       strNotes: json['StrNotes'] ?? '',
       strField2: json['StrField2'] ?? '',
+      attachment: (json['Attachment'] as List<dynamic>)
+          .map((e) => AttachmentModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -44,6 +49,7 @@ class UpdataRequestGeneralModel extends Equatable {
       'StrField1': strField1,
       'StrField2': strField2,
       'StrNotes': strNotes,
+      'Attachment': attachment.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -57,5 +63,6 @@ class UpdataRequestGeneralModel extends Equatable {
     strField1,
     strField2,
     strNotes,
+    attachment,
   ];
 }
