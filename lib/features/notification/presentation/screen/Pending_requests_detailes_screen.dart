@@ -126,101 +126,93 @@ class PendingRequestDetailScreen extends StatelessWidget {
                   title: AppLocalKay.reason.tr(),
                   value: request.cAUSES ?? '-',
                 ),
-                if (request.attachments.isNotEmpty)
-                  ...request.attachments.map((attachment) {
-                    return buildInfoRow(
-                      icon: Icons.remove_red_eye,
-                      title: AppLocalKay.attachment.tr(),
-                      value: formatAttachmentName(attachment.attachmentName),
-                      value2: GestureDetector(
-                        onTap: () async {
-                          final cubit = context.read<ServicesCubit>();
 
-                          await cubit.imageFileName(attachment.attachmentFileName ?? '', context);
-                          final stateStatus = cubit.state.imageFileNameStatus;
-
-                          if (stateStatus?.isSuccess == true) {
-                            final base64File = stateStatus?.data ?? '';
-
-                            await FileViewerUtils.displayFile(
-                              context,
-                              base64File,
-                              attachment.attachmentFileName ?? '',
-                            );
-                          } else if (stateStatus?.isFailure == true) {
-                            showDialog(
-                              context: context,
-                              builder: (_) => AlertDialog(content: Text(stateStatus?.error ?? '')),
-                            );
-                          }
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: 40,
-                          width: 60,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: AppColor.primaryColor(context),
-                          ),
-                          child: Text(
-                            AppLocalKay.view.tr(),
-                            style: AppTextStyle.text14RGrey(
-                              context,
-                              color: AppColor.whiteColor(context),
-                            ),
-                          ),
+                if (request.attachments.isNotEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.attach_file, color: Colors.blueAccent),
+                        const SizedBox(width: 12),
+                        Text(
+                          '${AppLocalKay.attachment.tr()} (${request.attachments.length})',
+                          style: AppTextStyle.text16MSecond(context),
                         ),
-                      ),
-                    );
-                  }).toList()
-                else
-                  buildInfoRow(
-                    icon: Icons.remove_red_eye,
-                    title: AppLocalKay.attachment.tr(),
-                    value: formatAttachmentName(request.attatchmentName),
-                    value2: request.attatchmentName != null
-                        ? GestureDetector(
-                            onTap: () async {
-                              final cubit = context.read<ServicesCubit>();
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
 
-                              await cubit.imageFileName(request.AttchmentFileName ?? '', context);
-                              final stateStatus = cubit.state.imageFileNameStatus;
+                  Column(
+                    children: request.attachments.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final attachment = entry.value;
 
-                              if (stateStatus?.isSuccess == true) {
-                                final base64File = stateStatus?.data ?? '';
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 24),
 
-                                await FileViewerUtils.displayFile(
-                                  context,
-                                  base64File,
-                                  request.AttchmentFileName ?? '',
-                                );
-                              } else if (stateStatus?.isFailure == true) {
-                                showDialog(
-                                  context: context,
-                                  builder: (_) =>
-                                      AlertDialog(content: Text(stateStatus?.error ?? '')),
-                                );
-                              }
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: 40,
-                              width: 60,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: AppColor.primaryColor(context),
-                              ),
+                            Text('${index + 1}- ', style: AppTextStyle.text16MSecond(context)),
+
+                            Expanded(
                               child: Text(
-                                AppLocalKay.view.tr(),
-                                style: AppTextStyle.text14RGrey(
+                                formatAttachmentName(attachment.attachmentName),
+                                style: AppTextStyle.text16MSecond(context),
+                              ),
+                            ),
+
+                            GestureDetector(
+                              onTap: () async {
+                                final cubit = context.read<ServicesCubit>();
+
+                                await cubit.imageFileName(
+                                  attachment.attachmentFileName ?? '',
                                   context,
-                                  color: AppColor.whiteColor(context),
+                                );
+
+                                final stateStatus = cubit.state.imageFileNameStatus;
+
+                                if (stateStatus?.isSuccess == true) {
+                                  final base64File = stateStatus?.data ?? '';
+
+                                  await FileViewerUtils.displayFile(
+                                    context,
+                                    base64File,
+                                    attachment.attachmentFileName ?? '',
+                                  );
+                                } else if (stateStatus?.isFailure == true) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) =>
+                                        AlertDialog(content: Text(stateStatus?.error ?? '')),
+                                  );
+                                }
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 36,
+                                width: 60,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: AppColor.primaryColor(context),
+                                ),
+                                child: Text(
+                                  AppLocalKay.view.tr(),
+                                  style: AppTextStyle.text14RGrey(
+                                    context,
+                                    color: AppColor.whiteColor(context),
+                                  ),
                                 ),
                               ),
                             ),
-                          )
-                        : const SizedBox.shrink(),
+                          ],
+                        ),
+                      );
+                    }).toList(),
                   ),
+                ],
               ],
             ),
           ),

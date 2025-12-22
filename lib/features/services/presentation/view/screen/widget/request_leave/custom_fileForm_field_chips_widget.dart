@@ -46,13 +46,25 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
   }
 
   void _pickFiles() async {
+    if (widget.controller.text.trim().isEmpty) {
+      CommonMethods.showToast(
+        message: context.locale.languageCode == 'ar'
+            ? 'يرجى إدخال وصف المرفق أولاً'
+            : 'Please enter attachment description first',
+        type: ToastType.warning,
+      );
+      return;
+    }
+
     FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
 
     if (result != null) {
+      final description = widget.controller.text.trim();
+
       final newFiles = result.files.map((file) {
         return {
-          'AttatchmentName': file.name,
-          'AttchmentFileName': file.path!,
+          'AttatchmentName': description, // ✅ الوصف
+          'AttchmentFileName': file.path!, // Local (مؤقت)
           'LocalPath': file.path!,
         };
       }).toList();
@@ -60,10 +72,9 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
       setState(() {
         selectedFilesMap.addAll(newFiles);
         selectedFilesPaths.addAll(newFiles.map((e) => e['AttchmentFileName']!));
-        widget.controller.text = selectedFilesMap.map((e) => e['AttatchmentName']).join(', ');
+        widget.controller.clear(); // ✔️ نفرغ الوصف بعد الإضافة
       });
 
-      // رفع الملفات
       context.read<ServicesCubit>().uploadFiles(selectedFilesPaths);
     }
   }
@@ -111,6 +122,11 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
                     return ListTile(
                       leading: const Icon(Icons.insert_drive_file),
                       title: Text(file['AttatchmentName'] ?? ''),
+                      subtitle: Text(
+                        (file['AttchmentFileName'] ?? '').split('\\').last,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+
                       onTap: () {
                         final localPath = file['LocalPath'] ?? '';
                         final serverPath = file['AttchmentFileName'] ?? '';
@@ -169,15 +185,11 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
           final responseFiles = (status.data as List<String>).asMap().entries.map((entry) {
             final index = entry.key;
             final serverPath = entry.value;
-            String localPath = '';
-            if (index < selectedFilesMap.length) {
-              localPath = selectedFilesMap[index]['LocalPath'] ?? '';
-            }
 
             return {
-              'AttatchmentName': serverPath.split('\\').last,
+              'AttatchmentName': selectedFilesMap[index]['AttatchmentName'] ?? '',
               'AttchmentFileName': serverPath,
-              'LocalPath': localPath,
+              'LocalPath': selectedFilesMap[index]['LocalPath'] ?? '',
             };
           }).toList();
 

@@ -55,7 +55,9 @@ class PendingRequestCard extends StatelessWidget {
                           : AppColor.primaryColor(context),
                     ),
                     child: Text(
-                      request.attatchmentName == null ? "تحت المعالجة" : "تم ارفاق المرفقات ",
+                      request.attatchmentName == null
+                          ? AppLocalKay.pending.tr()
+                          : AppLocalKay.attachmentsAttached.tr(),
                       style: AppTextStyle.text14RGrey(context, color: AppColor.whiteColor(context)),
                     ),
                   ),

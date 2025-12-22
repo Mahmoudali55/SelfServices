@@ -100,199 +100,203 @@ class _HousingAllowanceRequestScreenState extends State<HousingAllowanceRequestS
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            HousingAllowanceForm(
-              formKey: _formKey,
-              dateController: _dateController,
-              noteController: _noteController,
-              amountController: _amountController,
-              requestIdController: _requestIdController,
-              travelPlaceValues: travelPlaceValues,
-              selectedPlace: selectedPlace,
-              onPlaceChanged: (val) => setState(() => selectedPlace = val),
-            ),
-            Gap(10.h),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomFileFormFieldChips(
-                    controller: attachmentController,
-                    onFilesChanged: (files) {
-                      setState(() {
-                        selectedFilesMap = files;
-                      });
-                    },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              HousingAllowanceForm(
+                formKey: _formKey,
+                dateController: _dateController,
+                noteController: _noteController,
+                amountController: _amountController,
+                requestIdController: _requestIdController,
+                travelPlaceValues: travelPlaceValues,
+                selectedPlace: selectedPlace,
+                onPlaceChanged: (val) => setState(() => selectedPlace = val),
+              ),
+              Gap(10.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomFileFormFieldChips(
+                      controller: attachmentController,
+                      onFilesChanged: (files) {
+                        setState(() {
+                          selectedFilesMap = files;
+                        });
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                widget.model == null
-                    ? const SizedBox.shrink()
-                    : Padding(
-                        padding: EdgeInsets.only(
-                          bottom: attachmentController.text.isEmpty ? 0 : 55,
-                        ),
-                        child: GestureDetector(
-                          onTap: () async {
-                            final cubit = context.read<ServicesCubit>();
+                  const SizedBox(width: 10),
+                  widget.model == null
+                      ? const SizedBox.shrink()
+                      : Padding(
+                          padding: EdgeInsets.only(
+                            bottom: attachmentController.text.isEmpty ? 0 : 55,
+                          ),
+                          child: GestureDetector(
+                            onTap: () async {
+                              final cubit = context.read<ServicesCubit>();
 
-                            await cubit.getAttachments(
-                              requestId: widget.model!.requestID,
-                              attchmentType: 22,
-                            );
+                              await cubit.getAttachments(
+                                requestId: widget.model!.requestID,
+                                attchmentType: 22,
+                              );
 
-                            final state = cubit.state;
-                            if (state.vacationAttachmentsStatus != null &&
-                                state.vacationAttachmentsStatus!.isSuccess) {
-                              List<VacationAttachmentItem> attachments =
-                                  List<VacationAttachmentItem>.from(
-                                    state.vacationAttachmentsStatus!.data ?? [],
-                                  );
+                              final state = cubit.state;
+                              if (state.vacationAttachmentsStatus != null &&
+                                  state.vacationAttachmentsStatus!.isSuccess) {
+                                List<VacationAttachmentItem> attachments =
+                                    List<VacationAttachmentItem>.from(
+                                      state.vacationAttachmentsStatus!.data ?? [],
+                                    );
 
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                                ),
-                                builder: (bottomSheetContext) {
-                                  return StatefulBuilder(
-                                    builder: (ctx, setStateSheet) {
-                                      Future<void> refreshAttachments() async {
-                                        await cubit.getAttachments(
-                                          requestId: widget.model!.requestID,
-                                          attchmentType: 22,
-                                        );
-                                        final newState = cubit.state;
-                                        if (newState.vacationAttachmentsStatus != null &&
-                                            newState.vacationAttachmentsStatus!.isSuccess) {
-                                          setStateSheet(() {
-                                            attachments = List<VacationAttachmentItem>.from(
-                                              newState.vacationAttachmentsStatus!.data ?? [],
-                                            );
-                                          });
-                                        } else {}
-                                      }
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                  ),
+                                  builder: (bottomSheetContext) {
+                                    return StatefulBuilder(
+                                      builder: (ctx, setStateSheet) {
+                                        Future<void> refreshAttachments() async {
+                                          await cubit.getAttachments(
+                                            requestId: widget.model!.requestID,
+                                            attchmentType: 22,
+                                          );
+                                          final newState = cubit.state;
+                                          if (newState.vacationAttachmentsStatus != null &&
+                                              newState.vacationAttachmentsStatus!.isSuccess) {
+                                            setStateSheet(() {
+                                              attachments = List<VacationAttachmentItem>.from(
+                                                newState.vacationAttachmentsStatus!.data ?? [],
+                                              );
+                                            });
+                                          } else {}
+                                        }
 
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                          bottom: MediaQuery.of(context).viewInsets.bottom,
-                                        ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const SizedBox(height: 12),
-                                            Text(
-                                              context.locale.languageCode == 'ar'
-                                                  ? 'المرفقات'
-                                                  : 'Attachments',
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            if (attachments.isEmpty)
-                                              Padding(
-                                                padding: const EdgeInsets.all(16.0),
-                                                child: Text(
-                                                  context.locale.languageCode == 'ar'
-                                                      ? 'لا توجد مرفقات'
-                                                      : 'No attachments',
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                                          ),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const SizedBox(height: 12),
+                                              Text(
+                                                context.locale.languageCode == 'ar'
+                                                    ? 'المرفقات'
+                                                    : 'Attachments',
+                                                style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
-                                              )
-                                            else
-                                              ListView.builder(
-                                                shrinkWrap: true,
-                                                itemCount: attachments.length,
-                                                itemBuilder: (context, index) {
-                                                  final item = attachments[index];
-                                                  return ListTile(
-                                                    leading: IconButton(
-                                                      icon: const Icon(Icons.remove_red_eye),
-                                                      onPressed: () async {
-                                                        final cubit = context.read<ServicesCubit>();
-
-                                                        await cubit.imageFileName(
-                                                          item.attchmentFileName,
-                                                          context,
-                                                        );
-                                                        final stateStatus =
-                                                            cubit.state.imageFileNameStatus;
-
-                                                        if (stateStatus?.isSuccess == true) {
-                                                          final base64File =
-                                                              stateStatus?.data ?? '';
-
-                                                          await FileViewerUtils.displayFile(
-                                                            context,
-                                                            base64File,
-                                                            item.attchmentFileName,
-                                                          );
-                                                        } else if (stateStatus?.isFailure == true) {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (_) => AlertDialog(
-                                                              content: Text(
-                                                                stateStatus?.error ?? '',
-                                                              ),
-                                                            ),
-                                                          );
-                                                        }
-                                                      },
-                                                    ),
-                                                    title: Text(item.attatchmentName),
-                                                    trailing: IconButton(
-                                                      icon: const Icon(
-                                                        Icons.delete,
-                                                        color: Colors.red,
-                                                      ),
-                                                      onPressed: () async {
-                                                        await cubit.deleteAttachment(
-                                                          requestId: widget.model!.requestID,
-                                                          attachId: item.ser,
-                                                          context: context,
-                                                          attchmentType: 22,
-                                                        );
-
-                                                        await refreshAttachments();
-                                                      },
-                                                    ),
-                                                  );
-                                                },
                                               ),
-                                            const SizedBox(height: 12),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              );
-                            } else {
-                              CommonMethods.showToast(
-                                message: context.locale.languageCode == 'ar'
-                                    ? 'حدث خطأ أثناء تحميل الملفات'
-                                    : 'Failed to load attachments',
-                                type: ToastType.error,
-                              );
-                            }
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 30),
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: AppColor.primaryColor(context),
-                              borderRadius: BorderRadius.circular(10),
+                                              const SizedBox(height: 8),
+                                              if (attachments.isEmpty)
+                                                Padding(
+                                                  padding: const EdgeInsets.all(16.0),
+                                                  child: Text(
+                                                    context.locale.languageCode == 'ar'
+                                                        ? 'لا توجد مرفقات'
+                                                        : 'No attachments',
+                                                  ),
+                                                )
+                                              else
+                                                ListView.builder(
+                                                  shrinkWrap: true,
+                                                  itemCount: attachments.length,
+                                                  itemBuilder: (context, index) {
+                                                    final item = attachments[index];
+                                                    return ListTile(
+                                                      leading: IconButton(
+                                                        icon: const Icon(Icons.remove_red_eye),
+                                                        onPressed: () async {
+                                                          final cubit = context
+                                                              .read<ServicesCubit>();
+
+                                                          await cubit.imageFileName(
+                                                            item.attchmentFileName,
+                                                            context,
+                                                          );
+                                                          final stateStatus =
+                                                              cubit.state.imageFileNameStatus;
+
+                                                          if (stateStatus?.isSuccess == true) {
+                                                            final base64File =
+                                                                stateStatus?.data ?? '';
+
+                                                            await FileViewerUtils.displayFile(
+                                                              context,
+                                                              base64File,
+                                                              item.attchmentFileName,
+                                                            );
+                                                          } else if (stateStatus?.isFailure ==
+                                                              true) {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder: (_) => AlertDialog(
+                                                                content: Text(
+                                                                  stateStatus?.error ?? '',
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }
+                                                        },
+                                                      ),
+                                                      title: Text(item.attatchmentName),
+                                                      trailing: IconButton(
+                                                        icon: const Icon(
+                                                          Icons.delete,
+                                                          color: Colors.red,
+                                                        ),
+                                                        onPressed: () async {
+                                                          await cubit.deleteAttachment(
+                                                            requestId: widget.model!.requestID,
+                                                            attachId: item.ser,
+                                                            context: context,
+                                                            attchmentType: 22,
+                                                          );
+
+                                                          await refreshAttachments();
+                                                        },
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              const SizedBox(height: 12),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                              } else {
+                                CommonMethods.showToast(
+                                  message: context.locale.languageCode == 'ar'
+                                      ? 'حدث خطأ أثناء تحميل الملفات'
+                                      : 'Failed to load attachments',
+                                  type: ToastType.error,
+                                );
+                              }
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 30),
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: AppColor.primaryColor(context),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(Icons.search, color: AppColor.whiteColor(context)),
                             ),
-                            child: Icon(Icons.search, color: AppColor.whiteColor(context)),
                           ),
                         ),
-                      ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: HousingAllowanceSaveButton(

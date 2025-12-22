@@ -53,6 +53,7 @@ class RequestItemCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(15),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const _HeaderRow(),
                   const Divider(height: 20, thickness: 1),

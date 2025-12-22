@@ -71,6 +71,7 @@ class CarRequestItem extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(15),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _HeaderRow(context),
                   const Divider(height: 20, thickness: 1),

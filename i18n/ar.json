@@ -48,7 +48,7 @@
   "attachments": "المرفقات",
   "attachmentName": "اسم المرفق*",
   "upload": " تحميل",
-  "selectFile": "اختر الملف",
+  "selectFile": "اوصف الملف واختر الملف الذي تريده",
   "noAttachments": "لا توجد مرفقات",
   "new": "سجل جديد",
   "leaveTypes": "انواع الاجازات",
@@ -487,8 +487,9 @@
   "alternative_name_en": "اسم البديل (EN)",
   "alternative_code": "كود البديل",
 
-
+  "pending":"تحت المعالجة",
+  "attachments_attached":"تم ارفاق المرفقات",
   "attachment_name": "اسم المرفق",
   "no_attachment": "لا يوجد",
-  "followed_actions":"الاجراءات  المطلوبة"
-}
+  "followed_actions":"الاجراءات  المطلوبة"}
+

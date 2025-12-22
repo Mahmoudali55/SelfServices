@@ -48,7 +48,7 @@
   "attachments": "Attachments",
   "attachmentName": "Attachment name *",
   "upload": "Upload",
-  "selectFile": "Select file",
+  "selectFile": "Describe the file and choose the file you want",
   "noAttachments": "No attachments",
   "new": "New record",
   "leaveTypes": "Leave types",
@@ -495,5 +495,7 @@
 
   "attachment_name": "Attachment Name",
   "no_attachment": "No attachment",
-  "followed_actions": "Followed Actions"
+  "followed_actions": "Followed Actions",
+   "pending": "Pending",
+  "attachments_attached": "Attachments Attached"
 }
