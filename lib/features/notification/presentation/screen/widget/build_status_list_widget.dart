@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_template/core/routes/routes_name.dart';
 import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
+import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/notification/data/model/employee_requests_notify_model.dart';
 import 'package:my_template/features/notification/presentation/screen/widget/notification_request_type_mapper.dart';
@@ -19,78 +20,114 @@ class ModernNotificationScreen extends StatefulWidget {
 }
 
 class _ModernNotificationScreenState extends State<ModernNotificationScreen> {
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-  late List<RequestItem> latestItems;
-  late List<RequestItem> olderItems;
+  int? selectedStatus; // null = All, 0 = In Progress, 1 = Accepted, 2 = Rejected, 3 = Holding
 
-  @override
-  void initState() {
-    super.initState();
-
-    final sortedData = sortByDate(widget.data);
-
-    final takeCount = sortedData.length >= 3 ? 3 : sortedData.length;
-    latestItems = sortedData.take(takeCount).toList();
-
-    olderItems = sortedData.length > takeCount ? sortedData.sublist(takeCount) : <RequestItem>[];
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _insertItems();
-    });
-  }
-
-  Future<void> _insertItems() async {
-    int index = 0;
-    for (var item in latestItems + olderItems) {
-      await Future.delayed(const Duration(milliseconds: 100));
-      _listKey.currentState?.insertItem(index);
-      index++;
-    }
+  List<RequestItem> get filteredData {
+    if (selectedStatus == null) return widget.data;
+    return widget.data.where((item) => item.reqDecideState == selectedStatus).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final allItems = [...latestItems, ...olderItems];
-    return AnimatedList(
-      key: _listKey,
-      padding: const EdgeInsets.all(12),
-      initialItemCount: 0,
-      itemBuilder: (context, index, animation) {
-        final item = allItems[index];
-        final isLatest = index < latestItems.length;
+    final sortedData = sortByDate(filteredData);
+    final takeCount = sortedData.length >= 3 ? 3 : sortedData.length;
+    final latestItems = sortedData.take(takeCount).toList();
+    final olderItems = sortedData.length > takeCount
+        ? sortedData.sublist(takeCount)
+        : <RequestItem>[];
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (index == 0 && isLatest)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  context.locale.languageCode == 'ar' ? 'الأحدث' : 'Latest',
-                  style: AppTextStyle.text16MSecond(context).copyWith(fontWeight: FontWeight.bold),
+    final allItems = [...latestItems, ...olderItems];
+
+    return Column(
+      children: [
+        _buildFilterChips(),
+        Expanded(
+          child: allItems.isEmpty
+              ? Center(
+                  child: Text(
+                    AppLocalKay.no_requests.tr(),
+                    style: AppTextStyle.text16MSecond(context),
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(12),
+                  itemCount: allItems.length,
+                  itemBuilder: (context, index) {
+                    final item = allItems[index];
+                    final isLatest = index < latestItems.length;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (index == 0 && isLatest)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text(
+                              context.locale.languageCode == 'ar' ? 'الأحدث' : 'Latest',
+                              style: AppTextStyle.text16MSecond(
+                                context,
+                              ).copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        if (index == latestItems.length && olderItems.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text(
+                              context.locale.languageCode == 'ar' ? 'الأقدم' : 'Older',
+                              style: AppTextStyle.text16MSecond(
+                                context,
+                              ).copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        BuildModernNotificationItem(item: item),
+                      ],
+                    );
+                  },
                 ),
-              ),
-            if (index == latestItems.length && olderItems.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  context.locale.languageCode == 'ar' ? 'الأقدم' : 'Older',
-                  style: AppTextStyle.text16MSecond(context).copyWith(fontWeight: FontWeight.bold),
-                ),
-              ),
-            SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1, 0),
-                end: Offset.zero,
-              ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-              child: FadeTransition(
-                opacity: animation,
-                child: BuildModernNotificationItem(item: item),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterChips() {
+    final filters = [
+      {'label': context.locale.languageCode == 'ar' ? 'الكل' : 'All', 'value': null},
+      {'label': context.locale.languageCode == 'ar' ? 'تحت الإجراء' : 'In Progress', 'value': 0},
+      {'label': context.locale.languageCode == 'ar' ? 'تحت السحب' : 'Holding', 'value': 3},
+      {'label': context.locale.languageCode == 'ar' ? 'مقبول' : 'Accepted', 'value': 1},
+      {'label': context.locale.languageCode == 'ar' ? 'مرفوض' : 'Rejected', 'value': 2},
+    ];
+
+    return Container(
+      height: 50,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        scrollDirection: Axis.horizontal,
+        itemCount: filters.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final filter = filters[index];
+          final isSelected = selectedStatus == filter['value'];
+          return ChoiceChip(
+            label: Text(
+              filter['label'] as String,
+              style: AppTextStyle.text14MPrimary(
+                context,
+                color: isSelected ? Colors.white : AppColor.blackColor(context),
               ),
             ),
-          ],
-        );
-      },
+            selected: isSelected,
+            selectedColor: AppColor.primaryColor(context),
+            backgroundColor: Colors.grey.shade200,
+            onSelected: (selected) {
+              setState(() {
+                selectedStatus = filter['value'] as int?;
+              });
+            },
+          );
+        },
+      ),
     );
   }
 }
@@ -115,6 +152,12 @@ class BuildModernNotificationItem extends StatelessWidget {
         iconData = Icons.cancel_rounded;
         iconColor = const Color(0xFFC0392B);
         iconBgColor = const Color(0xFFF5B7B1);
+        break;
+      case 3:
+      case 4:
+        iconData = Icons.access_time_filled_rounded;
+        iconColor = const Color(0xFF3498DB); // Blue for holding
+        iconBgColor = const Color(0xFFAED6F1);
         break;
       default:
         iconData = Icons.autorenew_rounded;

@@ -8,6 +8,7 @@ import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/home/presentation/cubit/home_cubit.dart';
 import 'package:my_template/features/request_history/presentation/view/cubit/vacation_requests_cubit.dart';
+import 'package:my_template/features/request_history/presentation/view/screen/widget/action_notes_marquee.dart';
 import 'package:my_template/features/request_history/presentation/view/screen/widget/custom_titel_card_widget.dart';
 import 'package:my_template/features/services/data/model/request_leave/vacation_requests_response_model.dart';
 
@@ -90,56 +91,48 @@ class VacationRequestItem extends StatelessWidget {
         color: AppColor.whiteColor(context),
         margin: const EdgeInsets.all(15),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _HeaderRow(
-                iconData: iconData,
-                vacTypeName: request.vacTypeName,
-                vacDayCount: request.vacDayCount,
-              ),
-              const Divider(height: 20, thickness: 1),
-              _VacationDetails(request: request),
-              Container(
-                margin: const EdgeInsets.only(top: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: Column(
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          if (request.reqDicidState == 4) ...[
-                            TextSpan(
-                              text: AppLocalKay.followedActions.tr() + ': ',
-                              style: AppTextStyle.text16SDark(
-                                context,
-                                color: AppColor.darkTextColor(context).withAlpha(140),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (request.reqDicidState == 4 && (request.actionNotes?.isNotEmpty ?? false))
+              AnimatedActionNote(text: request.actionNotes!),
+            Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  _HeaderRow(
+                    iconData: iconData,
+                    vacTypeName: request.vacTypeName,
+                    vacDayCount: request.vacDayCount,
+                  ),
+                  const Divider(height: 20, thickness: 1),
+                  _VacationDetails(request: request),
+                  Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Column(
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: request.requestDesc ?? '',
+                                style: AppTextStyle.text14RGrey(
+                                  context,
+                                  color: statusInfo.color,
+                                ).copyWith(fontWeight: FontWeight.bold),
                               ),
-                            ),
-                            TextSpan(
-                              text: request.actionNotes ?? '',
-                              style: AppTextStyle.text16SDark(context, color: statusInfo.color),
-                            ),
-                          ] else ...[
-                            TextSpan(
-                              text: request.requestDesc ?? '',
-                              style: AppTextStyle.text14RGrey(
-                                context,
-                                color: statusInfo.color,
-                              ).copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ],
-                      ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  if (isEditable) _ActionButtons(request: request, empcoded: empcoded),
+                ],
               ),
-              if (isEditable) _ActionButtons(request: request, empcoded: empcoded),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

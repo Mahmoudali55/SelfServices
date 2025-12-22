@@ -78,7 +78,9 @@ class NotifictionRepoImpl implements NotifictionRepo {
           (jsonDecode(dataString) as List<dynamic>).map((e) => Map<String, dynamic>.from(e)),
         );
 
-        return dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList();
+        return _groupRequests(
+          dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList(),
+        );
       },
     );
   }
@@ -97,7 +99,9 @@ class NotifictionRepoImpl implements NotifictionRepo {
           (jsonDecode(dataString) as List<dynamic>).map((e) => Map<String, dynamic>.from(e)),
         );
 
-        return dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList();
+        return _groupRequests(
+          dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList(),
+        );
       },
     );
   }
@@ -116,7 +120,9 @@ class NotifictionRepoImpl implements NotifictionRepo {
           (jsonDecode(dataString) as List<dynamic>).map((e) => Map<String, dynamic>.from(e)),
         );
 
-        return dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList();
+        return _groupRequests(
+          dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList(),
+        );
       },
     );
   }
@@ -135,7 +141,9 @@ class NotifictionRepoImpl implements NotifictionRepo {
           (jsonDecode(dataString) as List<dynamic>).map((e) => Map<String, dynamic>.from(e)),
         );
 
-        return dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList();
+        return _groupRequests(
+          dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList(),
+        );
       },
     );
   }
@@ -154,7 +162,9 @@ class NotifictionRepoImpl implements NotifictionRepo {
           (jsonDecode(dataString) as List<dynamic>).map((e) => Map<String, dynamic>.from(e)),
         );
 
-        return dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList();
+        return _groupRequests(
+          dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList(),
+        );
       },
     );
   }
@@ -173,7 +183,9 @@ class NotifictionRepoImpl implements NotifictionRepo {
           (jsonDecode(dataString) as List<dynamic>).map((e) => Map<String, dynamic>.from(e)),
         );
 
-        return dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList();
+        return _groupRequests(
+          dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList(),
+        );
       },
     );
   }
@@ -192,7 +204,9 @@ class NotifictionRepoImpl implements NotifictionRepo {
           (jsonDecode(dataString) as List<dynamic>).map((e) => Map<String, dynamic>.from(e)),
         );
 
-        return dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList();
+        return _groupRequests(
+          dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList(),
+        );
       },
     );
   }
@@ -211,7 +225,9 @@ class NotifictionRepoImpl implements NotifictionRepo {
           (jsonDecode(dataString) as List<dynamic>).map((e) => Map<String, dynamic>.from(e)),
         );
 
-        return dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList();
+        return _groupRequests(
+          dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList(),
+        );
       },
     );
   }
@@ -230,7 +246,9 @@ class NotifictionRepoImpl implements NotifictionRepo {
           (jsonDecode(dataString) as List<dynamic>).map((e) => Map<String, dynamic>.from(e)),
         );
 
-        return dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList();
+        return _groupRequests(
+          dataList.map((e) => VacationRequestToDecideModel.fromJson(e)).toList(),
+        );
       },
     );
   }
@@ -271,5 +289,41 @@ class NotifictionRepoImpl implements NotifictionRepo {
         return list;
       },
     );
+  }
+
+  List<VacationRequestToDecideModel> _groupRequests(List<VacationRequestToDecideModel> list) {
+    final Map<int, VacationRequestToDecideModel> grouped = {};
+
+    for (var item in list) {
+      final id = item.requestId;
+      if (id == null) continue;
+
+      if (grouped.containsKey(id)) {
+        final existing = grouped[id]!;
+        final newAttachments = List<AttachmentModel>.from(existing.attachments);
+        if (item.attatchmentName != null) {
+          newAttachments.add(
+            AttachmentModel(
+              attachmentName: item.attatchmentName,
+              attachmentFileName: item.AttchmentFileName,
+            ),
+          );
+        }
+        grouped[id] = existing.copyWith(attachments: newAttachments);
+      } else {
+        final attachments = <AttachmentModel>[];
+        if (item.attatchmentName != null) {
+          attachments.add(
+            AttachmentModel(
+              attachmentName: item.attatchmentName,
+              attachmentFileName: item.AttchmentFileName,
+            ),
+          );
+        }
+        grouped[id] = item.copyWith(attachments: attachments);
+      }
+    }
+
+    return grouped.values.toList();
   }
 }

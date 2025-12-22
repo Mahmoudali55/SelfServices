@@ -10,6 +10,7 @@ import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/request_history/data/model/get_dynamic_order_model.dart';
 import 'package:my_template/features/request_history/presentation/view/cubit/vacation_requests_cubit.dart';
+import 'package:my_template/features/request_history/presentation/view/screen/widget/action_notes_marquee.dart';
 import 'package:my_template/features/request_history/presentation/view/screen/widget/custom_titel_card_widget.dart';
 
 class RequestsListViewRequestGeneral extends StatelessWidget {
@@ -81,52 +82,44 @@ class HousingAllowanceRequestItem extends StatelessWidget {
         color: AppColor.whiteColor(context),
         margin: const EdgeInsets.all(15),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _HeaderRow(context),
-              const Divider(height: 20, thickness: 1),
-              _Details(request: request, isEn: isEn),
-              Container(
-                margin: const EdgeInsets.only(top: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: Column(
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          if (request.reqDicidState == 4) ...[
-                            TextSpan(
-                              text: AppLocalKay.followedActions.tr() + ': ',
-                              style: AppTextStyle.text16SDark(
-                                context,
-                                color: AppColor.darkTextColor(context).withAlpha(140),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (request.reqDicidState == 4 && (request.actionNotes?.isNotEmpty ?? false))
+              AnimatedActionNote(text: request.actionNotes!),
+            Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  _HeaderRow(context),
+                  const Divider(height: 20, thickness: 1),
+                  _Details(request: request, isEn: isEn),
+                  Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Column(
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: request.requestDesc ?? '',
+                                style: AppTextStyle.text14RGrey(
+                                  context,
+                                  color: statusColor,
+                                ).copyWith(fontWeight: FontWeight.bold),
                               ),
-                            ),
-                            TextSpan(
-                              text: request.actionNotes ?? '',
-                              style: AppTextStyle.text16SDark(context, color: statusColor),
-                            ),
-                          ] else ...[
-                            TextSpan(
-                              text: request.requestDesc ?? '',
-                              style: AppTextStyle.text14RGrey(
-                                context,
-                                color: statusColor,
-                              ).copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ],
-                      ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  if (isEditable) _ActionButtons(request: request, empcoded: empcoded),
+                ],
               ),
-              if (isEditable) _ActionButtons(request: request, empcoded: empcoded),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

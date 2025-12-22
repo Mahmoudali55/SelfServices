@@ -212,7 +212,7 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
           const SizedBox(height: 5),
           CustomFormField(
             controller: widget.controller,
-            readOnly: true,
+
             hintText: AppLocalKay.selectFile.tr(),
             suffixIcon: IconButton(
               icon: Icon(Icons.attach_file, color: AppColor.primaryColor(context)),

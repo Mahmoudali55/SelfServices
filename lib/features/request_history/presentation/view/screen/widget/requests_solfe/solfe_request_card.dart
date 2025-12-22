@@ -7,6 +7,7 @@ import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/request_history/data/model/get_solfa_model.dart';
 import 'package:my_template/features/request_history/presentation/view/cubit/vacation_requests_cubit.dart';
+import 'package:my_template/features/request_history/presentation/view/screen/widget/action_notes_marquee.dart';
 import 'package:my_template/features/request_history/presentation/view/screen/widget/custom_titel_card_widget.dart';
 
 class RequestCard extends StatelessWidget {
@@ -31,93 +32,91 @@ class RequestCard extends StatelessWidget {
         color: AppColor.whiteColor(context),
         margin: const EdgeInsets.all(15),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (request.reqDicidState == 4 && (request.actionNotes?.isNotEmpty ?? false))
+              AnimatedActionNote(text: request.actionNotes!),
+            Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
                 children: [
-                  Icon(Icons.money, size: 16, color: AppColor.blackColor(context)),
-                  const SizedBox(width: 8),
-                  Text(
-                    langCode == 'en' ? request.solfaTypeNameE ?? '' : request.solfaTypeName ?? '',
-                    style: AppTextStyle.text16MSecond(context, color: AppColor.blackColor(context)),
+                  Row(
+                    children: [
+                      Icon(Icons.money, size: 16, color: AppColor.blackColor(context)),
+                      const SizedBox(width: 8),
+                      Text(
+                        langCode == 'en'
+                            ? request.solfaTypeNameE ?? ''
+                            : request.solfaTypeName ?? '',
+                        style: AppTextStyle.text16MSecond(
+                          context,
+                          color: AppColor.blackColor(context),
+                        ),
+                      ),
+                    ],
                   ),
+                  const Divider(height: 20, thickness: 1),
+
+                  CustomTitelCardWidget(
+                    icon: Icons.person,
+                    request: request,
+                    title: AppLocalKay.employee.tr(),
+                    description: langCode == 'en' ? request.empNameE ?? '' : request.empName ?? '',
+                  ),
+                  CustomTitelCardWidget(
+                    icon: Icons.calendar_month,
+                    request: request,
+                    title: AppLocalKay.discountstartdate.tr(),
+                    description: request.startDicountDate ?? '',
+                  ),
+                  CustomTitelCardWidget(
+                    icon: Icons.monetization_on,
+                    request: request,
+                    title: AppLocalKay.loanamount.tr(),
+                    description: request.solfaAmount.toString(),
+                  ),
+                  CustomTitelCardWidget(
+                    icon: Icons.list_alt,
+                    request: request,
+                    title: AppLocalKay.loaninstallments.tr(),
+                    description: request.dofaaCount.toString(),
+                  ),
+                  CustomTitelCardWidget(
+                    icon: Icons.attach_money,
+                    request: request,
+                    title: AppLocalKay.installmentamount.tr(),
+                    description: request.dofaaAmount.toString(),
+                  ),
+
+                  Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Column(
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: request.requestDesc ?? '',
+                                style: AppTextStyle.text14RGrey(
+                                  context,
+                                  color: statusInfo.color,
+                                ).copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  if (request.reqDecideState == 3)
+                    ActionButtons(request: request, empcoded: empcoded),
                 ],
               ),
-              const Divider(height: 20, thickness: 1),
-
-              CustomTitelCardWidget(
-                icon: Icons.person,
-                request: request,
-                title: AppLocalKay.employee.tr(),
-                description: langCode == 'en' ? request.empNameE ?? '' : request.empName ?? '',
-              ),
-              CustomTitelCardWidget(
-                icon: Icons.calendar_month,
-                request: request,
-                title: AppLocalKay.discountstartdate.tr(),
-                description: request.startDicountDate ?? '',
-              ),
-              CustomTitelCardWidget(
-                icon: Icons.monetization_on,
-                request: request,
-                title: AppLocalKay.loanamount.tr(),
-                description: request.solfaAmount.toString(),
-              ),
-              CustomTitelCardWidget(
-                icon: Icons.list_alt,
-                request: request,
-                title: AppLocalKay.loaninstallments.tr(),
-                description: request.dofaaCount.toString(),
-              ),
-              CustomTitelCardWidget(
-                icon: Icons.attach_money,
-                request: request,
-                title: AppLocalKay.installmentamount.tr(),
-                description: request.dofaaAmount.toString(),
-              ),
-
-              Container(
-                margin: const EdgeInsets.only(top: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: Column(
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          if (request.reqDicidState == 4) ...[
-                            TextSpan(
-                              text: AppLocalKay.followedActions.tr() + ': ',
-                              style: AppTextStyle.text16SDark(
-                                context,
-                                color: AppColor.darkTextColor(context).withAlpha(140),
-                              ),
-                            ),
-                            TextSpan(
-                              text: request.actionNotes ?? '',
-                              style: AppTextStyle.text16SDark(context, color: statusInfo.color),
-                            ),
-                          ] else ...[
-                            TextSpan(
-                              text: request.requestDesc ?? '',
-                              style: AppTextStyle.text14RGrey(
-                                context,
-                                color: statusInfo.color,
-                              ).copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              if (request.reqDecideState == 3) ActionButtons(request: request, empcoded: empcoded),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

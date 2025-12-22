@@ -44,6 +44,21 @@ class PendingRequestCard extends StatelessWidget {
                     request.strRequestType ?? '',
                     style: AppTextStyle.text16MSecond(context, color: AppColor.blackColor(context)),
                   ),
+                  const Spacer(),
+                  Container(
+                    margin: const EdgeInsets.only(left: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: request.attatchmentName == null
+                          ? Colors.orange
+                          : AppColor.primaryColor(context),
+                    ),
+                    child: Text(
+                      request.attatchmentName == null ? "تحت المعالجة" : "تم ارفاق المرفقات ",
+                      style: AppTextStyle.text14RGrey(context, color: AppColor.whiteColor(context)),
+                    ),
+                  ),
                 ],
               ),
               const Divider(height: 20, thickness: 1),

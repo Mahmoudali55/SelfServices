@@ -260,19 +260,21 @@ class _MoreScreenState extends State<MoreScreen> {
       ),
     );
 
-    if (shouldLogout ?? false) {
-      await HiveMethods.deleteEmpCode();
-      await HiveMethods.deleteToken();
-      final empId = HiveMethods.getEmpCode();
-      await HiveMethods.deleteBoxFromDisk('chat_messages_$empId');
-      if (!context.mounted) return;
-      CommonMethods.showToast(
-        message: context.locale.languageCode == 'ar'
-            ? 'تم تسجيل الخروج بنجاح'
-            : 'Logout successful',
-        type: ToastType.success,
-      );
-      Navigator.of(context).pushNamedAndRemoveUntil(RoutesName.loginScreen, (route) => false);
-    }
+    if (shouldLogout != true) return;
+
+    final empId = HiveMethods.getEmpCode();
+
+    await HiveMethods.deleteBoxFromDisk('chat_messages_$empId');
+    await HiveMethods.deleteEmpCode();
+    await HiveMethods.deleteToken();
+
+    if (!context.mounted) return;
+
+    CommonMethods.showToast(
+      message: context.locale.languageCode == 'ar' ? 'تم تسجيل الخروج بنجاح' : 'Logout successful',
+      type: ToastType.success,
+    );
+
+    Navigator.of(context).pushNamedAndRemoveUntil(RoutesName.loginScreen, (route) => false);
   }
 }
