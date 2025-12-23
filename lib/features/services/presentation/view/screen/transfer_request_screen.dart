@@ -11,6 +11,7 @@ import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/core/utils/file_viewer_utils.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/request_history/data/model/get_all_transfer_model.dart';
+import 'package:my_template/features/services/data/model/request_leave/employee_model.dart';
 import 'package:my_template/features/services/data/model/request_leave/get_vacation_attachment_model.dart';
 import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
 import 'package:my_template/features/services/data/model/transfer/add_new_transfer_request_model.dart';
@@ -25,7 +26,6 @@ import 'package:my_template/features/services/presentation/view/screen/widget/re
 import 'package:my_template/features/services/presentation/view/screen/widget/transfer/custom_branch_picker_widget.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/transfer/custom_department_picker_widget.dart';
 import 'package:my_template/features/services/presentation/view/screen/widget/transfer/custom_project_picker_widget.dart';
-import 'package:my_template/features/services/presentation/view/screen/widget/transfer/employee_picker_field.dart';
 
 class TransferRequestScreen extends StatefulWidget {
   const TransferRequestScreen({super.key, this.empCode, this.pagePrivID, this.transferModel});
@@ -78,11 +78,24 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
       final cubit = context.read<ServicesCubit>();
       // تحميل البيانات فقط إذا كانت القائمة فارغة
       if (cubit.state.employeesStatus.data?.isEmpty ?? true) {
-        cubit.getEmployees(empcode: widget.empCode ?? 0, privid: 0);
+        cubit.getEmployees(empcode: widget.empCode ?? 0, privid: 1); // Use privid: 1 as in Home
       }
 
       if (widget.transferModel != null) {
         _initExistingRequest();
+      } else {
+        // Auto-fill if employees are already loaded
+        final employees = cubit.state.employeesStatus.data;
+        if (employees != null && employees.isNotEmpty) {
+          try {
+            final currentEmp = employees.firstWhere((e) => e.empCode == widget.empCode);
+            _autoFillEmployeeData(currentEmp);
+          } catch (_) {
+            if (widget.pagePrivID != 1 && widget.pagePrivID != 2 && employees.length == 1) {
+              _autoFillEmployeeData(employees.first);
+            }
+          }
+        }
       }
     }
   }
@@ -122,6 +135,33 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
         : model.toBNameE ?? '';
   }
 
+  void _autoFillEmployeeData(EmployeeModel emp) {
+    if (widget.transferModel != null) return;
+    ownerEmpIdController.text = emp.empCode.toString();
+    ownerEmpNameController.text = context.locale.languageCode == 'ar'
+        ? emp.empName?.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? ''
+        : emp.empNameE?.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? '';
+
+    depFromIdController.text = emp.dCode.toString();
+    depFromNameController.text = context.locale.languageCode == 'ar'
+        ? emp.dName ?? ''
+        : emp.dNameE ?? '';
+
+    branchIdformController.text = emp.empBranch.toString();
+    branchNameformController.text = context.locale.languageCode == 'ar'
+        ? emp.bNameAr ?? ''
+        : emp.bNameEn ?? '';
+
+    projectIdFromController.text = emp.naGroup.toString();
+    projectNameFromController.text = context.locale.languageCode == 'ar'
+        ? emp.projectName ?? ''
+        : emp.projectNameEn ?? '';
+
+    context.read<ServicesCubit>().selectedEmployee = emp;
+    _updateVacationData();
+    setState(() {});
+  }
+
   void _updateVacationData() {
     final empId = (widget.pagePrivID == 1 || widget.pagePrivID == 2)
         ? int.tryParse(ownerEmpIdController.text) ?? 0
@@ -142,6 +182,19 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
       backgroundColor: AppColor.whiteColor(context),
       bottomNavigationBar: BlocListener<ServicesCubit, ServicesState>(
         listener: (context, state) {
+          if (state.employeesStatus.isSuccess && widget.transferModel == null) {
+            final employees = state.employeesStatus.data;
+            if (employees != null && employees.isNotEmpty) {
+              try {
+                final currentEmp = employees.firstWhere((e) => e.empCode == widget.empCode);
+                _autoFillEmployeeData(currentEmp);
+              } catch (_) {
+                if (widget.pagePrivID != 1 && widget.pagePrivID != 2 && employees.length == 1) {
+                  _autoFillEmployeeData(employees.first);
+                }
+              }
+            }
+          }
           if (widget.transferModel != null) {
             if (state.updataTransferStatus.isSuccess) {
               CommonMethods.showToast(
@@ -341,42 +394,49 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                   ],
                 ),
 
-                EmployeePickerTransferField(
-                  currentEmpCode: widget.empCode ?? 0,
-                  validator: (p0) {
-                    if (p0 == null || p0.isEmpty) {
-                      return AppLocalKay.requestOwner.tr();
-                    }
-                    return null;
-                  },
+                // EmployeePickerTransferField(
+                //   currentEmpCode: widget.empCode ?? 0,
+                //   validator: (p0) {
+                //     if (p0 == null || p0.isEmpty) {
+                //       return AppLocalKay.requestOwner.tr();
+                //     }
+                //     return null;
+                //   },
+                //   title: AppLocalKay.employee.tr(),
+                //   idController: ownerEmpIdController,
+                //   nameController: ownerEmpNameController,
+                //   onEmployeeSelected: (emp) {
+                //     ownerEmpIdController.text = emp.empCode.toString();
+                //     ownerEmpNameController.text = context.locale.languageCode == 'ar'
+                //         ? emp.empName?.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? ''
+                //         : emp.empNameE?.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? '';
+
+                //     context.read<ServicesCubit>().selectedEmployee = emp;
+
+                //     depFromIdController.text = emp.dCode.toString();
+                //     depFromNameController.text = context.locale.languageCode == 'ar'
+                //         ? emp.dName ?? ''
+                //         : emp.dNameE ?? '';
+
+                //     branchIdformController.text = emp.empBranch.toString();
+                //     branchNameformController.text = context.locale.languageCode == 'ar'
+                //         ? emp.bNameAr ?? ''
+                //         : emp.bNameEn ?? '';
+
+                //     projectIdFromController.text = emp.naGroup.toString();
+                //     projectNameFromController.text = context.locale.languageCode == 'ar'
+                //         ? emp.projectName ?? ''
+                //         : emp.projectNameEn ?? '';
+
+                //     _updateVacationData();
+                //   },
+                // ),
+                CustomFormField(
                   title: AppLocalKay.employee.tr(),
-                  idController: ownerEmpIdController,
-                  nameController: ownerEmpNameController,
-                  onEmployeeSelected: (emp) {
-                    ownerEmpIdController.text = emp.empCode.toString();
-                    ownerEmpNameController.text = context.locale.languageCode == 'ar'
-                        ? emp.empName.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? '' ?? ''
-                        : emp.empNameE.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? '' ?? '';
-                    ;
-                    context.read<ServicesCubit>().selectedEmployee = emp;
-
-                    depFromIdController.text = emp.dCode.toString();
-                    depFromNameController.text = context.locale.languageCode == 'ar'
-                        ? emp.dName ?? ''
-                        : emp.dName ?? '';
-
-                    branchNameformController.text = context.locale.languageCode == 'ar'
-                        ? emp.bNameAr ?? ''
-                        : emp.bNameEn ?? '';
-
-                    projectNameFromController.text = context.locale.languageCode == 'ar'
-                        ? emp.projectName ?? ''
-                        : emp.projectNameEn ?? '';
-
-                    _updateVacationData();
-                  },
+                  readOnly: true,
+                  controller: ownerEmpNameController,
+                  fillColor: Colors.grey.withAlpha(50),
                 ),
-
                 Text(
                   AppLocalKay.managerfrom.tr(),
                   style: AppTextStyle.formTitleStyle(context, color: AppColor.blackColor(context)),
@@ -602,9 +662,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                     widget.transferModel == null
                         ? const SizedBox.shrink()
                         : Padding(
-                            padding: EdgeInsets.only(
-                              bottom: attachmentController.text.isEmpty ? 0 : 55,
-                            ),
+                            padding: EdgeInsets.only(bottom: 0),
                             child: GestureDetector(
                               onTap: () async {
                                 final cubit = context.read<ServicesCubit>();

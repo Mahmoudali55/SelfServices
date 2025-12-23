@@ -583,7 +583,7 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                         ? const SizedBox.shrink()
                         : Padding(
                             padding: EdgeInsets.only(
-                              bottom: attachmentController.text.isEmpty ? 0 : 55,
+                              bottom:0,
                             ),
                             child: GestureDetector(
                               onTap: () async {

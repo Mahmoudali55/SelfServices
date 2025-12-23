@@ -846,9 +846,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                           widget.vacationRequestOrdersModel == null
                               ? const SizedBox.shrink()
                               : Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: attachmentController.text.isEmpty ? 0 : 55,
-                                  ),
+                                  padding: EdgeInsets.only(bottom: 0),
                                   child: GestureDetector(
                                     onTap: () async {
                                       final cubit = context.read<ServicesCubit>();
