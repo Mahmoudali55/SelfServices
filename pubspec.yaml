@@ -79,6 +79,8 @@ dependencies:
   flutter_secure_storage:
   badges: ^3.1.2
   package_info_plus:
+  printing: ^5.14.2
+  pdf: ^3.10.7
   flutter:
     sdk: flutter
   # The following adds the Cupertino Icons font to your application.

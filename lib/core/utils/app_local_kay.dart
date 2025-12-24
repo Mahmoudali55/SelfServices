@@ -480,4 +480,5 @@ class AppLocalKay {
   static const String followedActions = 'followed_actions';
   static const String pending = 'pending';
   static const String attachmentsAttached = 'attachments_attached';
+  static const String print = 'print';
 }

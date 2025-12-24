@@ -491,5 +491,7 @@
   "attachments_attached":"تم ارفاق المرفقات",
   "attachment_name": "اسم المرفق",
   "no_attachment": "لا يوجد",
-  "followed_actions":"الاجراءات  المطلوبة"}
+  "followed_actions":"الاجراءات  المطلوبة",
+  "print": "طباعة"
+}
 

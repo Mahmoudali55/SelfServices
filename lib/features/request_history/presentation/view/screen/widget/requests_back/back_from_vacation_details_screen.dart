@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_template/core/custom_widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
+import 'package:my_template/core/utils/pdf_print_utils.dart';
 import 'package:my_template/features/request_history/data/model/get_requests_vacation_back.dart';
 import 'package:my_template/features/request_history/presentation/view/screen/widget/section_widget.dart';
 
@@ -26,6 +27,38 @@ class BackFromVacationDetailsScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.print),
+            onPressed: () => PdfPrintUtils.printDetails(context, AppLocalKay.backleave.tr(), [
+              PrintSection(
+                title: AppLocalKay.employee.tr(),
+                items: {
+                  AppLocalKay.employeeName.tr(): langCode == 'en'
+                      ? (request.empNameE ?? '-')
+                      : (request.empName ?? '-'),
+                  AppLocalKay.employeeCode.tr(): request.empCode?.toString() ?? '-',
+                },
+              ),
+              PrintSection(
+                title: AppLocalKay.requestDate.tr(),
+                items: {
+                  AppLocalKay.start_date.tr(): request.strVacRequestDateFrom ?? '-',
+                  AppLocalKay.end_date.tr(): request.strVacRequestDateTo ?? '-',
+                  AppLocalKay.days.tr(): request.vacDayCount.toString(),
+                },
+              ),
+              PrintSection(
+                title: AppLocalKay.status.tr(),
+
+                items: {
+                  AppLocalKay.status.tr(): statusText,
+                  AppLocalKay.followedActions.tr(): request.actionNotes ?? '-',
+                },
+              ),
+            ]),
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_template/core/custom_widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
+import 'package:my_template/core/utils/pdf_print_utils.dart';
 import 'package:my_template/features/request_history/data/model/get_solfa_model.dart';
 import 'package:my_template/features/request_history/presentation/view/screen/widget/section_widget.dart';
 
@@ -19,6 +20,40 @@ class SolfaDetailsScreen extends StatelessWidget {
       appBar: CustomAppBar(
         context,
         title: Text(AppLocalKay.loanDetails.tr(), style: AppTextStyle.text18MSecond(context)),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.print),
+            onPressed: () => PdfPrintUtils.printDetails(context, AppLocalKay.loanDetails.tr(), [
+              PrintSection(
+                title: AppLocalKay.employee.tr(),
+                items: {
+                  AppLocalKay.employeeName.tr(): isEn ? (request.empNameE ?? '-') : request.empName,
+                  AppLocalKay.empCode.tr(): request.empCode.toString(),
+                },
+              ),
+              PrintSection(
+                title: AppLocalKay.solfa.tr(),
+                items: {
+                  AppLocalKay.solfaType.tr(): isEn
+                      ? (request.solfaTypeNameE ?? '-')
+                      : request.solfaTypeName,
+                  AppLocalKay.discountstartdate.tr(): request.startDicountDate ?? '-',
+                  AppLocalKay.loanamount.tr(): request.solfaAmount.toString(),
+                  AppLocalKay.loaninstallmentscount.tr(): request.dofaaCount.toString(),
+                  AppLocalKay.installmentamounttitle.tr(): request.dofaaAmount.toString(),
+                  AppLocalKay.notes.tr(): request.strNotes,
+                },
+              ),
+              PrintSection(
+                title: AppLocalKay.status.tr(),
+                items: {
+                  AppLocalKay.status.tr(): request.requestDesc,
+                  AppLocalKay.followedActions.tr(): request.actionNotes ?? '-',
+                },
+              ),
+            ]),
+          ),
+        ],
         centerTitle: true,
         automaticallyImplyLeading: true,
         leading: IconButton(
@@ -32,10 +67,8 @@ class SolfaDetailsScreen extends StatelessWidget {
           SectionWidget(
             title: AppLocalKay.employee.tr(),
             items: {
-              AppLocalKay.employeeName.tr(): isEn
-                  ? (request.empNameE ?? '-')
-                  : (request.empName ?? '-'),
-              AppLocalKay.empCode.tr(): request.empCode?.toString() ?? '-',
+              AppLocalKay.employeeName.tr(): isEn ? (request.empNameE ?? '-') : request.empName,
+              AppLocalKay.empCode.tr(): request.empCode.toString(),
             },
           ),
           SectionWidget(
@@ -43,7 +76,7 @@ class SolfaDetailsScreen extends StatelessWidget {
             items: {
               AppLocalKay.solfaType.tr(): isEn
                   ? (request.solfaTypeNameE ?? '-')
-                  : (request.solfaTypeName ?? '-'),
+                  : request.solfaTypeName,
               AppLocalKay.discountstartdate.tr(): request.startDicountDate ?? '-',
               AppLocalKay.loanamount.tr(): request.solfaAmount.toString(),
               AppLocalKay.loaninstallmentscount.tr(): request.dofaaCount.toString(),
@@ -60,7 +93,7 @@ class SolfaDetailsScreen extends StatelessWidget {
                 ? Color.fromARGB(255, 2, 217, 9)
                 : const Color.fromARGB(255, 200, 194, 26),
             items: {
-              AppLocalKay.status.tr(): request.requestDesc ?? '-',
+              AppLocalKay.status.tr(): request.requestDesc,
               AppLocalKay.followedActions.tr(): request.actionNotes ?? '-',
             },
           ),
