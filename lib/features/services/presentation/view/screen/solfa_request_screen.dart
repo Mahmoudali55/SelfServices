@@ -447,49 +447,38 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                       ),
                     ),
                     Row(
-                      spacing: 5,
+                      crossAxisAlignment:
+                          CrossAxisAlignment.center, // يبقي كل شيء في منتصف الارتفاع
                       children: [
                         Expanded(
                           flex: 1,
                           child: CustomFormField(
                             controller: empIdController,
-                            onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                             readOnly: true,
                             hintText: 'ID',
+                            validator: (value) => value!.isEmpty ? 'id' : null,
                           ),
                         ),
+                        const SizedBox(width: 8),
                         Expanded(
                           flex: 4,
                           child: CustomFormField(
-                            onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                             controller: empNameController,
                             readOnly: true,
                             hintText: AppLocalKay.collateralname.tr(),
+                            onTap: _openEmployeeSearch,
+                            suffixIcon: Icon(Icons.arrow_drop_down),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return AppLocalKay.collateralname.tr();
                               }
-
                               if (empIdController.text == widget.empId.toString()) {
                                 return context.locale.languageCode == 'ar'
                                     ? 'لا يمكن لصاحب الطلب أن يكون ضامنًا لنفسه'
                                     : 'The applicant cannot be a guarantor for himself';
                               }
-
                               return null;
                             },
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: _openEmployeeSearch,
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: AppColor.primaryColor(context),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Icon(Icons.search, color: AppColor.whiteColor(context)),
                           ),
                         ),
                       ],
@@ -518,43 +507,31 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                             readOnly: true,
                             hintText: 'ID',
                             onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                            validator: (value) => value!.isEmpty ? 'id' : null,
                           ),
                         ),
                         Expanded(
                           flex: 4,
-                          child: Expanded(
-                            flex: 4,
-                            child: CustomFormField(
-                              controller: emp2NameController,
-                              readOnly: true,
-                              hintText: AppLocalKay.collateralname2.tr(),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return AppLocalKay.collateral2.tr();
-                                }
+                          child: CustomFormField(
+                            controller: emp2NameController,
+                            readOnly: true,
+                            hintText: AppLocalKay.collateralname2.tr(),
+                            onTap: _openEmployee2Search,
+                            suffixIcon: Icon(Icons.arrow_drop_down),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return AppLocalKay.collateral2.tr();
+                              }
 
-                                if (empIdController.text.isNotEmpty &&
-                                    empIdController.text == emp2IdController.text) {
-                                  return context.locale.languageCode == 'ar'
-                                      ? 'لا يمكن اختيار نفس الضامن مرتين'
-                                      : 'First and second guarantor cannot be the same';
-                                }
+                              if (empIdController.text.isNotEmpty &&
+                                  empIdController.text == emp2IdController.text) {
+                                return context.locale.languageCode == 'ar'
+                                    ? 'لا يمكن اختيار نفس الضامن مرتين'
+                                    : 'First and second guarantor cannot be the same';
+                              }
 
-                                return null;
-                              },
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: _openEmployee2Search,
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: AppColor.primaryColor(context),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Icon(Icons.search, color: AppColor.whiteColor(context)),
+                              return null;
+                            },
                           ),
                         ),
                       ],
@@ -582,9 +559,7 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                     widget.solfaItem == null
                         ? const SizedBox.shrink()
                         : Padding(
-                            padding: EdgeInsets.only(
-                              bottom:0,
-                            ),
+                            padding: EdgeInsets.only(bottom: 0),
                             child: GestureDetector(
                               onTap: () async {
                                 final cubit = context.read<ServicesCubit>();

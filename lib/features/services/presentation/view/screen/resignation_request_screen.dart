@@ -47,7 +47,7 @@ class _ResignationRequestScreenState extends State<ResignationRequestScreen> {
     if (widget.resignationModel != null) {
       _requestIdController.text = widget.resignationModel?.requestID.toString() ?? '';
       _notesController.text = widget.resignationModel?.strNotes ?? '';
-      _lastWorkController.text = widget.resignationModel?.lastWorkDate ?? '';
+
       try {
         if (widget.resignationModel!.requestDate.isNotEmpty) {
           DateTime parsedDate = DateFormat(
@@ -57,6 +57,26 @@ class _ResignationRequestScreenState extends State<ResignationRequestScreen> {
           _dateController.text = DateFormat('yyyy-MM-dd', 'en').format(parsedDate);
         }
       } catch (_) {}
+      if (widget.resignationModel?.lastWorkDate != null &&
+          widget.resignationModel!.lastWorkDate.isNotEmpty) {
+        try {
+          final rawDate = widget.resignationModel!.lastWorkDate;
+
+          DateTime parsedDate;
+
+          if (rawDate.contains('/')) {
+            // yyyy/MM/dd
+            parsedDate = DateFormat('yyyy/MM/dd', 'en').parse(rawDate);
+          } else {
+            // yyyy-MM-dd أو ISO
+            parsedDate = DateTime.parse(rawDate);
+          }
+
+          _lastWorkController.text = DateFormat('yyyy-MM-dd', 'en').format(parsedDate);
+        } catch (e) {
+          _lastWorkController.text = '';
+        }
+      }
     }
   }
 

@@ -14,8 +14,12 @@ import 'package:my_template/features/services/presentation/cubit/services_state.
 
 class EmployeeSearchBottomSheetLight extends StatefulWidget {
   final Function(EmployeeModel emp) onEmployeeSelected;
-
-  const EmployeeSearchBottomSheetLight({super.key, required this.onEmployeeSelected});
+  final int? excludeEmpCode;
+  const EmployeeSearchBottomSheetLight({
+    super.key,
+    required this.onEmployeeSelected,
+    this.excludeEmpCode,
+  });
 
   @override
   State<EmployeeSearchBottomSheetLight> createState() => _EmployeeSearchBottomSheetLightState();
@@ -31,12 +35,16 @@ class _EmployeeSearchBottomSheetLightState extends State<EmployeeSearchBottomShe
       builder: (context, state) {
         final employees = state.employeesStatus.data ?? [];
         final filtered = employees.where((emp) {
+          if (widget.excludeEmpCode != null && emp.empCode == widget.excludeEmpCode) {
+            return false; // استبعاد الموظف الرئيسي
+          }
           final name = (emp.empName ?? '').toLowerCase();
           final code = emp.empCode.toString().toLowerCase();
           return searchQuery.isEmpty ||
               name.contains(searchQuery.toLowerCase()) ||
               code.contains(searchQuery.toLowerCase());
         }).toList();
+
         return GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: SingleChildScrollView(

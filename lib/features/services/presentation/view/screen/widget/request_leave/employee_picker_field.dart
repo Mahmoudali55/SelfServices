@@ -16,7 +16,7 @@ class EmployeePickerField extends StatelessWidget {
   final int? pagePrivID;
   final int? empCode;
   final String? Function(String?)? validator;
-
+  final int? excludeEmpCode;
   const EmployeePickerField({
     super.key,
     required this.title,
@@ -26,6 +26,7 @@ class EmployeePickerField extends StatelessWidget {
     this.validator,
     this.pagePrivID,
     this.empCode,
+    this.excludeEmpCode,
   });
 
   @override
@@ -46,7 +47,7 @@ class EmployeePickerField extends StatelessWidget {
                 controller: idController,
                 readOnly: true,
                 hintText: 'ID ',
-                validator: validator,
+                validator: (value) => value!.isEmpty ? 'id' : null,
               ),
             ),
             Expanded(
@@ -55,19 +56,9 @@ class EmployeePickerField extends StatelessWidget {
                 controller: nameController,
                 readOnly: true,
                 hintText: AppLocalKay.employeeName.tr(),
-                validator: validator,
-              ),
-            ),
-            GestureDetector(
-              onTap: () => _openEmployeeSearch(context),
-              child: Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: AppColor.primaryColor(context),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(Icons.search, color: AppColor.whiteColor(context)),
+                validator: (value) => value!.isEmpty ? 'id' : null,
+                onTap: () => _openEmployeeSearch(context),
+                suffixIcon: Icon(Icons.arrow_drop_down),
               ),
             ),
           ],
@@ -95,7 +86,10 @@ class EmployeePickerField extends StatelessWidget {
           value: cubit,
           child: SizedBox(
             height: 600,
-            child: EmployeeSearchBottomSheetLight(onEmployeeSelected: onEmployeeSelected),
+            child: EmployeeSearchBottomSheetLight(
+              onEmployeeSelected: onEmployeeSelected,
+              excludeEmpCode: excludeEmpCode,
+            ),
           ),
         );
       },

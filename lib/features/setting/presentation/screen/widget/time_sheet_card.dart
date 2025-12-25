@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:my_template/core/theme/app_colors.dart';
+import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/setting/data/model/time_sheet_model.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/time_sheet_row.dart';
@@ -12,9 +14,20 @@ class TimeSheetCard extends StatelessWidget {
 
   const TimeSheetCard({super.key, required this.model, required this.currentDate});
 
-  DateTime _parseTime(DateTime date, String time) {
-    final parts = time.split(':').map(int.parse).toList();
-    return DateTime(date.year, date.month, date.day, parts[0], parts[1], parts[2]);
+  /// دالة لتحويل الوقت بصيغة HH:mm:ss أو تركها إذا فارغة/غير صالحة
+  DateTime _parseTime(DateTime date, String? time) {
+    if (time == null || time.isEmpty) {
+      return DateTime(date.year, date.month, date.day);
+    }
+
+    try {
+      // تحقق من صيغة الوقت HH:mm:ss
+      final parts = time.split(':').map(int.parse).toList();
+      return DateTime(date.year, date.month, date.day, parts[0], parts[1], parts[2]);
+    } catch (_) {
+      // لو الوقت غير صالح
+      return DateTime(date.year, date.month, date.day);
+    }
   }
 
   @override
@@ -46,18 +59,26 @@ class TimeSheetCard extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TimeSheetRow(
-              title: AppLocalKay.project.tr(),
-              value: model.nameGpf,
-              color: AppColor.greenColor(context),
+            Text(
+              AppLocalKay.project.tr(),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.sp,
+                color: AppColor.blackColor(context),
+              ),
             ),
+            Text(
+              model.nameGpf ?? '-',
+              style: AppTextStyle.text16MSecond(context, color: AppColor.greenColor(context)),
+            ),
+            Gap(10.h),
             TimeSheetRow(
               title: AppLocalKay.checkin.tr(),
-              value: model.signInTime,
+              value: model.signInTime ?? '-',
               color: AppColor.greenColor(context),
             ),
-
             TimeSheetRow(
               title: AppLocalKay.checkout.tr(),
               value: model.signOutTime ?? '-',
@@ -65,12 +86,12 @@ class TimeSheetCard extends StatelessWidget {
             ),
             TimeSheetRow(
               title: AppLocalKay.ProjectCheckIn.tr(),
-              value: model.projectSignInTime,
+              value: model.projectSignInTime ?? '-',
               color: AppColor.greenColor(context),
             ),
             TimeSheetRow(
               title: AppLocalKay.ProjectCheckout.tr(),
-              value: model.projectSignOutTime,
+              value: model.projectSignOutTime ?? '-',
               color: Colors.blueGrey,
             ),
             TimeSheetRow(

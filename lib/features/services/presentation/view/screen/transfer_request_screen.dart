@@ -433,7 +433,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                 // ),
                 CustomFormField(
                   title: AppLocalKay.employee.tr(),
-                  readOnly: true,
+
                   controller: ownerEmpNameController,
                   fillColor: Colors.grey.withAlpha(50),
                 ),
@@ -443,13 +443,13 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                 ),
                 CustomFormField(
                   onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-                  readOnly: true,
+
                   controller: depFromNameController,
                   fillColor: Colors.grey.withAlpha(50),
                 ),
                 CustomFormField(
                   onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-                  readOnly: true,
+
                   title: AppLocalKay.departmentfrom.tr(),
                   controller: branchNameformController,
                   fillColor: Colors.grey.withAlpha(50),
@@ -457,7 +457,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
 
                 CustomFormField(
                   onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-                  readOnly: true,
+
                   title: AppLocalKay.projectfrom.tr(),
                   controller: projectNameFromController,
                   fillColor: Colors.grey.withAlpha(50),
@@ -475,7 +475,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                         onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                         readOnly: true,
                         controller: depToIdController,
-                        validator: (p0) => p0!.isEmpty ? AppLocalKay.managerTo.tr() : null,
+                        validator: (value) => value!.isEmpty ? 'id' : null,
                       ),
                     ),
                     Expanded(
@@ -483,43 +483,33 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                       child: CustomFormField(
                         onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                         readOnly: true,
+                        onTap: () {
+                          branchIdController.clear();
+                          branchNameController.clear();
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                            ),
+                            builder: (_) => CustomDepartmentPickerWidget(
+                              context: context,
+                              departmentIdController: depToIdController,
+                              departmentNameController: depToNameController,
+                              onDepartmentSelected: (DepartmentModel selectedDept) {
+                                depToIdController.text = selectedDept.dCode.toString();
+                                depToNameController.text = selectedDept.dName;
+
+                                context.read<ServicesCubit>().getBranchData(
+                                  deptCode: selectedDept.dCode,
+                                );
+                              },
+                            ),
+                          );
+                        },
                         controller: depToNameController,
                         validator: (p0) => p0!.isEmpty ? AppLocalKay.managerTo.tr() : null,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        branchIdController.clear();
-                        branchNameController.clear();
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                          ),
-                          builder: (_) => CustomDepartmentPickerWidget(
-                            context: context,
-                            departmentIdController: depToIdController,
-                            departmentNameController: depToNameController,
-                            onDepartmentSelected: (DepartmentModel selectedDept) {
-                              depToIdController.text = selectedDept.dCode.toString();
-                              depToNameController.text = selectedDept.dName;
-
-                              context.read<ServicesCubit>().getBranchData(
-                                deptCode: selectedDept.dCode,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: AppColor.primaryColor(context),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(Icons.search, color: AppColor.whiteColor(context)),
+                        suffixIcon: Icon(Icons.arrow_drop_down),
                       ),
                     ),
                   ],
@@ -537,7 +527,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                         onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                         readOnly: true,
                         controller: branchIdController,
-                        validator: (p0) => p0!.isEmpty ? AppLocalKay.departmentTo.tr() : null,
+                        validator: (value) => value!.isEmpty ? 'id' : null,
                       ),
                     ),
                     Expanded(
@@ -545,45 +535,44 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                       child: CustomFormField(
                         onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                         readOnly: true,
+                        onTap: () async {
+                          if (depToIdController.text.isEmpty) {
+                            CommonMethods.showToast(
+                              message: context.locale.languageCode == 'ar'
+                                  ? 'لابد من اختيار الإدارة أولاً'
+                                  : 'Please select department first',
+                              type: ToastType.error,
+                            );
+                            return;
+                          }
+                          await context.read<ServicesCubit>().getBranchData(
+                            deptCode: int.tryParse(depToIdController.text) ?? 0,
+                          );
+                          final branches =
+                              context.read<ServicesCubit>().state.branchStatus.data ?? [];
+
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                            ),
+                            builder: (ctx) {
+                              return CustomBranchPickerWidget(
+                                context: context,
+                                branchIdController: branchIdController,
+                                branchNameController: branchNameController,
+                                onBranchSelected: (BranchDataModel selectedDept) {
+                                  branchIdController.text = selectedDept.bCode.toString();
+                                  branchNameController.text = selectedDept.bName;
+                                },
+                              );
+                            },
+                          );
+                        },
+                        suffixIcon: Icon(Icons.arrow_drop_down),
                         controller: branchNameController,
                         validator: (p0) => p0!.isEmpty ? AppLocalKay.departmentTo.tr() : null,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        await context.read<ServicesCubit>().getBranchData(
-                          deptCode: int.tryParse(depToIdController.text) ?? 0,
-                        );
-                        final branches =
-                            context.read<ServicesCubit>().state.branchStatus.data ?? [];
-
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                          ),
-                          builder: (ctx) {
-                            return CustomBranchPickerWidget(
-                              context: context,
-                              branchIdController: branchIdController,
-                              branchNameController: branchNameController,
-                              onBranchSelected: (BranchDataModel selectedDept) {
-                                branchIdController.text = selectedDept.bCode.toString();
-                                branchNameController.text = selectedDept.bName;
-                              },
-                            );
-                          },
-                        );
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: AppColor.primaryColor(context),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(Icons.search, color: AppColor.whiteColor(context)),
                       ),
                     ),
                   ],
@@ -601,7 +590,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                         onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                         readOnly: true,
                         controller: projectIdController,
-                        validator: (p0) => p0!.isEmpty ? AppLocalKay.projectTo.tr() : null,
+                        validator: (value) => value!.isEmpty ? 'id' : null,
                       ),
                     ),
                     Expanded(
@@ -609,33 +598,23 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                       child: CustomFormField(
                         onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                         readOnly: true,
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                            ),
+                            builder: (_) => CustomProjectPickerWidget(
+                              context: context,
+                              projectIdController: projectIdController,
+                              projectNameController: projectNameController,
+                            ),
+                          );
+                        },
                         controller: projectNameController,
                         validator: (p0) => p0!.isEmpty ? AppLocalKay.projectTo.tr() : null,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                          ),
-                          builder: (_) => CustomProjectPickerWidget(
-                            context: context,
-                            projectIdController: projectIdController,
-                            projectNameController: projectNameController,
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: AppColor.primaryColor(context),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(Icons.search, color: AppColor.whiteColor(context)),
+                        suffixIcon: Icon(Icons.arrow_drop_down),
                       ),
                     ),
                   ],
@@ -669,7 +648,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
 
                                 await cubit.getAttachments(
                                   requestId: widget.transferModel!.requestId,
-                                  attchmentType: 801,
+                                  attchmentType: 810,
                                 );
 
                                 final state = cubit.state;
@@ -692,7 +671,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                                           Future<void> refreshAttachments() async {
                                             await cubit.getAttachments(
                                               requestId: widget.transferModel!.requestId,
-                                              attchmentType: 801,
+                                              attchmentType: 810,
                                             );
                                             final newState = cubit.state;
                                             if (newState.vacationAttachmentsStatus != null &&
@@ -794,7 +773,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                                                                   widget.transferModel!.requestId,
                                                               attachId: item.ser,
                                                               context: context,
-                                                              attchmentType: 801,
+                                                              attchmentType: 810,
                                                             );
 
                                                             await refreshAttachments();

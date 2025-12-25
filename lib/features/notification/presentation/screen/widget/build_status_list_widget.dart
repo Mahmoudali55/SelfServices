@@ -2,6 +2,9 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:gap/gap.dart';
+import 'package:my_template/core/images/app_images.dart';
 import 'package:my_template/core/routes/routes_name.dart';
 import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
@@ -44,9 +47,21 @@ class _ModernNotificationScreenState extends State<ModernNotificationScreen> {
         Expanded(
           child: allItems.isEmpty
               ? Center(
-                  child: Text(
-                    AppLocalKay.no_requests.tr(),
-                    style: AppTextStyle.text16MSecond(context),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        AppImages.assetsGlobalIconEmptyFolderIcon,
+                        height: 200,
+                        width: 200,
+                        color: AppColor.primaryColor(context),
+                      ),
+                      const Gap(20),
+                      Text(
+                        AppLocalKay.no_requests.tr(),
+                        style: AppTextStyle.text16MSecond(context),
+                      ),
+                    ],
                   ),
                 )
               : ListView.builder(

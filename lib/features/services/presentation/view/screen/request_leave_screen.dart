@@ -667,6 +667,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                       EmployeePickerField(
                         empCode: widget.empCode ?? 0,
                         pagePrivID: 1,
+                        excludeEmpCode: int.tryParse(ownerEmpIdController.text) ?? 0,
                         validator: (p0) {
                           final selectedLeave = context.read<ServicesCubit>().selectedLeave;
 

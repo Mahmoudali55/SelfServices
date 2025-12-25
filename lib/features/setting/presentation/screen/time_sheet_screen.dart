@@ -54,6 +54,19 @@ class _TimeSheetScreenState extends State<TimeSheetScreen> {
           AppLocalKay.timesheet.tr(),
           style: AppTextStyle.text18MSecond(context, color: AppColor.whiteColor(context)),
         ),
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.print, color: AppColor.whiteColor(context)),
+        //     onPressed: () {
+        //       final state = context.read<SettingCubit>().state;
+        //       final timeSheets = state.timeSheetListStatus.data ?? [];
+
+        //       if (timeSheets.isNotEmpty) {
+        //         printTimeSheet(timeSheets, currentDate);
+        //       }
+        //     },
+        //   ),
+        // ],
       ),
       body: Stack(
         children: [
@@ -117,7 +130,7 @@ class _TimeSheetScreenState extends State<TimeSheetScreen> {
                       if (timeSheets.isEmpty) {
                         return const TimeSheetEmptyState();
                       }
-                     
+
                       return Column(
                         children: timeSheets
                             .map(
