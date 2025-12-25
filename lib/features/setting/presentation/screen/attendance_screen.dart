@@ -346,7 +346,78 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                       ),
                                     ),
                                     const SizedBox(height: 16),
-                                    customCheckInForSelf(context, currentDeviceId),
+                                    ListTile(
+                                      title: Text(
+                                        context.locale.languageCode == 'ar'
+                                            ? 'تسجيل حضور '
+                                            : 'Check In for Self',
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      trailing: const Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 16,
+                                        color: Colors.grey,
+                                      ),
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        final cubit = context.read<SettingCubit>();
+                                        await cubit.employeeMobileSerialno(empId);
+                                        final mobileStatus = cubit.state.mobileSerialnoStatus;
+                                        if (mobileStatus.isSuccess) {
+                                          final mobileList = mobileStatus.data?.data;
+                                          final mobileSerNo =
+                                              (mobileList != null && mobileList.isNotEmpty)
+                                              ? mobileList.first.mobileSerno
+                                              : null;
+
+                                          if (mobileSerNo == null) {
+                                            showModalBottomSheet(
+                                              context: context,
+                                              isScrollControlled: true,
+                                              shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.vertical(
+                                                  top: Radius.circular(20),
+                                                ),
+                                              ),
+                                              builder: (_) => Padding(
+                                                padding: MediaQuery.of(context).viewInsets,
+                                                child: AddDeviceBottomSheet(
+                                                  onSubmit: () async {
+                                                    Navigator.pop(context);
+                                                    CommonMethods.showToast(
+                                                      message: context.locale.languageCode == 'ar'
+                                                          ? 'تم تسجيل الجهاز بنجاح'
+                                                          : 'Device registered successfully',
+                                                      type: ToastType.success,
+                                                    );
+                                                    ();
+                                                    await _markAttendance(
+                                                      true,
+                                                      empId,
+                                                      currentDeviceId,
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            );
+                                          } else if (mobileSerNo == currentDeviceId) {
+                                            await _markAttendance(true, empId, currentDeviceId);
+                                          } else if (mobileSerNo != currentDeviceId) {
+                                            CommonMethods.showToast(
+                                              message: context.locale.languageCode == 'ar'
+                                                  ? 'عذرا ، يوجد جهاز اخر مسجل لهذا المستخدم'
+                                                  : 'This device is already registered by another user',
+                                              type: ToastType.error,
+                                            );
+                                          } else {}
+                                        } else if (mobileStatus.isFailure) {
+                                          CommonMethods.showToast(
+                                            message: mobileStatus.error ?? 'Error',
+                                            type: ToastType.error,
+                                          );
+                                        }
+                                      },
+                                    ),
                                     customCheckInforAnotherEmployee(context),
                                   ],
                                 ),
@@ -716,62 +787,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             ),
           ),
         );
-      },
-    );
-  }
-
-  ListTile customCheckInForSelf(BuildContext context, String currentDeviceId) {
-    return ListTile(
-      title: Text(
-        context.locale.languageCode == 'ar' ? 'تسجيل حضور ' : 'Check In for Self',
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-      onTap: () async {
-        Navigator.pop(context);
-        final cubit = context.read<SettingCubit>();
-        await cubit.employeeMobileSerialno(empId);
-        final mobileStatus = cubit.state.mobileSerialnoStatus;
-        if (mobileStatus.isSuccess) {
-          final mobileData = mobileStatus.data;
-          final mobileSerNo = mobileData?.data.first.mobileSerno;
-          if (mobileSerNo == null) {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              builder: (_) => Padding(
-                padding: MediaQuery.of(context).viewInsets,
-                child: AddDeviceBottomSheet(
-                  onSubmit: () async {
-                    Navigator.pop(context);
-                    CommonMethods.showToast(
-                      message: context.locale.languageCode == 'ar'
-                          ? 'تم تسجيل الجهاز بنجاح'
-                          : 'Device registered successfully',
-                      type: ToastType.success,
-                    );
-                    ();
-                    await _markAttendance(true, empId, currentDeviceId);
-                  },
-                ),
-              ),
-            );
-          } else if (mobileSerNo == currentDeviceId) {
-            await _markAttendance(true, empId, currentDeviceId);
-          } else if (mobileSerNo != currentDeviceId) {
-            CommonMethods.showToast(
-              message: context.locale.languageCode == 'ar'
-                  ? 'عذرا ، يوجد جهاز اخر مسجل لهذا المستخدم'
-                  : 'This device is already registered by another user',
-              type: ToastType.error,
-            );
-          } else {}
-        } else if (mobileStatus.isFailure) {
-          CommonMethods.showToast(message: mobileStatus.error ?? 'Error', type: ToastType.error);
-        }
       },
     );
   }
