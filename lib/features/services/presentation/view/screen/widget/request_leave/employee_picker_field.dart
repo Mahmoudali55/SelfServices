@@ -56,7 +56,7 @@ class EmployeePickerField extends StatelessWidget {
                 controller: nameController,
                 readOnly: true,
                 hintText: AppLocalKay.employeeName.tr(),
-                validator: (value) => value!.isEmpty ? 'id' : null,
+                validator: validator,
                 onTap: () => _openEmployeeSearch(context),
                 suffixIcon: Icon(Icons.arrow_drop_down),
               ),

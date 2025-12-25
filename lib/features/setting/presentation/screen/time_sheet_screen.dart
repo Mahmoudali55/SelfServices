@@ -11,6 +11,7 @@ import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/setting/presentation/cubit/setting_state.dart';
 import 'package:my_template/features/setting/presentation/cubit/settting_cubit.dart';
+import 'package:my_template/features/setting/presentation/screen/utils/time_sheet_pdf_generator.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/time_sheet_card.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/time_sheet_date_selector.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/time_sheet_empty_state.dart';
@@ -54,19 +55,19 @@ class _TimeSheetScreenState extends State<TimeSheetScreen> {
           AppLocalKay.timesheet.tr(),
           style: AppTextStyle.text18MSecond(context, color: AppColor.whiteColor(context)),
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.print, color: AppColor.whiteColor(context)),
-        //     onPressed: () {
-        //       final state = context.read<SettingCubit>().state;
-        //       final timeSheets = state.timeSheetListStatus.data ?? [];
+        actions: [
+          IconButton(
+            icon: Icon(Icons.print, color: AppColor.whiteColor(context)),
+            onPressed: () {
+              final state = context.read<SettingCubit>().state;
+              final timeSheets = state.timeSheetListStatus.data ?? [];
 
-        //       if (timeSheets.isNotEmpty) {
-        //         printTimeSheet(timeSheets, currentDate);
-        //       }
-        //     },
-        //   ),
-        // ],
+              if (timeSheets.isNotEmpty) {
+                TimeSheetPdfGenerator.generateAndPrint(context, timeSheets, currentDate);
+              }
+            },
+          ),
+        ],
       ),
       body: Stack(
         children: [

@@ -14,44 +14,104 @@ class TimeSheetCard extends StatelessWidget {
 
   const TimeSheetCard({super.key, required this.model, required this.currentDate});
 
-  /// دالة لتحويل الوقت بصيغة HH:mm:ss أو تركها إذا فارغة/غير صالحة
-  DateTime _parseTime(DateTime date, String? time) {
-    if (time == null || time.isEmpty) {
-      return DateTime(date.year, date.month, date.day);
-    }
+  DateTime? _parseDateTime(String? dateStr, String? timeStr) {
+    if (dateStr == null || dateStr.isEmpty || timeStr == null || timeStr.isEmpty) return null;
 
     try {
-      // تحقق من صيغة الوقت HH:mm:ss
-      final parts = time.split(':').map(int.parse).toList();
-      return DateTime(date.year, date.month, date.day, parts[0], parts[1], parts[2]);
-    } catch (_) {
-      // لو الوقت غير صالح
-      return DateTime(date.year, date.month, date.day);
+      final date = dateStr.trim();
+      final time = timeStr.trim();
+
+      if (time.toUpperCase().contains('AM') || time.toUpperCase().contains('PM')) {
+        return DateFormat('dd/MM/yyyy hh:mm:ss a', 'en').parse('$date $time');
+      } else {
+        return DateFormat('dd/MM/yyyy HH:mm:ss', 'en').parse('$date $time');
+      }
+    } catch (e) {
+      debugPrint('Error parsing datetime: $dateStr $timeStr | $e');
+      return null;
     }
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    return "${twoDigits(duration.inHours)}:$twoDigitMinutes";
   }
 
   @override
   Widget build(BuildContext context) {
-    final projectStart = _parseTime(currentDate, model.projectSignInTime);
-    final projectEnd = _parseTime(currentDate, model.projectSignOutTime);
-    final actualSignIn = _parseTime(currentDate, model.signInTime);
-    final actualSignOut = model.signOutTime != null
-        ? _parseTime(currentDate, model.signOutTime!)
-        : projectEnd;
+    // 1. Establish the "Base Date" for the shift (usually the sign-in date or currentDate)
+    final baseDateStr = model.signInDate.isNotEmpty
+        ? model.signInDate
+        : DateFormat('yyyy-MM-dd').format(currentDate);
 
-    final delay = actualSignIn.isAfter(projectStart)
-        ? actualSignIn.difference(projectStart)
-        : Duration.zero;
+    // 2. Parse Project Schedule
+    DateTime? projectStart = _parseDateTime(baseDateStr, model.projectSignInTime);
+    DateTime? projectEnd = _parseDateTime(baseDateStr, model.projectSignOutTime);
 
+    // Handle Night Shift: If Project End time is before Start time (e.g. 20:00 to 04:00), add 1 day to End
+    if (projectStart != null && projectEnd != null) {
+      if (projectEnd.isBefore(projectStart)) {
+        projectEnd = projectEnd.add(const Duration(days: 1));
+      }
+    }
+
+    // 3. Parse Actual Attendance
+    DateTime? actualSignIn = _parseDateTime(model.signInDate, model.signInTime);
+
+    // For signOut, check if model has a date.
+    String? effectiveSignOutDate = model.signOutDate;
+    if ((effectiveSignOutDate == null || effectiveSignOutDate.isEmpty) &&
+        model.signOutTime != null) {
+      // Heuristic: If we have time but no date, assume same day as signIn.
+      // Only if time is drastically smaller than signInTime (e.g. 04:00 vs 20:00) we *might* assume next day,
+      // but strictly speaking, missing date is ambiguous. We will assume baseDateStr.
+      effectiveSignOutDate = baseDateStr;
+    }
+
+    DateTime? actualSignOut = _parseDateTime(effectiveSignOutDate, model.signOutTime);
+
+    // Handle Night Shift for Actuals (if date was inferred):
+    // If inferred actualSignOut is before actualSignIn, add 1 day
+    if (actualSignIn != null &&
+        actualSignOut != null &&
+        (model.signOutDate == null || model.signOutDate!.isEmpty)) {
+      if (actualSignOut.isBefore(actualSignIn)) {
+        actualSignOut = actualSignOut.add(const Duration(days: 1));
+      }
+    }
+
+    Duration delay = Duration.zero;
     Duration overtime = Duration.zero;
-    if (actualSignIn.isBefore(projectStart)) {
-      overtime += projectStart.difference(actualSignIn);
-    }
-    if (actualSignOut.isAfter(projectEnd)) {
-      overtime += actualSignOut.difference(projectEnd);
+    Duration workDuration = Duration.zero;
+
+    // --- Calculations ---
+
+    // Delay: Actual Start > Project Start
+    if (actualSignIn != null && projectStart != null) {
+      if (actualSignIn.isAfter(projectStart)) {
+        delay = actualSignIn.difference(projectStart);
+      }
     }
 
-    final workDuration = actualSignOut.difference(actualSignIn);
+    // Overtime
+    // 1. Early Arrival (Before Project Start)
+    if (actualSignIn != null && projectStart != null) {
+      if (actualSignIn.isBefore(projectStart)) {
+        overtime += projectStart.difference(actualSignIn);
+      }
+    }
+    // 2. Late Departure (After Project End)
+    if (actualSignOut != null && projectEnd != null) {
+      if (actualSignOut.isAfter(projectEnd)) {
+        overtime += actualSignOut.difference(projectEnd);
+      }
+    }
+
+    // Actual Work Duration
+    if (actualSignIn != null && actualSignOut != null) {
+      workDuration = actualSignOut.difference(actualSignIn);
+    }
 
     return Card(
       elevation: 3,
@@ -96,17 +156,17 @@ class TimeSheetCard extends StatelessWidget {
             ),
             TimeSheetRow(
               title: AppLocalKay.delay.tr(),
-              value: '${delay.inHours}h ${delay.inMinutes.remainder(60)}m',
+              value: _formatDuration(delay),
               color: delay > Duration.zero ? Colors.red : AppColor.greenColor(context),
             ),
             TimeSheetRow(
               title: AppLocalKay.extra.tr(),
-              value: '${overtime.inHours}h ${overtime.inMinutes.remainder(60)}m',
+              value: _formatDuration(overtime),
               color: overtime > Duration.zero ? Colors.blue : AppColor.blackColor(context),
             ),
             TimeSheetRow(
               title: AppLocalKay.totalWork.tr(),
-              value: '${workDuration.inHours}h ${workDuration.inMinutes.remainder(60)}m',
+              value: actualSignOut != null ? _formatDuration(workDuration) : '-',
               color: Colors.deepPurple,
             ),
           ],

@@ -755,12 +755,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                             child: CustomFormField(
                               controller: _servicesController,
                               readOnly: true,
-                              validator: (p0) {
-                                if (p0 == null || p0.isEmpty) {
-                                  return AppLocalKay.serviceName.tr();
-                                }
-                                return null;
-                              },
+
                               onTap: () async {
                                 final leavesCubit = context.read<ServicesCubit>();
 
