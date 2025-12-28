@@ -84,7 +84,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
+          _scrollController.position.minScrollExtent,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
@@ -260,11 +260,13 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                 Expanded(
                   child: BlocConsumer<ChatCubit, ChatState>(
                     listener: (context, state) {
-                      _scrollToBottom();
+                      if (_scrollController.hasClients && _scrollController.offset < 100) {
+                        _scrollToBottom();
+                      }
                     },
                     builder: (context, state) {
                       return MessageList(
-                        messages: state.chatMessages,
+                        messages: state.chatMessages.reversed.toList(),
                         currentUserId: widget.currentUserId,
                         otherUserName: widget.otherUserName,
                         scrollController: _scrollController,

@@ -481,9 +481,6 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                         return;
                       }
                     }
-
-                    // تحويل قائمة الملفات إلى List<Map<String, String>>
-
                     if (widget.vacationRequestOrdersModel != null) {
                       await context.read<ServicesCubit>().updataVacationRequest(
                         VacationRequestUpdateModel(

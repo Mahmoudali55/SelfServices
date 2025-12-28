@@ -17,17 +17,14 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp();
   await Hive.initFlutter();
-
   final key = await getSecureKey();
   await Hive.openBox('app', encryptionCipher: HiveAesCipher(key));
   final box = Hive.box('app');
   final savedLang = box.get('lang', defaultValue: 'ar') as String;
   await ServiceInitialize.initialize();
   await Constants.loadBaseUrl();
-
   final isDeviceJailBroken = await JailbreakRootDetection.instance.isJailBroken;
   final isDebugged = await JailbreakRootDetection.instance.isDebugged;
-
   if (isDeviceJailBroken && !isDebugged) {
     runApp(
       MaterialApp(
@@ -44,7 +41,6 @@ void main() async {
     );
     return;
   }
-
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('ar'), Locale('en')],

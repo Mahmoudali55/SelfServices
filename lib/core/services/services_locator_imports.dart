@@ -27,7 +27,6 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<SettingCubit>(() => SettingCubit(sl()));
   sl.registerLazySingleton<SettingRepo>(() => SettingRepoImp(sl()));
   sl.registerFactory<ChatRepository>(() => ChatRepository(firestore: FirebaseFirestore.instance));
-  int currentUserId = int.parse(HiveMethods.getEmpCode() ?? '0');
   sl.registerFactory<ChatCubit>(
     () => ChatCubit(
       repository: sl<ChatRepository>(),
@@ -35,5 +34,7 @@ Future<void> initDependencies() async {
     ),
   );
 
-  sl.registerFactory<GroupCubit>(() => GroupCubit(sl<ChatRepository>(), currentUserId));
+  sl.registerFactory<GroupCubit>(
+    () => GroupCubit(sl<ChatRepository>(), int.parse(HiveMethods.getEmpCode() ?? '0')),
+  );
 }

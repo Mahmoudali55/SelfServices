@@ -57,7 +57,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> with WidgetsBindingOb
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _cloudinaryService = CloudinaryService();
-    // start listening to messages
+
     context.read<GroupCubit>().listenToGroupMessages(widget.groupId);
 
     _controller.addListener(() => setState(() {}));
@@ -72,13 +72,15 @@ class _GroupChatScreenState extends State<GroupChatScreen> with WidgetsBindingOb
   }
 
   void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.minScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   void _scrollToMessageById(String messageId, List<ChatMessage> messages) {
@@ -635,7 +637,9 @@ class _GroupChatScreenState extends State<GroupChatScreen> with WidgetsBindingOb
                       if (state is GroupLoaded && state.groupMessages.containsKey(widget.groupId)) {
                         final messages = state.groupMessages[widget.groupId]!;
                         _markAsReadIfNeeded(messages, cubit);
-                        _scrollToBottom();
+                        if (_scrollController.hasClients && _scrollController.offset < 100) {
+                          _scrollToBottom();
+                        }
                       }
                     },
                     builder: (context, state) {
@@ -645,7 +649,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> with WidgetsBindingOb
                           : <ChatMessage>[];
 
                       return MessageList(
-                        messages: messages,
+                        messages: messages.reversed.toList(),
                         currentUserId: cubit.currentUserId,
                         scrollController: _scrollController,
                         selectedMessageId: selectedMessageId,

@@ -40,6 +40,7 @@ class MessageList extends StatelessWidget {
     }
 
     return ListView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
       reverse: true,
       controller: scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
@@ -108,16 +109,24 @@ class MessageList extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Center(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.blue.withOpacity(0.1),
+            color: const Color(0xFFD1D7DB),
             borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 1,
+                offset: const Offset(0, 1),
+              ),
+            ],
           ),
           child: Text(
             dateLabel,
-            style: AppTextStyle.text14RGrey(
-              context,
-            ).copyWith(color: Colors.blue[800], fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.black54,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),
