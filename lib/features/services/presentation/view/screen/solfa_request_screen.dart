@@ -447,8 +447,7 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                       ),
                     ),
                     Row(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.center, // يبقي كل شيء في منتصف الارتفاع
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           flex: 1,

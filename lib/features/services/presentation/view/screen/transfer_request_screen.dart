@@ -84,7 +84,6 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
       if (widget.transferModel != null) {
         _initExistingRequest();
       } else {
-        // Auto-fill if employees are already loaded
         final employees = cubit.state.employeesStatus.data;
         if (employees != null && employees.isNotEmpty) {
           try {
