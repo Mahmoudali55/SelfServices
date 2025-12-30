@@ -107,7 +107,22 @@ class PendingRequestCard extends StatelessWidget {
                   ActionButton(
                     label: AppLocalKay.accept.tr(),
                     color: AppColor.greenColor(context),
-                    onTap: () => _handleAction(context, 1),
+                    onTap: () {
+                      context.read<NotifictionCubit>().decidingIn(
+                        request: DecidingInRequestModel(
+                          requestType: request.requestType ?? 0,
+                          requestId: request.requestId ?? 0,
+                          actionType: 1,
+                          actionMakerEmpID: int.tryParse(HiveMethods.getEmpCode() ?? '0') ?? 0,
+                          strNotes: '',
+                          isLastDecidingEmp: request.isLastDecidingEmp,
+                          haveSpecialDecide: 0,
+                          specialDecideEmpId: null,
+                        ),
+                        message: _successMessage(context, 1),
+                        requestType: type,
+                      );
+                    },
                   ),
                   const SizedBox(width: 8),
                   ActionButton(
