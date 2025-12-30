@@ -69,14 +69,88 @@ class GroupCubit extends Cubit<GroupState> {
 
   void listenToGroupMessages(String groupId) {
     _messagesSubscriptions[groupId]?.cancel();
-    _messagesSubscriptions[groupId] = repository.getGroupMessages(groupId).listen((messages) {
+    _messagesSubscriptions[groupId] = repository.getGroupMessages(groupId, limit: 20).listen((
+      messages,
+    ) {
       final currentState = state;
       if (currentState is GroupLoaded) {
-        final updatedMessages = Map<String, List<ChatMessage>>.from(currentState.groupMessages);
-        updatedMessages[groupId] = messages;
-        emit(GroupLoaded(currentState.groups, groupMessages: updatedMessages));
+        final existingMessages = currentState.groupMessages[groupId] ?? [];
+        final updatedMessages = List<ChatMessage>.from(existingMessages);
+
+        for (var msg in messages) {
+          final index = updatedMessages.indexWhere((m) => m.id == msg.id);
+          if (index != -1) {
+            updatedMessages[index] = msg;
+          } else {
+            updatedMessages.add(msg);
+          }
+        }
+
+        // Sort to ensure oldest-to-newest
+        updatedMessages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+        final hasMore = currentState.hasMoreMessages[groupId] ?? true;
+
+        emit(
+          currentState.copyWith(
+            groupMessages: {...currentState.groupMessages, groupId: updatedMessages},
+            hasMoreMessages: {...currentState.hasMoreMessages, groupId: hasMore},
+          ),
+        );
       }
     });
+  }
+
+  Future<void> loadMoreMessages(String groupId) async {
+    final currentState = state;
+    if (currentState is! GroupLoaded) return;
+
+    if (currentState.isLoadingMore[groupId] == true ||
+        currentState.hasMoreMessages[groupId] == false) {
+      return;
+    }
+
+    final messages = currentState.groupMessages[groupId] ?? [];
+    if (messages.isEmpty) return;
+
+    // The first message in our oldest-to-newest list is the oldest one currently loaded
+    final earliestTimestamp = messages.first.timestamp;
+
+    emit(currentState.copyWith(isLoadingMore: {...currentState.isLoadingMore, groupId: true}));
+
+    try {
+      final olderMessages = await repository.fetchHistoryGroupMessages(
+        groupId: groupId,
+        beforeTimestamp: earliestTimestamp,
+        limit: 20,
+      );
+
+      final updatedState = state as GroupLoaded;
+      final updatedMessages = [...olderMessages, ...updatedState.groupMessages[groupId]!];
+
+      // Ensure specific uniqueness if overlaps somehow
+      final uniqueMessages = <String, ChatMessage>{};
+      for (var m in updatedMessages) {
+        if (m.id != null) uniqueMessages[m.id!] = m;
+      }
+      final resultList = uniqueMessages.values.toList()
+        ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+      emit(
+        updatedState.copyWith(
+          groupMessages: {...updatedState.groupMessages, groupId: resultList},
+          isLoadingMore: {...updatedState.isLoadingMore, groupId: false},
+          hasMoreMessages: {...updatedState.hasMoreMessages, groupId: olderMessages.length == 20},
+        ),
+      );
+    } catch (e) {
+      final updatedState = state as GroupLoaded;
+      emit(updatedState.copyWith(isLoadingMore: {...updatedState.isLoadingMore, groupId: false}));
+      emit(GroupError('فشل تحميل المزيد من الرسائل: $e'));
+      // Restore the loaded state after error if needed, but GroupError replaces it.
+      // Better to just show a toast or keep the loaded state.
+      emit(updatedState);
+    }
   }
 
   Future<void> sendGroupMessage(String groupId, ChatMessage message) async {

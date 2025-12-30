@@ -53,21 +53,12 @@ class ChatCubit extends Cubit<ChatState> {
 
     final initialMessages = await repository.getChatMessages(currentUserId, otherUserId!).first;
 
-    emit(
-      state.copyWith(
-        chatMessages: initialMessages..sort((a, b) => b.timestamp.compareTo(a.timestamp)),
-      ),
-    );
+    emit(state.copyWith(chatMessages: initialMessages));
 
     _messagesSubscription = repository.getChatMessages(currentUserId, otherUserId!).skip(1).listen((
       messages,
     ) {
-      emit(
-        state.copyWith(
-          chatMessages: messages
-            ..sort((a, b) => b.timestamp.compareTo(a.timestamp)), // ترتيب الأحدث أولاً
-        ),
-      );
+      emit(state.copyWith(chatMessages: messages));
     });
 
     _otherUserStatusSubscription = repository.getUserStatus(otherUserId!).listen((status) {

@@ -60,7 +60,15 @@ class _GroupChatScreenState extends State<GroupChatScreen> with WidgetsBindingOb
 
     context.read<GroupCubit>().listenToGroupMessages(widget.groupId);
 
+    _scrollController.addListener(_onScroll);
+
     _controller.addListener(() => setState(() {}));
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      context.read<GroupCubit>().loadMoreMessages(widget.groupId);
+    }
   }
 
   @override
@@ -655,6 +663,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> with WidgetsBindingOb
                         selectedMessageId: selectedMessageId,
                         highlightedMessageId: highlightedMessageId,
                         getSenderName: (userId) => getUserNameById(userId),
+                        isLoadingMore:
+                            state is GroupLoaded && (state.isLoadingMore[widget.groupId] ?? false),
                         onLongPress: (msg) {
                           setState(() => selectedMessageId = msg.id);
                           _showMessageOptions(msg);

@@ -14,6 +14,7 @@ class MessageList extends StatelessWidget {
   final String? highlightedMessageId;
   final Function(ChatMessage) onLongPress;
   final Function(String) onReplyTap;
+  final bool isLoadingMore;
 
   const MessageList({
     super.key,
@@ -26,6 +27,7 @@ class MessageList extends StatelessWidget {
     this.highlightedMessageId,
     required this.onLongPress,
     required this.onReplyTap,
+    this.isLoadingMore = false,
   });
 
   @override
@@ -44,8 +46,14 @@ class MessageList extends StatelessWidget {
       reverse: true,
       controller: scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-      itemCount: messages.length,
+      itemCount: messages.length + (isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
+        if (isLoadingMore && index == messages.length) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
         final message = messages[index];
         final isMe = message.senderId == currentUserId;
         final nextMessage = index < messages.length - 1 ? messages[index + 1] : null;

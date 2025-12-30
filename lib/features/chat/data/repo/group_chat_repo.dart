@@ -46,17 +46,42 @@ extension GroupChat on ChatRepository {
         .delete();
   }
 
-  Stream<List<ChatMessage>> getGroupMessages(String groupId) {
+  Stream<List<ChatMessage>> getGroupMessages(String groupId, {int limit = 20}) {
     return firestore
         .collection('groups')
         .doc(groupId)
         .collection('messages')
-        .orderBy('timestamp', descending: false)
+        .orderBy('timestamp', descending: true)
+        .limit(limit)
         .snapshots()
         .map(
-          (snapshot) =>
-              snapshot.docs.map((doc) => ChatMessage.fromMap(doc.data(), id: doc.id)).toList(),
+          (snapshot) => snapshot.docs
+              .map((doc) => ChatMessage.fromMap(doc.data(), id: doc.id))
+              .toList()
+              .reversed
+              .toList(),
         );
+  }
+
+  Future<List<ChatMessage>> fetchHistoryGroupMessages({
+    required String groupId,
+    required DateTime beforeTimestamp,
+    int limit = 20,
+  }) async {
+    final snapshot = await firestore
+        .collection('groups')
+        .doc(groupId)
+        .collection('messages')
+        .where('timestamp', isLessThan: beforeTimestamp)
+        .orderBy('timestamp', descending: true)
+        .limit(limit)
+        .get();
+
+    return snapshot.docs
+        .map((doc) => ChatMessage.fromMap(doc.data(), id: doc.id))
+        .toList()
+        .reversed
+        .toList();
   }
 
   Stream<List<GroupModel>> getUserGroups(int userId) {

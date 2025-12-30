@@ -33,9 +33,30 @@ class GroupError extends GroupState {
 class GroupLoaded extends GroupState {
   final List<GroupModel> groups;
   final Map<String, List<ChatMessage>> groupMessages;
+  final Map<String, bool> isLoadingMore;
+  final Map<String, bool> hasMoreMessages;
 
-  const GroupLoaded(this.groups, {this.groupMessages = const {}});
+  const GroupLoaded(
+    this.groups, {
+    this.groupMessages = const {},
+    this.isLoadingMore = const {},
+    this.hasMoreMessages = const {},
+  });
+
+  GroupLoaded copyWith({
+    List<GroupModel>? groups,
+    Map<String, List<ChatMessage>>? groupMessages,
+    Map<String, bool>? isLoadingMore,
+    Map<String, bool>? hasMoreMessages,
+  }) {
+    return GroupLoaded(
+      groups ?? this.groups,
+      groupMessages: groupMessages ?? this.groupMessages,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      hasMoreMessages: hasMoreMessages ?? this.hasMoreMessages,
+    );
+  }
 
   @override
-  List<Object?> get props => [groups, groupMessages];
+  List<Object?> get props => [groups, groupMessages, isLoadingMore, hasMoreMessages];
 }
