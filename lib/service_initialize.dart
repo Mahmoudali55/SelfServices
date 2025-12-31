@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/services_locator.dart';
 import 'core/theme/theme_enum.dart';
+import 'features/notification/services/request_status_monitor.dart';
 
 class ServiceInitialize {
   ServiceInitialize._();
@@ -18,5 +19,8 @@ class ServiceInitialize {
     await EasyLocalization.ensureInitialized();
     await NotificationService.initialize();
     await initDependencies();
+    // Start monitoring request status
+    final monitor = sl<RequestStatusMonitor>();
+    await monitor.initialize();
   }
 }

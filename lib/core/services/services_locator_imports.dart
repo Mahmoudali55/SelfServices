@@ -24,6 +24,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<PrefileCubit>(() => PrefileCubit(sl()));
   sl.registerLazySingleton<NotifictionRepo>(() => NotifictionRepoImpl(sl()));
   sl.registerLazySingleton<NotifictionCubit>(() => NotifictionCubit(sl()));
+  sl.registerLazySingleton<RequestStatusMonitor>(() => RequestStatusMonitor(sl()));
   sl.registerLazySingleton<SettingCubit>(() => SettingCubit(sl()));
   sl.registerLazySingleton<SettingRepo>(() => SettingRepoImp(sl()));
   sl.registerFactory<ChatRepository>(() => ChatRepository(firestore: FirebaseFirestore.instance));

@@ -14,6 +14,7 @@ import 'package:my_template/features/home/presentation/cubit/home_cubit.dart';
 import 'package:my_template/features/layout/presentation/cubit/layout_cubit.dart';
 import 'package:my_template/features/notification/data/repo/notifiction_repo.dart';
 import 'package:my_template/features/notification/presentation/cubit/notification_cubit.dart';
+import 'package:my_template/features/notification/services/request_status_monitor.dart';
 import 'package:my_template/features/on_boarding/data/repository/on_boarding_rep.dart';
 import 'package:my_template/features/on_boarding/presentation/view/cubit/on_boarding_cubit.dart';
 import 'package:my_template/features/profile/data/repo/Profile_repo.dart';
@@ -28,6 +29,5 @@ import 'package:my_template/features/setting/presentation/cubit/settting_cubit.d
 import '../network/api_consumer.dart';
 import '../network/app_interceptors.dart';
 import '../network/dio_consumer.dart';
-
 
 part 'services_locator_imports.dart';
