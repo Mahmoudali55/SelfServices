@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_template/core/cache/hive/hive_methods.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/chat/data/model/chat_model.dart';
 import 'package:my_template/features/chat/data/repo/chat_repository.dart';
@@ -9,6 +10,7 @@ import 'package:my_template/features/chat/presentation/cubit/chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState> {
   final ChatRepository repository;
+  static int? activeOtherUserId;
   final int currentUserId;
   int? otherUserId;
 
@@ -32,6 +34,7 @@ class ChatCubit extends Cubit<ChatState> {
     _incomingMessagesSubscription = repository.listenToIncomingMessages(currentUserId).listen((
       newMessages,
     ) {
+      if (isClosed) return;
       final updated = List<ChatMessage>.from(state.chatMessages);
 
       for (var msg in newMessages) {
@@ -53,7 +56,11 @@ class ChatCubit extends Cubit<ChatState> {
 
     final initialMessages = await repository.getChatMessages(currentUserId, otherUserId!).first;
 
+    activeOtherUserId = otherUserId;
     emit(state.copyWith(chatMessages: initialMessages));
+
+    // Mark messages as read after loading them
+    markAllAsRead();
 
     _messagesSubscription = repository.getChatMessages(currentUserId, otherUserId!).skip(1).listen((
       messages,
@@ -94,6 +101,7 @@ class ChatCubit extends Cubit<ChatState> {
       repliedTo: repliedMessage?.id,
       repliedText: repliedMessage?.message,
       repliedSenderId: repliedMessage?.senderId,
+      senderName: HiveMethods.getEmpNameAR(),
       fileUrl: fileUrl,
       fileName: fileName,
     );
@@ -123,6 +131,7 @@ class ChatCubit extends Cubit<ChatState> {
       repliedTo: repliedMessage?.id,
       repliedText: repliedMessage?.message,
       repliedSenderId: repliedMessage?.senderId,
+      senderName: HiveMethods.getEmpNameAR(),
       fileUrl: repliedMessage?.fileUrl,
       fileName: repliedMessage?.fileName,
     );
@@ -176,8 +185,11 @@ class ChatCubit extends Cubit<ChatState> {
   void markAllAsRead() async {
     if (otherUserId == null) return;
 
+    // Find unread messages that were RECEIVED by current user (sent by other user)
     final unreadMessages = state.chatMessages
-        .where((msg) => !msg.isRead && msg.receiverId == otherUserId)
+        .where(
+          (msg) => !msg.isRead && msg.receiverId == currentUserId && msg.senderId == otherUserId,
+        )
         .toList();
 
     for (var msg in unreadMessages) {
@@ -236,9 +248,11 @@ class ChatCubit extends Cubit<ChatState> {
 
   @override
   Future<void> close() {
+    activeOtherUserId = null;
     _messagesSubscription?.cancel();
     _lastMessagesSubscription?.cancel();
     _otherUserStatusSubscription?.cancel();
+    _incomingMessagesSubscription?.cancel();
 
     stopHeartbeat();
 

@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:my_template/core/cache/hive/hive_methods.dart';
 import 'package:my_template/core/custom_widgets/custom_toast/custom_toast.dart';
 import 'package:my_template/core/routes/routes_name.dart';
+import 'package:my_template/core/services/notification_service.dart';
 import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
@@ -267,6 +268,7 @@ class _MoreScreenState extends State<MoreScreen> {
     await HiveMethods.deleteBoxFromDisk('chat_messages_$empId');
     await HiveMethods.deleteEmpCode();
     await HiveMethods.deleteToken();
+    await NotificationService.stopListening();
 
     if (!context.mounted) return;
 

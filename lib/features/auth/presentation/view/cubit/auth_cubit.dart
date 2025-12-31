@@ -7,6 +7,7 @@ import 'package:my_template/core/custom_widgets/custom_toast/custom_toast.dart';
 import 'package:my_template/core/network/connection_checker.dart';
 import 'package:my_template/core/network/status.state.dart';
 import 'package:my_template/core/routes/routes_name.dart';
+import 'package:my_template/core/services/notification_service.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/auth/data/model/emp_login_model.dart';
@@ -66,6 +67,14 @@ class AuthCubit extends Cubit<AuthState> {
         HiveMethods.updateEmpNameEN(success.user.empNameE);
         HiveMethods.updateEmpCode(success.user.empCode);
         HiveMethods.updateEmpPassword(passwordController.text);
+
+        // Update FCM Token in Firestore if empCode is available
+        final empCodeInt = int.tryParse(success.user.empCode);
+        if (empCodeInt != null) {
+          NotificationService.updateTokenInFirestore(empCodeInt);
+          NotificationService.startListeningForNotifications(empCodeInt);
+        }
+
         emit(state.copyWith(loginStatus: StatusState.success(success)));
       },
     );

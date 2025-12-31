@@ -18,6 +18,7 @@ class ChatMessage {
   final String? repliedTo;
   final String? repliedText;
   final int? repliedSenderId;
+  final String? senderName;
   final List<int> participants;
 
   ChatMessage({
@@ -36,6 +37,7 @@ class ChatMessage {
     this.repliedTo,
     this.repliedText,
     this.repliedSenderId,
+    this.senderName,
     List<int>? participants,
   }) : participants = participants ?? [senderId, receiverId];
 
@@ -55,6 +57,7 @@ class ChatMessage {
       'repliedTo': repliedTo,
       'repliedText': repliedText,
       'repliedSenderId': repliedSenderId,
+      'senderName': senderName,
       'participants': participants,
     };
   }
@@ -89,6 +92,7 @@ class ChatMessage {
       repliedTo: map['repliedTo'],
       repliedText: map['repliedText'],
       repliedSenderId: map['repliedSenderId'],
+      senderName: map['senderName'],
       participants: List<int>.from(map['participants'] ?? []),
     );
   }
@@ -109,6 +113,7 @@ class ChatMessage {
     String? repliedTo,
     String? repliedText,
     int? repliedSenderId,
+    String? senderName,
     List<int>? participants,
   }) {
     return ChatMessage(
@@ -127,6 +132,7 @@ class ChatMessage {
       repliedTo: repliedTo ?? this.repliedTo,
       repliedText: repliedText ?? this.repliedText,
       repliedSenderId: repliedSenderId ?? this.repliedSenderId,
+      senderName: senderName ?? this.senderName,
       participants: participants ?? this.participants,
     );
   }

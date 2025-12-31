@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -58,7 +59,6 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     final cubit = context.read<ChatCubit>();
     cubit.setOtherUserId(widget.otherUserId);
-    cubit.markAllAsRead();
 
     _cloudinaryService = CloudinaryService();
 
@@ -251,76 +251,87 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         },
         onBack: () => Navigator.pop(context),
       ),
-      body: Container(
-        decoration: const BoxDecoration(color: Color(0xFFE5DDD5)),
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  child: BlocConsumer<ChatCubit, ChatState>(
-                    listener: (context, state) {
-                      if (_scrollController.hasClients && _scrollController.offset < 100) {
-                        _scrollToBottom();
-                      }
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          if (selectedMessageId != null) {
+            setState(() {
+              selectedMessageId = null;
+            });
+          }
+          FocusScope.of(context).unfocus();
+        },
+        child: Container(
+          decoration: const BoxDecoration(color: Color(0xFFE5DDD5)),
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Expanded(
+                    child: BlocConsumer<ChatCubit, ChatState>(
+                      listener: (context, state) {
+                        if (_scrollController.hasClients && _scrollController.offset < 100) {
+                          _scrollToBottom();
+                        }
+                      },
+                      builder: (context, state) {
+                        return MessageList(
+                          messages: state.chatMessages.reversed.toList(),
+                          currentUserId: widget.currentUserId,
+                          otherUserName: widget.otherUserName,
+                          scrollController: _scrollController,
+                          selectedMessageId: selectedMessageId,
+                          highlightedMessageId: highlightedMessageId,
+                          onLongPress: (msg) {
+                            setState(() => selectedMessageId = msg.id);
+                            _showOptionsDialog(msg, cubit);
+                          },
+                          onReplyTap: (repliedId) {
+                            _scrollToMessageById(repliedId, state.chatMessages);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  ChatInputField(
+                    controller: _controller,
+                    isRecording: _isRecording,
+                    showEmojiPicker: _showEmojiPicker,
+                    isUploading: isUploading,
+                    repliedMessage: repliedMessage,
+                    repliedMessageSenderName: repliedMessage != null
+                        ? (repliedMessage!.senderId == widget.currentUserId
+                              ? (context.locale.languageCode == 'ar' ? 'أنت' : 'You')
+                              : widget.otherUserName)
+                        : null,
+                    otherUserName: widget.otherUserName,
+                    onToggleEmoji: () {
+                      setState(() {
+                        _showEmojiPicker = !_showEmojiPicker;
+                        if (_showEmojiPicker) FocusScope.of(context).unfocus();
+                      });
                     },
-                    builder: (context, state) {
-                      return MessageList(
-                        messages: state.chatMessages.reversed.toList(),
-                        currentUserId: widget.currentUserId,
-                        otherUserName: widget.otherUserName,
-                        scrollController: _scrollController,
-                        selectedMessageId: selectedMessageId,
-                        highlightedMessageId: highlightedMessageId,
-                        onLongPress: (msg) {
-                          setState(() => selectedMessageId = msg.id);
-                          _showOptionsDialog(msg, cubit);
-                        },
-                        onReplyTap: (repliedId) {
-                          _scrollToMessageById(repliedId, state.chatMessages);
-                        },
-                      );
+                    onSend: () => _sendMessage(cubit),
+                    onPickImage: () => _sendImage(cubit),
+                    onPickFile: () => _sendFile(cubit),
+                    onStartRecording: () async {
+                      await _startRecording();
+                    },
+                    onRecordingComplete: (file) async {
+                      await _uploadAndSendFile(file, MessageType.audio, cubit);
+                      setState(() => _isRecording = false);
+                    },
+                    onCancelRecording: () => setState(() => _isRecording = false),
+                    onCancelReply: () => setState(() => repliedMessage = null),
+                    onTyping: (text) {
+                      _startTyping();
                     },
                   ),
-                ),
-                ChatInputField(
-                  controller: _controller,
-                  isRecording: _isRecording,
-                  showEmojiPicker: _showEmojiPicker,
-                  isUploading: isUploading,
-                  repliedMessage: repliedMessage,
-                  repliedMessageSenderName: repliedMessage != null
-                      ? (repliedMessage!.senderId == widget.currentUserId
-                            ? (context.locale.languageCode == 'ar' ? 'أنت' : 'You')
-                            : widget.otherUserName)
-                      : null,
-                  otherUserName: widget.otherUserName,
-                  onToggleEmoji: () {
-                    setState(() {
-                      _showEmojiPicker = !_showEmojiPicker;
-                      if (_showEmojiPicker) FocusScope.of(context).unfocus();
-                    });
-                  },
-                  onSend: () => _sendMessage(cubit),
-                  onPickImage: () => _sendImage(cubit),
-                  onPickFile: () => _sendFile(cubit),
-                  onStartRecording: () async {
-                    await _startRecording();
-                  },
-                  onRecordingComplete: (file) async {
-                    await _uploadAndSendFile(file, MessageType.audio, cubit);
-                    setState(() => _isRecording = false);
-                  },
-                  onCancelRecording: () => setState(() => _isRecording = false),
-                  onCancelReply: () => setState(() => repliedMessage = null),
-                  onTyping: (text) {
-                    _startTyping();
-                  },
-                ),
-              ],
-            ),
-            if (isUploading) _buildUploadOverlay(),
-          ],
+                ],
+              ),
+              if (isUploading) _buildUploadOverlay(),
+            ],
+          ),
         ),
       ),
     );
@@ -354,14 +365,15 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                   editingMessageId = msg.id;
                 },
               ),
-            ListTile(
-              leading: const Icon(Icons.forward, color: Colors.green),
-              title: Text(AppLocalKay.forward.tr()),
-              onTap: () {
-                Navigator.pop(context);
-                _forwardMessage(msg);
-              },
-            ),
+            if (!msg.isDeleted)
+              ListTile(
+                leading: const Icon(Icons.forward, color: Colors.green),
+                title: Text(AppLocalKay.forward.tr()),
+                onTap: () {
+                  Navigator.pop(context);
+                  _forwardMessage(msg);
+                },
+              ),
             if (msg.senderId == widget.currentUserId)
               ListTile(
                 leading: const Icon(Icons.delete, color: Colors.red),
@@ -370,6 +382,23 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                   Navigator.pop(context);
                   cubit.deleteMessage(msg);
                   setState(() => selectedMessageId = null);
+                },
+              ),
+            if (msg.message != null && msg.message!.isNotEmpty)
+              ListTile(
+                leading: const Icon(Icons.copy, color: Colors.grey),
+                title: Text(context.locale.languageCode == 'ar' ? 'نسخ الرسالة' : 'Copy message'),
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: msg.message!));
+                  Navigator.pop(context);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        context.locale.languageCode == 'ar' ? 'تم نسخ الرسالة' : 'Message copied',
+                      ),
+                    ),
+                  );
                 },
               ),
           ],
