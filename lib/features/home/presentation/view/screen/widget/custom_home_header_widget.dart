@@ -18,14 +18,8 @@ import 'package:my_template/features/services/presentation/cubit/services_cubit.
 import 'package:my_template/features/services/presentation/cubit/services_state.dart';
 
 class CustomHomeHeaderWidget extends StatefulWidget {
-  const CustomHomeHeaderWidget({
-    super.key,
-    required this.name,
-    required this.searchController,
-    required this.child,
-  });
+  const CustomHomeHeaderWidget({super.key, required this.searchController, required this.child});
 
-  final String? name;
   final TextEditingController searchController;
   final Widget child;
 

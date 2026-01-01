@@ -133,11 +133,12 @@ class HomeRepoImp implements HomeRepo {
   }
 
   @override
-  Future<Either<Failure, List<GetNewsModel>>> getAllNews(int? sar) async {
+  Future<Either<Failure, List<GetNewsModel>>> getAllNews(int? ser) {
     return handleDioRequest(
       request: () async {
-        final response = await apiConsumer.get(EndPoints.getnews(ser: sar));
-        return GetNewsModel.parseNewsList(response);
+        final response = await apiConsumer.get(EndPoints.getnews(ser: ser));
+
+        return GetNewsModel.parseList(response);
       },
     );
   }

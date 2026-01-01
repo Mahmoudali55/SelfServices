@@ -42,6 +42,7 @@ class _NewsTickerState extends State<NewsTicker> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.locale.languageCode;
     return Container(
       height: 35.h,
       margin: EdgeInsets.symmetric(horizontal: 10.w),
@@ -58,6 +59,7 @@ class _NewsTickerState extends State<NewsTicker> with SingleTickerProviderStateM
         separatorBuilder: (_, __) => SizedBox(width: 30.w),
         itemBuilder: (context, index) {
           final news = widget.newsList[index];
+
           return GestureDetector(
             onTap: () => _showNewsDetails(context, news),
             child: Row(
@@ -65,7 +67,7 @@ class _NewsTickerState extends State<NewsTicker> with SingleTickerProviderStateM
                 Icon(Icons.fiber_new, color: AppColor.greenColor(context), size: 18.sp),
                 SizedBox(width: 5.w),
                 Text(
-                  news.newsTitle,
+                  news.title(lang),
                   style: AppTextStyle.text14MPrimary(context, color: AppColor.greenColor(context)),
                 ),
               ],
@@ -83,6 +85,7 @@ class _NewsTickerState extends State<NewsTicker> with SingleTickerProviderStateM
       backgroundColor: Colors.transparent,
       builder: (ctx) => DraggableScrollableSheet(
         builder: (context, scrollController) {
+          final lang = context.locale.languageCode;
           return Container(
             decoration: BoxDecoration(
               color: AppColor.whiteColor(context),
@@ -129,21 +132,13 @@ class _NewsTickerState extends State<NewsTicker> with SingleTickerProviderStateM
                       ),
                       Gap(15.h),
                       Text(
-                        news.newsTitle,
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                          color: AppColor.blackColor(context),
+                        news.subject(lang),
+                        style: AppTextStyle.text14MPrimary(
+                          context,
+                          color: AppColor.greenColor(context),
                         ),
                       ),
                       Gap(10.h),
-                      Text(
-                        news.miniNewsSubject,
-                        style: AppTextStyle.text14MPrimary(
-                          context,
-                          color: AppColor.greyColor(context),
-                        ),
-                      ),
                     ],
                   ),
                 ),

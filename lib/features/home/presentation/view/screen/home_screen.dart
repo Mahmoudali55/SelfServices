@@ -116,7 +116,6 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomHomeHeaderWidget(
-                name: widget.name,
                 searchController: _searchController,
                 child: SizedBox(
                   height: 40.h,
