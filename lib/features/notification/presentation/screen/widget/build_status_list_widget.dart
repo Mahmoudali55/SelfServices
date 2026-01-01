@@ -23,48 +23,63 @@ class ModernNotificationScreen extends StatefulWidget {
 }
 
 class _ModernNotificationScreenState extends State<ModernNotificationScreen> {
-  int? selectedStatus; // null = All, 0 = In Progress, 1 = Accepted, 2 = Rejected, 3 = Holding
-
-  List<RequestItem> get filteredData {
-    if (selectedStatus == null) return widget.data;
-    return widget.data.where((item) => item.reqDecideState == selectedStatus).toList();
-  }
+  final List<int?> filterValues = [null, 3, 1, 2]; // All, Holding, Accepted, Rejected
 
   @override
   Widget build(BuildContext context) {
-    final sortedData = sortByDate(filteredData);
-    final takeCount = sortedData.length >= 3 ? 3 : sortedData.length;
-    final latestItems = sortedData.take(takeCount).toList();
-    final olderItems = sortedData.length > takeCount
-        ? sortedData.sublist(takeCount)
-        : <RequestItem>[];
+    return DefaultTabController(
+      length: filterValues.length,
+      child: Column(
+        children: [
+          TabBar(
+            isScrollable: true,
+            labelColor: AppColor.primaryColor(context),
+            unselectedLabelColor: AppColor.blackColor(context),
+            indicatorColor: AppColor.primaryColor(context),
+            tabs: [
+              Tab(text: context.locale.languageCode == 'ar' ? 'الكل' : 'All'),
+              Tab(text: context.locale.languageCode == 'ar' ? 'تحت الاجراء' : 'Holding'),
+              Tab(text: context.locale.languageCode == 'ar' ? 'مقبول' : 'Accepted'),
+              Tab(text: context.locale.languageCode == 'ar' ? 'مرفوض' : 'Rejected'),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              children: filterValues.map((status) {
+                final filteredData = status == null
+                    ? widget.data
+                    : widget.data.where((item) => item.reqDecideState == status).toList();
 
-    final allItems = [...latestItems, ...olderItems];
+                final sortedData = sortByDate(filteredData);
+                final takeCount = sortedData.length >= 3 ? 3 : sortedData.length;
+                final latestItems = sortedData.take(takeCount).toList();
+                final olderItems = sortedData.length > takeCount
+                    ? sortedData.sublist(takeCount)
+                    : <RequestItem>[];
+                final allItems = [...latestItems, ...olderItems];
 
-    return Column(
-      children: [
-        _buildFilterChips(),
-        Expanded(
-          child: allItems.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        AppImages.assetsGlobalIconEmptyFolderIcon,
-                        height: 200,
-                        width: 200,
-                        color: AppColor.primaryColor(context),
-                      ),
-                      const Gap(20),
-                      Text(
-                        AppLocalKay.no_requests.tr(),
-                        style: AppTextStyle.text16MSecond(context),
-                      ),
-                    ],
-                  ),
-                )
-              : ListView.builder(
+                if (allItems.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          AppImages.assetsGlobalIconEmptyFolderIcon,
+                          height: 200,
+                          width: 200,
+                          color: AppColor.primaryColor(context),
+                        ),
+                        const Gap(20),
+                        Text(
+                          AppLocalKay.no_requests.tr(),
+                          style: AppTextStyle.text16MSecond(context),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return ListView.builder(
                   padding: const EdgeInsets.all(12),
                   itemCount: allItems.length,
                   itemBuilder: (context, index) {
@@ -98,50 +113,11 @@ class _ModernNotificationScreenState extends State<ModernNotificationScreen> {
                       ],
                     );
                   },
-                ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFilterChips() {
-    final filters = [
-      {'label': context.locale.languageCode == 'ar' ? 'الكل' : 'All', 'value': null},
-      {'label': context.locale.languageCode == 'ar' ? 'تحت الإجراء' : 'In Progress', 'value': 0},
-      {'label': context.locale.languageCode == 'ar' ? 'تحت السحب' : 'Holding', 'value': 3},
-      {'label': context.locale.languageCode == 'ar' ? 'مقبول' : 'Accepted', 'value': 1},
-      {'label': context.locale.languageCode == 'ar' ? 'مرفوض' : 'Rejected', 'value': 2},
-    ];
-
-    return Container(
-      height: 50,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        scrollDirection: Axis.horizontal,
-        itemCount: filters.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final filter = filters[index];
-          final isSelected = selectedStatus == filter['value'];
-          return ChoiceChip(
-            label: Text(
-              filter['label'] as String,
-              style: AppTextStyle.text14MPrimary(
-                context,
-                color: isSelected ? Colors.white : AppColor.blackColor(context),
-              ),
+                );
+              }).toList(),
             ),
-            selected: isSelected,
-            selectedColor: AppColor.primaryColor(context),
-            backgroundColor: Colors.grey.shade200,
-            onSelected: (selected) {
-              setState(() {
-                selectedStatus = filter['value'] as int?;
-              });
-            },
-          );
-        },
+          ),
+        ],
       ),
     );
   }

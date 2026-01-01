@@ -8,10 +8,8 @@ Future<void> initDependencies() async {
   sl.registerFactory<ApiConsumer>(() => DioConsumer(client: sl()));
   sl.registerLazySingleton<AuthRepo>(() => AuthRepoImpl(sl()));
   sl.registerLazySingleton<AuthCubit>(() => AuthCubit(sl<AuthRepo>(), sl<ConnectionChecker>()));
-
   sl.registerLazySingleton<ConnectionChecker>(() => ConnectionCheckerImpl(InternetConnection()));
   sl.registerLazySingleton<OnBoardingRepository>(() => OnBoardingRepository());
-
   sl.registerLazySingleton<OnBoardingCubit>(() => OnBoardingCubit(repository: sl()));
   sl.registerLazySingleton<LayoutCubit>(() => LayoutCubit());
   sl.registerLazySingleton<HomeRepoImp>(() => HomeRepoImp(sl()));
@@ -34,7 +32,6 @@ Future<void> initDependencies() async {
       currentUserId: int.parse(HiveMethods.getEmpCode() ?? '0'),
     ),
   );
-
   sl.registerFactory<GroupCubit>(
     () => GroupCubit(sl<ChatRepository>(), int.parse(HiveMethods.getEmpCode() ?? '0')),
   );
