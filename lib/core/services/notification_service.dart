@@ -13,6 +13,8 @@ import 'package:my_template/core/routes/app_routers_import.dart';
 import 'package:my_template/core/routes/routes_name.dart';
 import 'package:my_template/core/services/services_locator.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
+import 'package:my_template/features/chat/data/model/chat_model.dart';
+import 'package:my_template/features/chat/data/repo/chat_repository.dart';
 import 'package:my_template/features/chat/presentation/cubit/chat_cubit.dart';
 import 'package:my_template/features/chat/presentation/screen/chat_screen.dart';
 import 'package:my_template/features/chat/presentation/screen/group_chat_screen.dart';
@@ -25,6 +27,7 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
   static StreamSubscription? _chatSubscription;
   static StreamSubscription? _groupSubscription;
+  static const String replyActionId = 'reply_chat_action';
 
   static Future<void> initialize() async {
     // 1. Request Permission
@@ -51,53 +54,95 @@ class NotificationService {
 
     await _localNotifications.initialize(
       initSettings,
-      onDidReceiveNotificationResponse: (details) {
-        log('Notification tapped: ${details.payload}');
-        if (details.payload != null) {
-          try {
-            final data = jsonDecode(details.payload!);
-            final senderId = data['senderId'] as int?;
-            final senderName = data['senderName'] as String?;
-            final currentUserId = data['currentUserId'] as int?;
-
-            if (senderId != null && senderName != null && currentUserId != null) {
-              // Use addPostFrameCallback to ensure navigation happens after the current frame
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                // Check if it's a group notification
-                final groupId = data['groupId'] as String?;
-                final groupName = data['groupName'] as String?;
-
-                if (groupId != null && groupName != null) {
-                  // Navigate to GroupChatScreen
-                  AppRouters.navigatorKey.currentState?.push(
-                    MaterialPageRoute(
-                      builder: (context) => GroupChatScreen(groupId: groupId, groupName: groupName),
-                    ),
-                  );
-                } else {
-                  // Navigate to ChatScreen
-                  AppRouters.navigatorKey.currentState?.push(
-                    MaterialPageRoute(
-                      builder: (context) => ChatScreen(
-                        currentUserId: currentUserId,
-                        otherUserId: senderId,
-                        otherUserName: senderName,
-                      ),
-                    ),
-                  );
-                }
-              });
-            } else if (data['type'] == 'request_update') {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                _handleRequestNotificationTap(data);
-              });
-            }
-          } catch (e) {
-            log('Error parsing notification payload: $e');
-          }
-        }
-      },
+      onDidReceiveNotificationResponse: _handleNotificationResponse,
+      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
+  }
+
+  static void _handleNotificationResponse(NotificationResponse details) {
+    log('Notification action: ${details.actionId}, payload: ${details.payload}');
+
+    if (details.payload != null) {
+      try {
+        final data = jsonDecode(details.payload!);
+
+        if (details.actionId == replyActionId &&
+            details.input != null &&
+            details.input!.isNotEmpty) {
+          _handleInlineReply(data, details.input!);
+          return;
+        }
+
+        final senderId = data['senderId'] as int?;
+        final senderName = data['senderName'] as String?;
+        final currentUserId = data['currentUserId'] as int?;
+
+        if (senderId != null && senderName != null && currentUserId != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final groupId = data['groupId'] as String?;
+            final groupName = data['groupName'] as String?;
+
+            if (groupId != null && groupName != null) {
+              AppRouters.navigatorKey.currentState?.push(
+                MaterialPageRoute(
+                  builder: (context) => GroupChatScreen(groupId: groupId, groupName: groupName),
+                ),
+              );
+            } else {
+              AppRouters.navigatorKey.currentState?.push(
+                MaterialPageRoute(
+                  builder: (context) => ChatScreen(
+                    currentUserId: currentUserId,
+                    otherUserId: senderId,
+                    otherUserName: senderName,
+                  ),
+                ),
+              );
+            }
+          });
+        } else if (data['type'] == 'request_update') {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _handleRequestNotificationTap(data);
+          });
+        }
+      } catch (e) {
+        log('Error parsing notification payload: $e');
+      }
+    }
+  }
+
+  static Future<void> _handleInlineReply(Map<String, dynamic> data, String replyText) async {
+    final senderId = data['senderId'] as int?;
+    final currentUserId = data['currentUserId'] as int?;
+    final senderName = data['senderName'] as String?;
+
+    if (senderId == null || currentUserId == null) return;
+
+    log('Handling inline reply: "$replyText" to user $senderId');
+
+    final repo = sl<ChatRepository>();
+    final conversationId = currentUserId < senderId
+        ? '${currentUserId}_${senderId}'
+        : '${senderId}_${currentUserId}';
+
+    final message = ChatMessage(
+      senderId: currentUserId,
+      receiverId: senderId,
+      message: replyText.trim(),
+      timestamp: DateTime.now(),
+      conversationId: conversationId,
+      senderName: HiveMethods.getEmpNameAR(),
+      type: MessageType.text,
+    );
+
+    try {
+      await repo.sendMessage(message);
+      log('Inline reply sent successfully');
+      // Dismiss the notification
+      await _localNotifications.cancelAll(); // Or use a specific ID if tracked
+    } catch (e) {
+      log('Error sending inline reply: $e');
+    }
 
     // 3. Create Android Notification Channel
     const AndroidNotificationChannel chatChannel = AndroidNotificationChannel(
@@ -162,13 +207,17 @@ class NotificationService {
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
-      // To use a custom sound like WhatsApp, you'd place 'whatsapp_tone.mp3' in res/raw/
-      // and use: sound: RawResourceAndroidNotificationSound('whatsapp_tone'),
+      actions: <AndroidNotificationAction>[],
     );
 
     const NotificationDetails platformDetails = NotificationDetails(
       android: androidDetails,
-      iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true),
+      iOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+        categoryIdentifier: 'chat_reply_category',
+      ),
     );
 
     // Create payload with sender info and optional group info
@@ -769,5 +818,16 @@ class NotificationService {
       RoutesName.layoutScreen,
       arguments: {'restoreIndex': 1, 'initialType': initialType},
     );
+  }
+}
+
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse details) {
+  log('Notification background action: ${details.actionId}, payload: ${details.payload}');
+  // For now, we reuse the foreground handler logic if possible,
+  // but background reply might need service re-initialization.
+  if (details.actionId == NotificationService.replyActionId && details.input != null) {
+    // We can't easily call the async handler without ensuring sl and Hive are ready.
+    // In a real app, you might need a separate minimal init for background tasks.
   }
 }

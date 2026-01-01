@@ -6,10 +6,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jailbreak_root_detection/jailbreak_root_detection.dart';
 import 'package:my_template/core/cache/hive/get_secure_key.dart';
 import 'package:my_template/core/network/contants.dart';
+import 'package:my_template/core/theme/cubit/app_theme_cubit.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 
 import 'app.dart';
-import 'core/theme/cubit/app_theme_cubit.dart';
+import 'core/theme/theme_enum.dart';
 import 'service_initialize.dart';
 
 void main() async {
@@ -17,6 +18,7 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp();
   await Hive.initFlutter();
+  Hive.registerAdapter(ThemeEnumAdapter());
   final key = await getSecureKey();
   await Hive.openBox('app', encryptionCipher: HiveAesCipher(key));
   final box = Hive.box('app');

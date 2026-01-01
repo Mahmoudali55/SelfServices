@@ -31,6 +31,7 @@ class RequestStatusMonitor {
   }
 
   bool _isChecking = false;
+  bool _isFirstCheck = true;
 
   Future<void> _checkStatus() async {
     if (_isChecking) {
@@ -54,18 +55,21 @@ class RequestStatusMonitor {
         response,
       ) {
         log('Fetched ${response.data.length} requests'); // Added log
-        _compareAndNotify(response.data);
+        _compareAndNotify(response.data, isFirstCheck: _isFirstCheck);
+        _isFirstCheck = false;
       });
     } finally {
       _isChecking = false;
     }
   }
 
-  void _compareAndNotify(List<RequestItem> currentRequests) {
+  void _compareAndNotify(List<RequestItem> currentRequests, {bool isFirstCheck = false}) {
     final lastRequestsJson = _box.get(_lastRequestsKey);
     List<RequestItem> lastRequests = [];
 
-    if (lastRequestsJson != null) {
+    bool isInitialSync = lastRequestsJson == null;
+
+    if (!isInitialSync) {
       try {
         final List<dynamic> decoded = jsonDecode(lastRequestsJson);
         lastRequests = decoded.map((e) => RequestItem.fromJson(e as Map<String, dynamic>)).toList();
@@ -73,7 +77,7 @@ class RequestStatusMonitor {
         log('RequestStatusMonitor: Error decoding last requests state: $e');
       }
     } else {
-      log('RequestStatusMonitor: No previous requests state found (first run or cleared).');
+      log('RequestStatusMonitor: Initial sync - saving state without notifying.');
     }
 
     // Use composite key (ID_Type) to ensure uniqueness
@@ -81,36 +85,34 @@ class RequestStatusMonitor {
       for (var item in lastRequests) '${item.vacRequestId}_${item.reqtype}': item,
     };
 
-    for (var current in currentRequests) {
-      final key = '${current.vacRequestId}_${current.reqtype}';
-      final last = lastRequestsMap[key];
+    if (!isInitialSync && !isFirstCheck) {
+      for (var current in currentRequests) {
+        final key = '${current.vacRequestId}_${current.reqtype}';
+        final last = lastRequestsMap[key];
 
-      if (last != null) {
-        // Compare status
-        if (current.reqDecideState != last.reqDecideState ||
-            current.reqDicidState != last.reqDicidState) {
-          log(
-            'RequestStatusMonitor: Status change detected for $key! '
-            'Old: ${last.reqDecideState}/${last.reqDicidState}, '
-            'New: ${current.reqDecideState}/${current.reqDicidState}',
-          );
+        if (last != null) {
+          // Compare status
+          if (current.reqDecideState != last.reqDecideState ||
+              current.reqDicidState != last.reqDicidState) {
+            log(
+              'RequestStatusMonitor: Status change detected for $key! '
+              'Old: ${last.reqDecideState}/${last.reqDicidState}, '
+              'New: ${current.reqDecideState}/${current.reqDicidState}',
+            );
 
-          _triggerNotification(current);
+            _triggerNotification(current);
+          }
         } else {
-          // log('RequestStatusMonitor: No change for $key'); // Optional verbose log
+          // New request found AFTER initial sync
+          log('RequestStatusMonitor: New request found: $key. Triggering notification.');
+          _triggerNotification(current);
         }
-      } else {
-        // New request or unseen before
-        // FOR TESTING: Notify on new items too so the user sees it works immediately after update
-        log('RequestStatusMonitor: New request found: $key. Triggering test notification.');
-        _triggerNotification(current);
       }
     }
 
     // Update local state
     final String encoded = jsonEncode(currentRequests.map((e) => e.toJson()).toList());
     _box.put(_lastRequestsKey, encoded);
-    // log('RequestStatusMonitor: Saved new state with ${currentRequests.length} items.');
   }
 
   void _triggerNotification(RequestItem request) {
