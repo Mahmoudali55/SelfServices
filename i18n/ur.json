@@ -488,5 +488,10 @@
   "followed_actions": "پیروی کی جانے والی کارروائیاں",
   "pending": "زیر التواء",
   "attachments_attached": "منسلکات منسلک ہیں",
-  "print": "پرنٹ کریں"
+  "print": "پرنٹ کریں",
+  "rate_not_selected": "براہ کرم بھیجنے سے پہلے درجہ بندی منتخب کریں ⭐",
+  "rate_feedback_content": "⭐ *ایپ کی درجہ بندی*:\nدرجہ بندی: {} 5 میں سے\nرائے: {}",
+  "logout_successful_message": "لاگ آؤٹ کامیاب",
+  "copyright": "© 2025 ڈیلٹا کمپنی",
+  "no_feedback": "کوئی رائے نہیں"
 }

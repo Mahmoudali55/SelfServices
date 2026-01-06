@@ -496,7 +496,12 @@
   "attachment_name": "Attachment Name",
   "no_attachment": "No attachment",
   "followed_actions": "Followed Actions",
-   "pending": "Pending",
+  "pending": "Pending",
   "attachments_attached": "Attachments Attached",
-  "print": "Print"
+  "print": "Print",
+  "rate_not_selected": "Please select a rating before sending ⭐",
+  "rate_feedback_content": "⭐ *App Rating *:\nRating: {} out of 5\nFeedback: {}",
+  "logout_successful_message": "Logout successful",
+  "copyright": "© 2025 Delta Company",
+  "no_feedback": "No feedback"
 }

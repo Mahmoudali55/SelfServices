@@ -420,20 +420,16 @@
   "branchDammam": "فرغ الدمام",
   "AppInfo": "معلومات التطبيق",
   "AppVersion": "اصدار التطبيق",
-
   "alternativeEmployee": "الموظف البديل",
   "employeeCode": "كود الموظف",
-
   "solfa": "السلفة",
   "solfaType": "نوع السلفة",
   "discountstartdate": "تاريخ بداية الخصم",
-
   "status": "الحالة",
   "statusNumber": "رقم الحالة",
   "attachment": "المرفقات",
   "fileName": "اسم الملف",
   "noAttachment": "لا يوجد مرفق",
-
   "deleteConfirmation": "هل أنت متأكد أنك تريد الحذف؟",
   "solfaRequestScreen": "شاشة طلب السلفة",
   "loaninstallmentscount": "عدد الأقساط",
@@ -460,15 +456,13 @@
   "all": "الجميع",
   "myRequests": "طلباتي",
   "submittedRequests": "الطلبات المقدمة للآخرين",
-    "vacation_request_details": "تفاصيل طلب الإجازة",
-
+  "vacation_request_details": "تفاصيل طلب الإجازة",
   "employee_data": "بيانات الموظف",
   "employee_name": "اسم الموظف",
   "employee_name_en": "اسم الموظف (EN)",
   "employee_code": "الكود الوظيفي",
   "department_name": "اسم القسم",
   "department_name_en": "اسم القسم (EN)",
-
   "vacation_data": "بيانات الإجازة",
   "request_number": "رقم الطلب",
   "vacation_type": "نوع الإجازة",
@@ -476,22 +470,23 @@
   "from_date": "من تاريخ",
   "to_date": "إلى تاريخ",
   "days_count": "عدد الأيام",
-
-
   "request_status": "حالة الطلب",
   "status_description": "الوصف",
   "status_number": "رقم الحالة",
-
   "alternative_employee": "الموظف البديل",
   "alternative_name": "اسم البديل",
   "alternative_name_en": "اسم البديل (EN)",
   "alternative_code": "كود البديل",
-
-  "pending":"تحت المعالجة",
-  "attachments_attached":"تم ارفاق المرفقات",
+  "pending": "حيد الانتظار",
+  "attachments_attached": "المرفقات المرفقة",
   "attachment_name": "اسم المرفق",
   "no_attachment": "لا يوجد",
   "followed_actions":"الاجراءات  المطلوبة",
-  "print": "طباعة"
+  "print": "طباعة",
+  "rate_not_selected": "من فضلك اختر تقييمًا قبل الإرسال ⭐",
+  "rate_feedback_content": "⭐ * تقييم التطبيق*:\nالتقييم: {} من 5\nالملاحظات: {}",
+  "logout_successful_message": "تم تسجيل الخروج بنجاح",
+  "copyright": "© 2025 شركة دلتا",
+  "no_feedback": "لا توجد ملاحظات"
 }
 

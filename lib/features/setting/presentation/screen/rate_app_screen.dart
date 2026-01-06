@@ -101,17 +101,15 @@ class _RateAppScreenState extends State<RateAppScreen> {
 
                   if (rating == 0.0) {
                     CommonMethods.showToast(
-                      message: lang == 'ar'
-                          ? 'من فضلك اختر تقييمًا قبل الإرسال ⭐'
-                          : 'Please select a rating before sending ⭐',
+                      message: AppLocalKay.rate_not_selected.tr(),
                       type: ToastType.success,
                     );
                     return; // وقف التنفيذ
                   }
 
-                  final message = (lang == 'ar')
-                      ? '⭐ * تقييم التطبيق*:\nالتقييم: $rating من 5\nالملاحظات: ${feedback.isEmpty ? "لا توجد ملاحظات" : feedback}'
-                      : '⭐ *App Rating *:\nRating: $rating out of 5\nFeedback: ${feedback.isEmpty ? "No feedback" : feedback}';
+                  final message = AppLocalKay.rate_feedback_content.tr(
+                    args: ['$rating', feedback.isEmpty ? AppLocalKay.no_feedback.tr() : feedback],
+                  );
 
                   const phoneNumber = '+966503432569';
 

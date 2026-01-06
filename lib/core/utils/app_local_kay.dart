@@ -479,6 +479,11 @@ class AppLocalKay {
   static const String attachment_name = 'attachment_name';
   static const String no_attachment = 'no_attachment';
   static const String followedActions = 'followed_actions';
+  static const String rate_not_selected = 'rate_not_selected';
+  static const String rate_feedback_content = 'rate_feedback_content';
+  static const String logout_successful_message = 'logout_successful_message';
+  static const String copyright = 'copyright';
+  static const String no_feedback = 'no_feedback';
   static const String pending = 'pending';
   static const String attachmentsAttached = 'attachments_attached';
   static const String print = 'print';

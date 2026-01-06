@@ -158,7 +158,7 @@ class _MoreScreenState extends State<MoreScreen> {
             ListTile(
               leading: _circleIcon(Icons.copyright, Colors.grey),
               title: Text(
-                '© 2025 Delta Company',
+                AppLocalKay.copyright.tr(),
                 style: TextStyle(color: AppColor.blackColor(context), fontWeight: FontWeight.w500),
               ),
             ),
@@ -273,7 +273,7 @@ class _MoreScreenState extends State<MoreScreen> {
     if (!context.mounted) return;
 
     CommonMethods.showToast(
-      message: context.locale.languageCode == 'ar' ? 'تم تسجيل الخروج بنجاح' : 'Logout successful',
+      message: AppLocalKay.logout_successful_message.tr(),
       type: ToastType.success,
     );
 
