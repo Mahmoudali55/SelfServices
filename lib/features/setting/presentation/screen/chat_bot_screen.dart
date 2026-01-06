@@ -220,9 +220,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with SingleTickerProvider
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            context.locale.languageCode == 'ar'
-                                ? 'كيف يمكني مساعدتك اليوم '
-                                : 'How can I help you today',
+                            AppLocalKay.chatbot_welcome.tr(),
                             textAlign: TextAlign.center,
                             style: AppTextStyle.text18MSecond(
                               context,
@@ -231,9 +229,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with SingleTickerProvider
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            context.locale.languageCode == 'ar'
-                                ? 'اكتب سؤالك هنا...'
-                                : 'Type your question here...',
+                            AppLocalKay.chatbot_hint.tr(),
                             textAlign: TextAlign.center,
                             style: AppTextStyle.text16MSecond(context, color: Colors.grey),
                           ),
@@ -266,9 +262,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with SingleTickerProvider
                       textInputAction: TextInputAction.send,
                       onSubmitted: (_) => _sendMessage(),
                       decoration: InputDecoration(
-                        hintText: context.locale.languageCode == 'ar'
-                            ? 'اكتب سؤالك هنا...'
-                            : 'Type your question here...',
+                        hintText: AppLocalKay.chatbot_hint.tr(),
                         hintStyle: const TextStyle(color: Colors.grey),
                         filled: true,
                         fillColor: Colors.grey[200],

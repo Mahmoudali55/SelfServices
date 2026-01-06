@@ -37,10 +37,10 @@ class _ModernNotificationScreenState extends State<ModernNotificationScreen> {
             unselectedLabelColor: AppColor.blackColor(context),
             indicatorColor: AppColor.primaryColor(context),
             tabs: [
-              Tab(text: context.locale.languageCode == 'ar' ? 'الكل' : 'All'),
-              Tab(text: context.locale.languageCode == 'ar' ? 'تحت الاجراء' : 'Holding'),
-              Tab(text: context.locale.languageCode == 'ar' ? 'مقبول' : 'Accepted'),
-              Tab(text: context.locale.languageCode == 'ar' ? 'مرفوض' : 'Rejected'),
+              Tab(text: AppLocalKay.filter_all.tr()),
+              Tab(text: AppLocalKay.filter_holding.tr()),
+              Tab(text: AppLocalKay.filter_accepted.tr()),
+              Tab(text: AppLocalKay.filter_rejected.tr()),
             ],
           ),
           Expanded(

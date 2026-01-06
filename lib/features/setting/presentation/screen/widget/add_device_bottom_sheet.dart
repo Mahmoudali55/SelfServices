@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:my_template/core/custom_widgets/buttons/custom_button.dart';
+import 'package:my_template/core/utils/app_local_kay.dart';
 
 class AddDeviceBottomSheet extends StatelessWidget {
   final VoidCallback onSubmit;
@@ -15,18 +16,13 @@ class AddDeviceBottomSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              context.locale.languageCode == 'ar'
-                  ? 'هذا الجهاز غير مسجل من قبل '
-                  : 'This device is not registered before ',
+              AppLocalKay.device_not_registered.tr(),
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
 
             const SizedBox(height: 16),
-            CustomButton(
-              onPressed: onSubmit,
-              text: context.locale.languageCode == 'ar' ? 'أضف جهاز جديد' : 'Add New Device',
-            ),
+            CustomButton(onPressed: onSubmit, text: AppLocalKay.add_new_device.tr()),
           ],
         ),
       ),

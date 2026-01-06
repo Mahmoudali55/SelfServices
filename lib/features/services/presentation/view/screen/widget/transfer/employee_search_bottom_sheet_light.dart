@@ -34,7 +34,7 @@ class _EmployeeSearchBottomSheetTransferState extends State<EmployeeSearchBottom
     return BlocBuilder<ServicesCubit, ServicesState>(
       builder: (context, state) {
         if (state.employeesStatus.isFailure) {
-          return Center(child: Text(state.employeesStatus.error ?? 'حدث خطأ'));
+          return Center(child: Text(state.employeesStatus.error ?? AppLocalKay.generic_error.tr()));
         }
 
         final employees = (state.employeesStatus.data ?? [])
@@ -80,9 +80,7 @@ class _EmployeeSearchBottomSheetTransferState extends State<EmployeeSearchBottom
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: CustomFormField(
                   prefixIcon: const Icon(Icons.search),
-                  hintText: context.locale.languageCode == 'ar'
-                      ? 'ابحث بالاسم أو الرقم الوظيفي...'
-                      : 'Search by name or employee code...',
+                  hintText: AppLocalKay.search_by_name_or_code.tr(),
                   onChanged: (val) => setState(() => searchQuery = val),
                 ),
               ),
@@ -146,7 +144,7 @@ class _EmployeeSearchBottomSheetTransferState extends State<EmployeeSearchBottom
                         separatorBuilder: (_, __) => const Divider(),
                         itemBuilder: (context, index) {
                           final emp = filtered[index];
-                          final displayName = context.locale.languageCode == 'ar'
+                          final displayName = context.locale.languageCode == 'en'
                               ? emp.empName?.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? ''
                               : emp.empNameE?.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? '';
 

@@ -41,9 +41,7 @@ void showChangePasswordSheet(BuildContext context) {
 
               if (status.isSuccess) {
                 CommonMethods.showToast(
-                  message: context.locale.languageCode == 'ar'
-                      ? 'تم تغيير كلمة المرور بنجاح'
-                      : 'Password changed successfully',
+                  message: AppLocalKay.password_change_success.tr(),
                   type: ToastType.success,
                 );
 
@@ -52,7 +50,7 @@ void showChangePasswordSheet(BuildContext context) {
                 Navigator.pop(context);
               } else if (status.isFailure) {
                 CommonMethods.showToast(
-                  message: status.message ?? 'حدث خطأ ما',
+                  message: status.message ?? AppLocalKay.generic_error.tr(),
                   type: ToastType.error,
                 );
               }
@@ -87,14 +85,10 @@ void showChangePasswordSheet(BuildContext context) {
                         isPassword: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return context.locale.languageCode == 'ar'
-                                ? 'الرجاء إدخال كلمة المرور الجديدة'
-                                : 'Please enter a new password';
+                            return AppLocalKay.new_password_placeholder.tr();
                           }
                           if (value.length < 6) {
-                            return context.locale.languageCode == 'ar'
-                                ? 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'
-                                : 'Password must be at least 6 characters';
+                            return AppLocalKay.password_length_error.tr();
                           }
                           return null;
                         },
@@ -109,14 +103,10 @@ void showChangePasswordSheet(BuildContext context) {
                         isPassword: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return context.locale.languageCode == 'ar'
-                                ? 'الرجاء تأكيد كلمة المرور'
-                                : 'Please confirm your password';
+                            return AppLocalKay.confirm_password_placeholder.tr();
                           }
                           if (value != passwordController.text) {
-                            return context.locale.languageCode == 'ar'
-                                ? 'كلمة المرور غير متطابقة'
-                                : 'Passwords do not match';
+                            return AppLocalKay.password_mismatch_error.tr();
                           }
                           return null;
                         },
@@ -146,8 +136,8 @@ void showChangePasswordSheet(BuildContext context) {
                       const SizedBox(height: 10),
                       storedPassword == null || storedPassword.isEmpty || storedPassword == ''
                           ? Text(
-                              context.locale.languageCode == 'ar'
-                                  ? 'لا يمكنك استخدام التطبيق قبل تغيير كلمة المرور'
+                              context.locale.languageCode == 'en'
+                                  ? AppLocalKay.mandatory_password_change_message.tr()
                                   : 'You cannot use the app until you change your password',
                               style: Theme.of(
                                 context,

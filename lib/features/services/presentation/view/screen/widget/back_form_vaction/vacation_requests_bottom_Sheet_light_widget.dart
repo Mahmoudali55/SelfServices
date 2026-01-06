@@ -87,7 +87,7 @@ class _VacationRequestsBottomSheetLightState extends State<VacationRequestsBotto
                     separatorBuilder: (_, __) => const Divider(),
                     itemBuilder: (context, index) {
                       final r = filteredRequests[index];
-                      final displayName = context.locale.languageCode == 'ar'
+                      final displayName = context.locale.languageCode == 'en'
                           ? r.empName
                           : r.empNameE;
                       return ListTile(

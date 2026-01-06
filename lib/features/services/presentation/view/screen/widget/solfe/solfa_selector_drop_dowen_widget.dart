@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
+import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/services/data/model/solfa_request/solfa_request_model.dart';
 import 'package:my_template/features/services/presentation/cubit/services_cubit.dart';
 import 'package:my_template/features/services/presentation/cubit/services_state.dart';
@@ -20,7 +21,7 @@ class SolfaSelectorDropdown extends StatelessWidget {
         final status = state.solfaStatus;
 
         if (status.isFailure) {
-          return Center(child: Text(status.error ?? 'حدث خطأ'));
+          return Center(child: Text(status.error ?? AppLocalKay.generic_error.tr()));
         }
 
         final lones = status.data ?? [];
@@ -53,7 +54,7 @@ class SolfaSelectorDropdown extends StatelessWidget {
                 (item) => DropdownMenuItem<SolfaTypeModel>(
                   value: item,
                   child: Text(
-                    context.locale.languageCode == 'ar' ? item.paName : item.paNameE ?? '',
+                    context.locale.languageCode == 'en' ? item.paNameE ?? item.paName : item.paName,
                     style: AppTextStyle.text14MPrimary(
                       context,
                       color: AppColor.blackColor(context),

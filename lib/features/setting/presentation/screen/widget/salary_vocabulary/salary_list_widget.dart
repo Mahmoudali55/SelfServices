@@ -57,7 +57,7 @@ class SalaryListWidget extends StatelessWidget {
                       style: AppTextStyle.text18MSecond(context).copyWith(color: Colors.white),
                     ),
                     Text(
-                      '${totalSalary.toStringAsFixed(2)} ${context.locale.languageCode == 'ar' ? 'ر.س' : 'SAR'}',
+                      '${totalSalary.toStringAsFixed(2)} ${AppLocalKay.currency.tr()}',
                       style: AppTextStyle.text18MSecond(context).copyWith(color: Colors.white),
                     ),
                   ],

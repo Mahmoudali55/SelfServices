@@ -37,7 +37,7 @@ class CarRequestForm extends StatelessWidget {
             children: [
               Expanded(
                 child: CustomFormField(
-                  hintText: context.locale.languageCode == 'ar' ? 'تلقائي' : 'Auto',
+                  hintText: AppLocalKay.auto.tr(),
                   title: AppLocalKay.requestNumber.tr(),
                   readOnly: true,
                   controller: requestIdController,

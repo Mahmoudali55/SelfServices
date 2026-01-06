@@ -67,18 +67,14 @@ class CarRequestSaveButton extends StatelessWidget {
 
   void _handleState(BuildContext context, ServicesState state) {
     if (isEdit && state.updataCarStatus.isSuccess) {
-      _showToastSuccess(context, 'تم تعديل طلب السيارة بنجاح', 'Car request updated successfully');
+      _showToastSuccess(context, AppLocalKay.car_request_update_success.tr());
       NavigatorMethods.pushNamedAndRemoveUntil(
         context,
         RoutesName.layoutScreen,
         arguments: {'restoreIndex': 1, 'initialType': 'siraRequest'},
       );
     } else if (!isEdit && state.addnewCarStatus.isSuccess) {
-      _showToastSuccess(
-        context,
-        'تم تسجيل طلب السيارة بنجاح',
-        'Car request submitted successfully',
-      );
+      _showToastSuccess(context, AppLocalKay.car_request_submit_success.tr());
       NavigatorMethods.pushNamedAndRemoveUntil(
         context,
         RoutesName.layoutScreen,
@@ -134,42 +130,24 @@ class CarRequestSaveButton extends StatelessWidget {
   bool _canSubmitRequest(BuildContext context, double column) {
     switch (column) {
       case 131:
-        _showToast(
-          context,
-          'عفوا ... لا يمكن طلب سيارة حيث انه لديك سيارة ',
-          'You cannot request a car because you already have a car',
-        );
+        _showToast(context, AppLocalKay.car_already_assigned.tr());
         return false;
       case 132:
-        _showToast(
-          context,
-          'عفوا ... لايمكن طلب سيارة حيث انه لديك طلب تحت الاجراء',
-          'You cannot request a car because you have a pending request',
-        );
+        _showToast(context, AppLocalKay.car_request_pending.tr());
         return false;
       case 133:
-        _showToast(
-          context,
-          ' عفوا ... لايمكن طلب سيارة حيث انه لديك طلب تم الموافقة عليه و منتظر تسليم السيارة',
-          'You cannot request a car because you have a request approved and waiting for delivery',
-        );
+        _showToast(context, AppLocalKay.car_request_approved_waiting.tr());
         return false;
       default:
         return true;
     }
   }
 
-  void _showToast(BuildContext context, String ar, [String? en]) {
-    CommonMethods.showToast(
-      message: context.locale.languageCode == 'ar' ? ar : (en ?? ar),
-      type: ToastType.error,
-    );
+  void _showToast(BuildContext context, String message) {
+    CommonMethods.showToast(message: message, type: ToastType.error);
   }
 
-  void _showToastSuccess(BuildContext context, String ar, [String? en]) {
-    CommonMethods.showToast(
-      message: context.locale.languageCode == 'ar' ? ar : (en ?? ar),
-      type: ToastType.success,
-    );
+  void _showToastSuccess(BuildContext context, String message) {
+    CommonMethods.showToast(message: message, type: ToastType.success);
   }
 }

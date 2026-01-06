@@ -84,9 +84,7 @@ class CustomBranchPickerWidget extends StatelessWidget {
                       padding: const EdgeInsets.all(12.0),
                       child: CustomFormField(
                         prefixIcon: const Icon(Icons.search),
-                        hintText: context.locale.languageCode == 'ar'
-                            ? 'ابحث باسم الفرع أو الكود'
-                            : 'Search by branch name or code',
+                        hintText: AppLocalKay.search_by_branch_name_or_code.tr(),
                         onChanged: (val) => setState(() => searchQuery = val),
                       ),
                     ),
@@ -148,7 +146,7 @@ class CustomBranchPickerWidget extends StatelessWidget {
                                 return ListTile(
                                   title: Text(branch.bCode.toString()),
                                   trailing: Text(
-                                    context.locale.languageCode == 'ar'
+                                    context.locale.languageCode == 'en'
                                         ? branch.bName ?? ''
                                         : branch.bNameE ?? '',
                                     style: AppTextStyle.text16MSecond(
@@ -158,7 +156,7 @@ class CustomBranchPickerWidget extends StatelessWidget {
                                   ),
                                   onTap: () {
                                     branchIdController.text = branch.bCode.toString();
-                                    branchNameController.text = context.locale.languageCode == 'ar'
+                                    branchNameController.text = context.locale.languageCode == 'en'
                                         ? branch.bName ?? ''
                                         : branch.bNameE ?? '';
 

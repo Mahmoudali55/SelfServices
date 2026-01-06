@@ -124,7 +124,7 @@ class _TimeSheetScreenState extends State<TimeSheetScreen> {
                       return const Center(child: CustomShimmerList());
                     }
                     if (status.isFailure) {
-                      return Center(child: Text(status.error ?? 'Error'));
+                      return Center(child: Text(status.error ?? AppLocalKay.errorOccurred.tr()));
                     }
                     if (status.isSuccess) {
                       final timeSheets = status.data ?? [];

@@ -170,9 +170,7 @@ class _RequestACarScreenState extends State<RequestACarScreen> {
                                             children: [
                                               const SizedBox(height: 12),
                                               Text(
-                                                context.locale.languageCode == 'ar'
-                                                    ? 'المرفقات'
-                                                    : 'Attachments',
+                                                AppLocalKay.attachments_title.tr(),
                                                 style: const TextStyle(
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.bold,
@@ -183,9 +181,7 @@ class _RequestACarScreenState extends State<RequestACarScreen> {
                                                 Padding(
                                                   padding: const EdgeInsets.all(16.0),
                                                   child: Text(
-                                                    context.locale.languageCode == 'ar'
-                                                        ? 'لا توجد مرفقات'
-                                                        : 'No attachments',
+                                                    AppLocalKay.no_attachments_found.tr(),
                                                   ),
                                                 )
                                               else
@@ -260,9 +256,7 @@ class _RequestACarScreenState extends State<RequestACarScreen> {
                                 );
                               } else {
                                 CommonMethods.showToast(
-                                  message: context.locale.languageCode == 'ar'
-                                      ? 'حدث خطأ أثناء تحميل الملفات'
-                                      : 'Failed to load attachments',
+                                  message: AppLocalKay.attachment_load_error.tr(),
                                   type: ToastType.error,
                                 );
                               }

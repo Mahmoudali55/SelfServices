@@ -8,6 +8,7 @@ import 'package:my_template/core/network/connection_checker.dart';
 import 'package:my_template/core/network/status.state.dart';
 import 'package:my_template/core/routes/routes_name.dart';
 import 'package:my_template/core/services/notification_service.dart';
+import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/auth/data/model/emp_login_model.dart';
@@ -42,11 +43,7 @@ class AuthCubit extends Cubit<AuthState> {
     final isConnected = await connectionChecker.isConnected;
     if (!isConnected) {
       CommonMethods.showToast(
-        message: context != null
-            ? (context.locale.languageCode == 'ar'
-                  ? 'لا يوجد اتصال بالإنترنت'
-                  : 'No internet connection')
-            : 'No internet connection',
+        message: AppLocalKay.no_internet_connection.tr(),
         type: ToastType.error,
       );
       return;
@@ -103,17 +100,14 @@ class AuthCubit extends Cubit<AuthState> {
     final bool isFirstLogin = HiveMethods.getToken() == null;
     if (!isFirstLogin) {
       if (value == null || value.isEmpty) {
-        return context.locale.languageCode == 'ar' ? 'ادخل كلمة المرور' : 'Enter password';
+        return AppLocalKay.enter_password.tr();
       }
     }
     return null;
   }
 
-  String? validateMobile(value, BuildContext context) => value!.isEmpty
-      ? context.locale.languageCode == 'ar'
-            ? 'ادخل رقم الموظف'
-            : 'Enter mobile'
-      : null;
+  String? validateMobile(value, BuildContext context) =>
+      value!.isEmpty ? AppLocalKay.enter_mobile.tr() : null;
 
   void onLoginSuccess({
     required BuildContext context,
@@ -121,10 +115,7 @@ class AuthCubit extends Cubit<AuthState> {
     required String languageCode,
   }) {
     if (state.loginStatus.isSuccess) {
-      CommonMethods.showToast(
-        message: languageCode == 'ar' ? 'تم تسجيل الدخول بنجاح' : 'Login successful',
-        type: ToastType.success,
-      );
+      CommonMethods.showToast(message: AppLocalKay.login_success.tr(), type: ToastType.success);
       if (HiveMethods.getToken() == null) {
         showChangePasswordSheet(context);
       } else {
@@ -132,7 +123,7 @@ class AuthCubit extends Cubit<AuthState> {
           context,
           RoutesName.layoutScreen,
           arguments: {
-            'username': languageCode == 'ar'
+            'username': languageCode == 'ar' || languageCode == 'ur'
                 ? state.loginStatus.data?.user.empName
                 : state.loginStatus.data?.user.empNameE,
             'empCode': int.tryParse(state.loginStatus.data?.user.empCode ?? '0') ?? 0,
@@ -142,8 +133,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
 
     if (state.loginStatus.isFailure) {
-      final error =
-          state.loginStatus.error ?? (languageCode == 'ar' ? 'فشل تسجيل الدخول' : 'Login failed');
+      final error = state.loginStatus.error ?? AppLocalKay.login_failed.tr();
       CommonMethods.showToast(message: error, type: ToastType.error);
     }
   }

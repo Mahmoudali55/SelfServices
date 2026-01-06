@@ -10,7 +10,9 @@ import 'package:printing/printing.dart';
 class SalaryPdfGenerator {
   static Future<void> generateAndPrint(BuildContext context, EmployeeSalaryModel salaryData) async {
     final pdf = pw.Document();
-    final isArabic = context.locale.languageCode == 'ar';
+    final isArabic = context.locale.languageCode == 'ar' || context.locale.languageCode == 'ur';
+    final isUrdu = context.locale.languageCode == 'ur';
+    final isRtl = isArabic || isUrdu;
 
     // Load fonts
     final fontRegular = await rootBundle.load("assets/font/Cairo-Regular.ttf");
@@ -31,7 +33,7 @@ class SalaryPdfGenerator {
       pw.Page(
         theme: theme,
         pageFormat: PdfPageFormat.a4,
-        textDirection: isArabic ? pw.TextDirection.rtl : pw.TextDirection.ltr,
+        textDirection: isRtl ? pw.TextDirection.rtl : pw.TextDirection.ltr,
         build: (pw.Context context) {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.stretch,
@@ -78,7 +80,7 @@ class SalaryPdfGenerator {
                           style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
                         ),
                         pw.Text(
-                          '$totalSalary ${isArabic ? 'ر.س' : 'SAR'}',
+                          '$totalSalary ${AppLocalKay.currency.tr()}',
                           style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
                         ),
                       ],

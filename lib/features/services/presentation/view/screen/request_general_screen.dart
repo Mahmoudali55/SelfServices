@@ -187,7 +187,8 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
                   controller: requestDescription,
                   title: AppLocalKay.reason.tr(),
                   maxLines: 3,
-                  validator: (v) => (v == null || v.trim().isEmpty) ? 'السبب مطلوب' : null,
+                  validator: (v) =>
+                      (v == null || v.trim().isEmpty) ? AppLocalKay.reason_required.tr() : null,
                 ),
                 Row(
                   children: [
@@ -257,9 +258,7 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
                                               children: [
                                                 const SizedBox(height: 12),
                                                 Text(
-                                                  context.locale.languageCode == 'ar'
-                                                      ? 'المرفقات'
-                                                      : 'Attachments',
+                                                  AppLocalKay.attachments_title.tr(),
                                                   style: const TextStyle(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.bold,
@@ -270,9 +269,7 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
                                                   Padding(
                                                     padding: const EdgeInsets.all(16.0),
                                                     child: Text(
-                                                      context.locale.languageCode == 'ar'
-                                                          ? 'لا توجد مرفقات'
-                                                          : 'No attachments',
+                                                      AppLocalKay.no_attachments_found.tr(),
                                                     ),
                                                   )
                                                 else
@@ -357,9 +354,7 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
                                   );
                                 } else {
                                   CommonMethods.showToast(
-                                    message: context.locale.languageCode == 'ar'
-                                        ? 'حدث خطأ أثناء تحميل الملفات'
-                                        : 'Failed to load attachments',
+                                    message: AppLocalKay.attachment_load_error.tr(),
                                     type: ToastType.error,
                                   );
                                 }
@@ -390,63 +385,37 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
   bool _canSubmitRequest(BuildContext context, double column) {
     switch (column) {
       case 136:
-        _showToast(
-          context,
-          'عفوا ... هناك طلب مقدم سابقا تحت الاجراء',
-          'Employee already has a pending leave request',
-        );
+        _showToast(context, AppLocalKay.request_pending_error.tr());
         return false;
       case 148:
-        _showToast(
-          context,
-          'عفوا ... لا يمكن عمل طلب الاجازة ... الموظف بديل لموظف اخر لم يعد من اجازته بعد',
-          'Employee already has a pending leave request',
-        );
+        _showToast(context, AppLocalKay.employee_alternative_error_1.tr());
         return false;
       case 149:
-        _showToast(
-          context,
-          'عفوا ... لا يمكن عمل طلب الاجازة ... الموظف بديل لموظف اخر له طلب اجازه مقدم',
-          'Employee already has a pending leave request',
-        );
+        _showToast(context, AppLocalKay.employee_alternative_error_2.tr());
         return false;
       default:
         return true;
     }
   }
 
-  void _showToast(BuildContext context, String ar, [String? en]) {
-    CommonMethods.showToast(
-      message: context.locale.languageCode == 'ar' ? ar : (en ?? ar),
-      type: ToastType.error,
-    );
+  void _showToast(BuildContext context, String message) {
+    CommonMethods.showToast(message: message, type: ToastType.error);
   }
 
-  void _showToastSuccess(BuildContext context, String ar, [String? en]) {
-    CommonMethods.showToast(
-      message: context.locale.languageCode == 'ar' ? ar : (en ?? ar),
-      type: ToastType.success,
-    );
+  void _showToastSuccess(BuildContext context, String message) {
+    CommonMethods.showToast(message: message, type: ToastType.success);
   }
 
   void _handleState(BuildContext context, ServicesState state) {
     if (widget.dynamicOrderModel != null && state.updataGeneralStatus.isSuccess) {
-      _showToastSuccess(
-        context,
-        'تم تعديل الطلب  بنجاح',
-        'Update resignation request successfully',
-      );
+      _showToastSuccess(context, AppLocalKay.request_update_success.tr());
       NavigatorMethods.pushNamedAndRemoveUntil(
         context,
         RoutesName.layoutScreen,
         arguments: {'restoreIndex': 1, 'initialType': 'requestgenerals'},
       );
     } else if (state.addnewGeneralStatus.isSuccess) {
-      _showToastSuccess(
-        context,
-        'تم تسجيل الطلب  بنجاح',
-        'Submit resignation request successfully',
-      );
+      _showToastSuccess(context, AppLocalKay.request_submit_success.tr());
       NavigatorMethods.pushNamedAndRemoveUntil(
         context,
         RoutesName.layoutScreen,

@@ -175,7 +175,7 @@ class _Details extends StatelessWidget {
         CustomTitelCardWidget(
           icon: Icons.airplane_ticket,
           request: request,
-          title: context.locale.languageCode == 'en' ? 'Ticket Type' : 'نوع التذاكر',
+          title: AppLocalKay.ticket_type.tr(),
           description: request.strGoback,
         ),
         CustomTitelCardWidget(

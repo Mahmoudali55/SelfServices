@@ -26,12 +26,14 @@ class HomeRepoImp implements HomeRepo {
         id: 1,
         nameAr: 'طلب الاجازة',
         nameEn: 'Leave Request',
+        nameUr: 'چھٹی کی درخواست',
         image: 'assets/global_icon/request_leave.png',
       ),
       ServiceItem(
         id: 2,
         nameAr: 'اشعار العودة من الاجازة',
         nameEn: 'Return from Leave Notification',
+        nameUr: 'چھٹی سے واپسی کا نوٹس',
         image: 'assets/global_icon/request_an_advance.png',
       ),
 
@@ -39,6 +41,7 @@ class HomeRepoImp implements HomeRepo {
         id: 3,
         nameAr: 'طلب سلفة',
         nameEn: 'Loan Request',
+        nameUr: 'قرض کی درخواست',
         image: 'assets/global_icon/request_salfa.png',
       ),
 
@@ -46,6 +49,7 @@ class HomeRepoImp implements HomeRepo {
         id: 4,
         nameAr: 'طلب استقالة',
         nameEn: 'Resignation Request',
+        nameUr: 'استعفیٰ کی درخواست',
         image: 'assets/global_icon/request_resignation.png',
       ),
 
@@ -53,18 +57,21 @@ class HomeRepoImp implements HomeRepo {
         id: 5,
         nameAr: 'طلب صرف تذاكر',
         nameEn: 'Ticket Request',
+        nameUr: 'ٹکٹ کی درخواست',
         image: 'assets/global_icon/request_ticket.png',
       ),
       ServiceItem(
         id: 6,
         nameAr: 'طلب صرف بدل سكن',
         nameEn: 'Housing Allowance Request',
+        nameUr: 'ہاؤسنگ الاؤنس کی درخواست',
         image: 'assets/global_icon/request_Housing_allowance.png',
       ),
       ServiceItem(
         id: 7,
         nameAr: 'طلب سيارة',
         nameEn: 'Car Request',
+        nameUr: 'گاڑی کی درخواست',
         image: 'assets/global_icon/request_car.png',
       ),
 
@@ -72,18 +79,21 @@ class HomeRepoImp implements HomeRepo {
         id: 8,
         nameAr: 'طلب نقل',
         nameEn: 'Transfer Request',
+        nameUr: 'تبادلے کی درخواست',
         image: 'assets/global_icon/request_transfer.png',
       ),
       ServiceItem(
         id: 9,
         nameAr: ' طلب تغيير جهاز الموظف',
         nameEn: 'Device ID',
+        nameUr: 'ڈیوائس تبدیل کرنے کی درخواست',
         image: 'assets/global_icon/device.png',
       ),
       ServiceItem(
         id: 10,
         nameAr: 'طلب عام',
         nameEn: 'General Request',
+        nameUr: 'عمومی درخواست',
         image: 'assets/global_icon/request_general.png',
       ),
     ];

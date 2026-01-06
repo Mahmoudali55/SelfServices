@@ -77,9 +77,9 @@ class _EmployeeSearchBottomSheetLightState extends State<EmployeeSearchBottomShe
                   child: CustomFormField(
                     controller: _searchController,
                     prefixIcon: const Icon(Icons.search),
-                    hintText: context.locale.languageCode == 'ar'
-                        ? 'ابحث بالاسم أو الرقم الوظيفي...'
-                        : 'Search by name or employee code...',
+                    hintText: context.locale.languageCode == 'en'
+                        ? AppLocalKay.search_by_name_or_code.tr()
+                        : AppLocalKay.search_by_name_or_code.tr(),
                     onChanged: (val) => setState(() => searchQuery = val),
                   ),
                 ),
@@ -142,7 +142,7 @@ class _EmployeeSearchBottomSheetLightState extends State<EmployeeSearchBottomShe
                           separatorBuilder: (_, __) => const Divider(),
                           itemBuilder: (context, index) {
                             final emp = filtered[index];
-                            final displayName = context.locale.languageCode == 'ar'
+                            final displayName = context.locale.languageCode == 'en'
                                 ? emp.empName?.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? ''
                                 : emp.empNameE?.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? '';
 

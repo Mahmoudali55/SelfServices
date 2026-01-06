@@ -104,57 +104,57 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
     requestIdController.text = model.requestId.toString();
     _dateController.text = model.requestDate ?? '';
     ownerEmpIdController.text = model.empCode.toString();
-    ownerEmpNameController.text = context.locale.languageCode == 'ar'
-        ? model.empName ?? ''
-        : model.empNameE ?? '';
-    depFromNameController.text = context.locale.languageCode == 'ar'
-        ? model.dName ?? ''
-        : model.dNameE ?? '';
+    ownerEmpNameController.text = context.locale.languageCode == 'en'
+        ? model.empNameE ?? ''
+        : model.empName ?? '';
+    depFromNameController.text = context.locale.languageCode == 'en'
+        ? model.dNameE ?? ''
+        : model.dName ?? '';
     depFromIdController.text = model.tDep.toString();
     branchIdformController.text = model.tBra.toString();
-    branchNameformController.text = context.locale.languageCode == 'ar'
-        ? model.bName ?? ''
-        : model.bNameE ?? '';
+    branchNameformController.text = context.locale.languageCode == 'en'
+        ? model.bNameE ?? ''
+        : model.bName ?? '';
     projectIdFromController.text = model.tProj.toString();
-    projectNameFromController.text = context.locale.languageCode == 'ar'
-        ? model.projName.toString()
-        : model.projEName.toString();
+    projectNameFromController.text = context.locale.languageCode == 'en'
+        ? model.projEName.toString()
+        : model.projName.toString();
     reasonController.text = model.causes1 ?? '';
     depToIdController.text = model.tDep.toString();
-    depToNameController.text = context.locale.languageCode == 'ar'
-        ? model.toDName ?? ''
-        : model.toDNameE ?? '';
+    depToNameController.text = context.locale.languageCode == 'en'
+        ? model.toDNameE ?? ''
+        : model.toDName ?? '';
     projectIdController.text = model.tProj.toString();
-    projectNameController.text = context.locale.languageCode == 'ar'
-        ? model.toProjName ?? ''
-        : model.toProjNameE ?? '';
+    projectNameController.text = context.locale.languageCode == 'en'
+        ? model.toProjNameE ?? ''
+        : model.toProjName ?? '';
     branchIdController.text = model.tBra.toString();
-    branchNameController.text = context.locale.languageCode == 'ar'
-        ? model.toBName ?? ''
-        : model.toBNameE ?? '';
+    branchNameController.text = context.locale.languageCode == 'en'
+        ? model.toBNameE ?? ''
+        : model.toBName ?? '';
   }
 
   void _autoFillEmployeeData(EmployeeModel emp) {
     if (widget.transferModel != null) return;
     ownerEmpIdController.text = emp.empCode.toString();
-    ownerEmpNameController.text = context.locale.languageCode == 'ar'
-        ? emp.empName?.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? ''
-        : emp.empNameE?.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? '';
+    ownerEmpNameController.text = context.locale.languageCode == 'en'
+        ? emp.empNameE?.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? ''
+        : emp.empName?.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ?? '';
 
     depFromIdController.text = emp.dCode.toString();
-    depFromNameController.text = context.locale.languageCode == 'ar'
-        ? emp.dName ?? ''
-        : emp.dNameE ?? '';
+    depFromNameController.text = context.locale.languageCode == 'en'
+        ? emp.dNameE ?? ''
+        : emp.dName ?? '';
 
     branchIdformController.text = emp.empBranch.toString();
-    branchNameformController.text = context.locale.languageCode == 'ar'
-        ? emp.bNameAr ?? ''
-        : emp.bNameEn ?? '';
+    branchNameformController.text = context.locale.languageCode == 'en'
+        ? emp.bNameEn ?? ''
+        : emp.bNameAr ?? '';
 
     projectIdFromController.text = emp.naGroup.toString();
-    projectNameFromController.text = context.locale.languageCode == 'ar'
-        ? emp.projectName ?? ''
-        : emp.projectNameEn ?? '';
+    projectNameFromController.text = context.locale.languageCode == 'en'
+        ? emp.projectNameEn ?? ''
+        : emp.projectName ?? '';
 
     context.read<ServicesCubit>().selectedEmployee = emp;
     _updateVacationData();
@@ -197,9 +197,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
           if (widget.transferModel != null) {
             if (state.updataTransferStatus.isSuccess) {
               CommonMethods.showToast(
-                message: context.locale.languageCode == 'ar'
-                    ? 'تم تعديل طلب نقل بنجاح'
-                    : 'Update transfer request successfully',
+                message: AppLocalKay.transfer_update_success.tr(),
                 type: ToastType.success,
               );
               NavigatorMethods.pushNamedAndRemoveUntil(
@@ -216,9 +214,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
           } else {
             if (state.addnewTransferStatus.isSuccess) {
               CommonMethods.showToast(
-                message: context.locale.languageCode == 'ar'
-                    ? 'تم تسجيل طلب نقل بنجاح'
-                    : 'Submit transfer request successfully',
+                message: AppLocalKay.transfer_submit_success.tr(),
                 type: ToastType.success,
               );
               NavigatorMethods.pushNamedAndRemoveUntil(

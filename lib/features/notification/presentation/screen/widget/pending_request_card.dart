@@ -175,7 +175,7 @@ class PendingRequestCard extends StatelessWidget {
         default:
           return 'تم وضع الطلب تحت الإجراء بنجاح';
       }
-    } else {
+    } else if (context.locale.languageCode == 'en') {
       switch (actionType) {
         case 1:
           return 'Request accepted successfully';
@@ -184,6 +184,14 @@ class PendingRequestCard extends StatelessWidget {
         default:
           return 'Request under process successfully';
       }
+    }
+    switch (actionType) {
+      case 1:
+        return 'درخواست کامیابی سے قبول کر لی گئی';
+      case 2:
+        return 'درخواست کامیابی سے مسترد کر دی گئی';
+      default:
+        return 'درخواست اس وقت کارروائی کے مرحلے میں ہے';
     }
   }
 }

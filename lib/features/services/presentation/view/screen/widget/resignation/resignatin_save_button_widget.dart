@@ -58,22 +58,14 @@ class ResignationSaveButton extends StatelessWidget {
 
   void _handleState(BuildContext context, ServicesState state) {
     if (resignationModel != null && state.updataResignationStatus.isSuccess) {
-      _showToastSuccess(
-        context,
-        'تم تعديل طلب الاستقالة بنجاح',
-        'Update resignation request successfully',
-      );
+      _showToastSuccess(context, AppLocalKay.update_resignation_success.tr());
       NavigatorMethods.pushNamedAndRemoveUntil(
         context,
         RoutesName.layoutScreen,
         arguments: {'restoreIndex': 1, 'initialType': 'sakalRequest'},
       );
     } else if (state.resignationStatus.isSuccess) {
-      _showToastSuccess(
-        context,
-        'تم تسجيل طلب الاستقالة بنجاح',
-        'Submit resignation request successfully',
-      );
+      _showToastSuccess(context, AppLocalKay.submit_resignation_success.tr());
       NavigatorMethods.pushNamedAndRemoveUntil(
         context,
         RoutesName.layoutScreen,
@@ -124,42 +116,24 @@ class ResignationSaveButton extends StatelessWidget {
   bool _canSubmitRequest(BuildContext context, double column) {
     switch (column) {
       case 136:
-        _showToast(
-          context,
-          'عفوا ... هناك طلب مقدم سابقا تحت الاجراء',
-          'Employee already has a pending leave request',
-        );
+        _showToast(context, AppLocalKay.pending_request_error.tr());
         return false;
       case 148:
-        _showToast(
-          context,
-          'عفوا ... لا يمكن عمل طلب الاجازة ... الموظف بديل لموظف اخر لم يعد من اجازته بعد',
-          'Employee already has a pending leave request',
-        );
+        _showToast(context, AppLocalKay.substitute_employee_error_1.tr());
         return false;
       case 149:
-        _showToast(
-          context,
-          'عفوا ... لا يمكن عمل طلب الاجازة ... الموظف بديل لموظف اخر له طلب اجازه مقدم',
-          'Employee already has a pending leave request',
-        );
+        _showToast(context, AppLocalKay.substitute_employee_error_2.tr());
         return false;
       default:
         return true;
     }
   }
 
-  void _showToast(BuildContext context, String ar, [String? en]) {
-    CommonMethods.showToast(
-      message: context.locale.languageCode == 'ar' ? ar : (en ?? ar),
-      type: ToastType.error,
-    );
+  void _showToast(BuildContext context, String message) {
+    CommonMethods.showToast(message: message, type: ToastType.error);
   }
 
-  void _showToastSuccess(BuildContext context, String ar, [String? en]) {
-    CommonMethods.showToast(
-      message: context.locale.languageCode == 'ar' ? ar : (en ?? ar),
-      type: ToastType.success,
-    );
+  void _showToastSuccess(BuildContext context, String message) {
+    CommonMethods.showToast(message: message, type: ToastType.success);
   }
 }

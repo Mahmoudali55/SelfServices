@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_template/core/theme/app_colors.dart';
 import 'package:my_template/core/theme/app_text_style.dart';
+import 'package:my_template/core/utils/app_local_kay.dart';
 
 class SalarySectionWidget extends StatelessWidget {
   final String title;
@@ -42,7 +43,7 @@ class SalarySectionWidget extends StatelessWidget {
                 ? item.paName ?? '-'
                 : item.paNameE ?? '-';
             final displayValue =
-                '${item.varVal1?.toStringAsFixed(2) ?? '0.00'} ${context.locale.languageCode == 'ar' ? 'ر.س' : 'SAR'}';
+                '${item.varVal1?.toStringAsFixed(2) ?? '0.00'} ${AppLocalKay.currency.tr()}';
 
             return Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -81,14 +82,14 @@ class SalarySectionWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    context.locale.languageCode == 'ar' ? 'اجمالي ${title}' : 'Total${title}',
+                    '${AppLocalKay.total.tr()} ${title}',
                     style: AppTextStyle.text14MPrimary(
                       context,
                     ).copyWith(color: AppColor.blackColor(context)),
                   ),
                 ),
                 Text(
-                  '${total.toStringAsFixed(2)} ${context.locale.languageCode == 'ar' ? 'ر.س' : 'SAR'}',
+                  '${total.toStringAsFixed(2)} ${AppLocalKay.currency.tr()}',
                   style: AppTextStyle.text14MPrimary(
                     context,
                   ).copyWith(color: AppColor.blackColor(context)),

@@ -116,25 +116,19 @@ class _BackFromVacationScreenState extends State<BackFromVacationScreen> {
       final checkResult = checkState.data;
       if (checkResult != null && checkResult.column1 == 136) {
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar'
-              ? 'عفوا ... هناك طلب مقدم سابقا تحت الاجراء'
-              : 'Employee already has a pending leave request',
+          message: AppLocalKay.request_pending_error.tr(),
           type: ToastType.error,
         );
         return;
       } else if (checkResult != null && checkResult.column1 == 148) {
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar'
-              ? 'عفوا ... لا يمكن عمل طلب الاجازة ... الموظف بديل لموظف اخر لم يعد من اجازته بعد'
-              : 'Employee already has a pending leave request',
+          message: AppLocalKay.employee_alternative_error_1.tr(),
           type: ToastType.error,
         );
         return;
       } else if (checkResult != null && checkResult.column1 == 149) {
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar'
-              ? 'عفوا ... لا يمكن عمل طلب الاجازة ... الموظف بديل لموظف اخر له طلب اجازه مقدم'
-              : 'Employee already has a pending leave request',
+          message: AppLocalKay.employee_alternative_error_2.tr(),
           type: ToastType.error,
         );
         return;
@@ -219,9 +213,7 @@ class _BackFromVacationScreenState extends State<BackFromVacationScreen> {
             if (widget.vacationBackRequestModel != null) {
               if (state.updataVacationBackStatus.isSuccess) {
                 CommonMethods.showToast(
-                  message: context.locale.languageCode == 'ar'
-                      ? 'تم تعديل طلب العودة من الاجازة بنجاح'
-                      : 'Update vacation request successfully',
+                  message: AppLocalKay.request_back_vacation_update_success.tr(),
                   type: ToastType.success,
                 );
                 NavigatorMethods.pushNamedAndRemoveUntil(
@@ -233,9 +225,7 @@ class _BackFromVacationScreenState extends State<BackFromVacationScreen> {
             }
             if (state.vacationBackAddStatus.isSuccess) {
               CommonMethods.showToast(
-                message: context.locale.languageCode == 'ar'
-                    ? 'تم حقظ طلب العودة من الاجازة بنجاح'
-                    : 'Submit vacation request successfully',
+                message: AppLocalKay.request_back_vacation_submit_success.tr(),
                 type: ToastType.success,
               );
               NavigatorMethods.pushNamedAndRemoveUntil(
@@ -288,7 +278,7 @@ class _BackFromVacationScreenState extends State<BackFromVacationScreen> {
                   children: [
                     Expanded(
                       child: CustomFormField(
-                        hintText: context.locale.languageCode == 'ar' ? 'تلقائي' : 'Auto',
+                        hintText: AppLocalKay.auto.tr(),
                         title: AppLocalKay.requestNumber.tr(),
                         readOnly: true,
                         controller: _requestnumberController,
@@ -343,9 +333,11 @@ class _BackFromVacationScreenState extends State<BackFromVacationScreen> {
                                         if (state.vacationBackStatus!.isLoading) {
                                           return const Center(child: CircularProgressIndicator());
                                         } else if (state.vacationBackStatus!.isFailure) {
-                                          return const Center(child: Text('Failed to load data'));
+                                          return Center(
+                                            child: Text(AppLocalKay.failed_to_load_data.tr()),
+                                          );
                                         } else if (requests.isEmpty) {
-                                          return const Center(child: Text('No requests found'));
+                                          return Center(child: Text(AppLocalKay.no_requests.tr()));
                                         }
                                         return VacationRequestsBottomSheetLight(
                                           requests: requests,

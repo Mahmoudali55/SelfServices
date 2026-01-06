@@ -103,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     Semantics(
                       label: AppLocalKay.login.tr(),
-                      hint: 'اضغط للدخول إلى حسابك',
+                      hint: AppLocalKay.login.tr(),
                       button: true,
                       child: CustomButton(
                         text: AppLocalKay.login.tr(),

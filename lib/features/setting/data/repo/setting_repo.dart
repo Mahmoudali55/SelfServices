@@ -73,12 +73,11 @@ class SettingRepoImp implements SettingRepo {
           queryParameters: {'empcode': empcode, 'day': day},
         );
         final dataString = response['Data'] as String;
-        return TimeSheetModel.getAllTimesheet(dataString);
+        return TimeSheetModel.fromDataString(dataString);
       },
     );
   }
 
-  
   @override
   Future<Either<Failure, EmployeeSalaryModel>> getEmployeeSalary(
     int empCode,

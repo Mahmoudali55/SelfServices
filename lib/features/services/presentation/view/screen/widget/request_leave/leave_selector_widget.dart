@@ -63,7 +63,7 @@ class LeaveSelectorDropdown extends StatelessWidget {
                 (leave) => DropdownMenuItem<VacationTypeModel>(
                   value: leave,
                   child: Text(
-                    context.locale.languageCode == 'ar'
+                    context.locale.languageCode == 'en'
                         ? leave.nameGpf ?? ''
                         : leave.nameGpfE ?? '',
                     style: AppTextStyle.text14MPrimary(

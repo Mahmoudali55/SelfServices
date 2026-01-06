@@ -111,9 +111,7 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
           if (widget.allTicketModel != null) {
             if (state.updataTicketStatus.isSuccess) {
               CommonMethods.showToast(
-                message: context.locale.languageCode == 'ar'
-                    ? 'تم تعديل طلب التذاكر بنجاح'
-                    : 'Update Ticket request successfully',
+                message: AppLocalKay.request_update_success.tr(),
                 type: ToastType.success,
               );
               NavigatorMethods.pushNamedAndRemoveUntil(
@@ -130,9 +128,7 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
           } else {
             if (state.addnewTicketStatus.isSuccess) {
               CommonMethods.showToast(
-                message: context.locale.languageCode == 'ar'
-                    ? 'تم تسجيل طلب التذاكر بنجاح'
-                    : 'Submit transfer request successfully',
+                message: AppLocalKay.request_submit_success.tr(),
                 type: ToastType.success,
               );
               NavigatorMethods.pushNamedAndRemoveUntil(
@@ -179,25 +175,19 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
                 if (checkResult != null) {
                   if (checkResult.column1 == 136) {
                     CommonMethods.showToast(
-                      message: context.locale.languageCode == 'ar'
-                          ? 'عفوا ... هناك طلب مقدم سابقا تحت الاجراء'
-                          : 'Employee already has a pending leave request',
+                      message: AppLocalKay.request_pending_error.tr(),
                       type: ToastType.error,
                     );
                     return;
                   } else if (checkResult.column1 == 148) {
                     CommonMethods.showToast(
-                      message: context.locale.languageCode == 'ar'
-                          ? 'عفوا ... لا يمكن عمل طلب النقل ... الموظف بديل لموظف اخر لم يعد من نقله بعد'
-                          : 'Employee already has a pending leave request',
+                      message: AppLocalKay.ticket_alternative_error_1.tr(),
                       type: ToastType.error,
                     );
                     return;
                   } else if (checkResult.column1 == 149) {
                     CommonMethods.showToast(
-                      message: context.locale.languageCode == 'ar'
-                          ? 'عفوا ... لا يمكن عمل طلب النقل ... الموظف بديل لموظف اخر له طلب نقل مقدم'
-                          : 'Employee already has a pending leave request',
+                      message: AppLocalKay.ticket_alternative_error_2.tr(),
                       type: ToastType.error,
                     );
                     return;
@@ -262,7 +252,7 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
                   children: [
                     Expanded(
                       child: CustomFormField(
-                        hintText: context.locale.languageCode == 'ar' ? 'تلقائي' : 'Auto',
+                        hintText: AppLocalKay.auto.tr(),
                         title: AppLocalKay.requestNumber.tr(),
                         controller: _requestIdController,
                         readOnly: true,
@@ -418,9 +408,7 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
                                               children: [
                                                 const SizedBox(height: 12),
                                                 Text(
-                                                  context.locale.languageCode == 'ar'
-                                                      ? 'المرفقات'
-                                                      : 'Attachments',
+                                                  AppLocalKay.attachments_title.tr(),
                                                   style: const TextStyle(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.bold,
@@ -431,9 +419,7 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
                                                   Padding(
                                                     padding: const EdgeInsets.all(16.0),
                                                     child: Text(
-                                                      context.locale.languageCode == 'ar'
-                                                          ? 'لا توجد مرفقات'
-                                                          : 'No attachments',
+                                                      AppLocalKay.no_attachments_found.tr(),
                                                     ),
                                                   )
                                                 else
@@ -517,9 +503,7 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
                                   );
                                 } else {
                                   CommonMethods.showToast(
-                                    message: context.locale.languageCode == 'ar'
-                                        ? 'حدث خطأ أثناء تحميل الملفات'
-                                        : 'Failed to load attachments',
+                                    message: AppLocalKay.attachment_load_error.tr(),
                                     type: ToastType.error,
                                   );
                                 }

@@ -61,7 +61,7 @@ class CarTypeSelectorDropdown extends StatelessWidget {
                 (item) => DropdownMenuItem<CarTypeModel>(
                   value: item,
                   child: Text(
-                    context.locale.languageCode == 'ar' ? item.carTypeName : item.carTypeNameEng,
+                    context.locale.languageCode == 'en' ? item.carTypeNameEng : item.carTypeName,
                     style: AppTextStyle.text14MPrimary(
                       context,
                       color: AppColor.blackColor(context),

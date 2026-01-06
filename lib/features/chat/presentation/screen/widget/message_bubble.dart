@@ -114,7 +114,7 @@ class MessageBubble extends StatelessWidget {
           children: [
             Text(
               message.repliedSenderId == (isMe ? message.senderId : message.receiverId)
-                  ? (context.locale.languageCode == 'ar' ? 'أنت' : 'You')
+                  ? AppLocalKay.you.tr()
                   : (getSenderName?.call(message.repliedSenderId!) ?? otherUserName ?? ''),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -186,7 +186,7 @@ class MessageBubble extends StatelessWidget {
           const SizedBox(width: 8),
           Flexible(
             child: Text(
-              message.fileName ?? 'File',
+              message.fileName ?? AppLocalKay.file.tr(),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(color: Colors.black, decoration: TextDecoration.underline),
@@ -204,7 +204,7 @@ class MessageBubble extends StatelessWidget {
       children: [
         if (message.isEdited && !message.isDeleted)
           Text(
-            context.locale.languageCode == 'ar' ? 'معدلة ' : 'Edited ',
+            AppLocalKay.edited.tr(),
             style: const TextStyle(
               fontSize: 10,
               color: Colors.black45,
@@ -212,7 +212,7 @@ class MessageBubble extends StatelessWidget {
             ),
           ),
         Text(
-          DateFormat('hh:mm a', 'en').format(message.timestamp),
+          DateFormat('hh:mm a', context.locale.languageCode).format(message.timestamp),
           style: const TextStyle(fontSize: 10, color: Colors.black45),
         ),
         if (isMe) ...[

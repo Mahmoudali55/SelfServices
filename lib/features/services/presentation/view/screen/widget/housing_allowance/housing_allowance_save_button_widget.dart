@@ -72,18 +72,10 @@ class HousingAllowanceSaveButton extends StatelessWidget {
 
   void _handleState(BuildContext context, ServicesState state) {
     if (isEdit && state.updataHousingAllowanceStatus.isSuccess) {
-      _showToastSuccess(
-        context,
-        'تم تعديل طلب صرف بدل سكن بنجاح',
-        'Update housing allowance request successfully',
-      );
+      _showToastSuccess(context, AppLocalKay.housing_allowance_update_success.tr());
       _navigateToLayout(context);
     } else if (!isEdit && state.housingAllowanceStatus.isSuccess) {
-      _showToastSuccess(
-        context,
-        'تم حفظ طلب صرف بدل سكن بنجاح',
-        'Submit housing allowance request successfully',
-      );
+      _showToastSuccess(context, AppLocalKay.housing_allowance_submit_success.tr());
       _navigateToLayout(context);
     }
 
@@ -104,7 +96,7 @@ class HousingAllowanceSaveButton extends StatelessWidget {
     // تأكد من اختيار نوع البدل
     final selectedPlace = controllers.selectedPlaceNotifier.value;
     if (selectedPlace == null) {
-      _showToast(context, 'الرجاء اختيار نوع البدل', 'Please select allowance type');
+      _showToast(context, AppLocalKay.select_allowance_type.tr());
       return;
     }
 
@@ -160,42 +152,24 @@ class HousingAllowanceSaveButton extends StatelessWidget {
   bool _canSubmitRequest(BuildContext context, double column) {
     switch (column) {
       case 136:
-        _showToast(
-          context,
-          'عفوا ... هناك طلب مقدم سابقا تحت الاجراء',
-          'Employee already has a pending leave request',
-        );
+        _showToast(context, AppLocalKay.request_pending_error.tr());
         return false;
       case 148:
-        _showToast(
-          context,
-          'عفوا ... الموظف بديل لموظف اخر لم يعد من اجازته بعد',
-          'Employee already has a pending leave request',
-        );
+        _showToast(context, AppLocalKay.employee_alternative_error_1.tr());
         return false;
       case 149:
-        _showToast(
-          context,
-          'عفوا ... الموظف بديل لموظف اخر له طلب اجازه مقدم',
-          'Employee already has a pending leave request',
-        );
+        _showToast(context, AppLocalKay.employee_alternative_error_2.tr());
         return false;
       default:
         return true;
     }
   }
 
-  void _showToast(BuildContext context, String ar, [String? en]) {
-    CommonMethods.showToast(
-      message: context.locale.languageCode == 'ar' ? ar : (en ?? ar),
-      type: ToastType.error,
-    );
+  void _showToast(BuildContext context, String message) {
+    CommonMethods.showToast(message: message, type: ToastType.error);
   }
 
-  void _showToastSuccess(BuildContext context, String ar, [String? en]) {
-    CommonMethods.showToast(
-      message: context.locale.languageCode == 'ar' ? ar : (en ?? ar),
-      type: ToastType.success,
-    );
+  void _showToastSuccess(BuildContext context, String message) {
+    CommonMethods.showToast(message: message, type: ToastType.success);
   }
 }

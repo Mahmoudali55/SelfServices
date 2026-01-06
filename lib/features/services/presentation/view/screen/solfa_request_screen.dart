@@ -187,9 +187,7 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
             if (widget.solfaItem != null) {
               if (state.updataSolfaStatus.isSuccess) {
                 CommonMethods.showToast(
-                  message: context.locale.languageCode == 'ar'
-                      ? 'تم تعديل طلب السلفة بنجاح'
-                      : 'Update loan request successfully',
+                  message: AppLocalKay.solfa_update_success.tr(),
                   type: ToastType.success,
                 );
                 NavigatorMethods.pushNamedAndRemoveUntil(
@@ -206,9 +204,7 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
             } else {
               if (state.loanRequestStatus.isSuccess) {
                 CommonMethods.showToast(
-                  message: context.locale.languageCode == 'ar'
-                      ? 'تم تسجيل طلب السلفة بنجاح'
-                      : 'Submit vacation request successfully',
+                  message: AppLocalKay.solfa_submit_success.tr(),
                   type: ToastType.success,
                 );
                 NavigatorMethods.pushNamedAndRemoveUntil(
@@ -348,7 +344,7 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                         onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                         title: AppLocalKay.requestNumber.tr(),
                         readOnly: true,
-                        hintText: context.locale.languageCode == 'ar' ? 'تلقائي' : 'Auto',
+                        hintText: AppLocalKay.auto.tr(),
                         controller: requestIdController,
                       ),
                     ),
@@ -472,7 +468,7 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                                 return AppLocalKay.collateralname.tr();
                               }
                               if (empIdController.text == widget.empId.toString()) {
-                                return context.locale.languageCode == 'ar'
+                                return context.locale.languageCode == 'en'
                                     ? 'لا يمكن لصاحب الطلب أن يكون ضامنًا لنفسه'
                                     : 'The applicant cannot be a guarantor for himself';
                               }
@@ -524,7 +520,7 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
 
                               if (empIdController.text.isNotEmpty &&
                                   empIdController.text == emp2IdController.text) {
-                                return context.locale.languageCode == 'ar'
+                                return context.locale.languageCode == 'en'
                                     ? 'لا يمكن اختيار نفس الضامن مرتين'
                                     : 'First and second guarantor cannot be the same';
                               }
@@ -610,7 +606,7 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                                               children: [
                                                 const SizedBox(height: 12),
                                                 Text(
-                                                  context.locale.languageCode == 'ar'
+                                                  context.locale.languageCode == 'en'
                                                       ? 'المرفقات'
                                                       : 'Attachments',
                                                   style: const TextStyle(
@@ -623,7 +619,7 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                                                   Padding(
                                                     padding: const EdgeInsets.all(16.0),
                                                     child: Text(
-                                                      context.locale.languageCode == 'ar'
+                                                      context.locale.languageCode == 'en'
                                                           ? 'لا توجد مرفقات'
                                                           : 'No attachments',
                                                     ),

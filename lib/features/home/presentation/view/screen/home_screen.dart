@@ -69,7 +69,9 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
   void didChangeDependencies() {
     super.didChangeDependencies();
     final lang = context.locale.languageCode;
-    empName = lang == 'ar' ? HiveMethods.getEmpNameAR() ?? '' : HiveMethods.getEmpNameEn() ?? '';
+    empName = lang == 'ar' || lang == 'ur'
+        ? HiveMethods.getEmpNameAR() ?? ''
+        : HiveMethods.getEmpNameEn() ?? '';
   }
 
   @override
@@ -103,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // ضروري لعمل AutomaticKeepAliveClientMixin
+    super.build(context);
     return Scaffold(
       backgroundColor: AppColor.whiteColor(context),
       extendBody: true,
@@ -111,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
         onRefresh: _refreshData,
         color: AppColor.primaryColor(context),
         child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(), // ضروري لعمل RefreshIndicator
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -141,9 +143,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                               : const SizedBox();
                         },
                       ),
-                      hintText: context.locale.languageCode == 'ar'
-                          ? 'ابحث عن خدمة...'
-                          : 'Search for a service...',
+                      hintText: AppLocalKay.search.tr(),
                       hintStyle: AppTextStyle.text16MSecond(
                         context,
                         color: AppColor.blackColor(context),
@@ -179,9 +179,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                       height: 30.h,
                       child: Center(
                         child: Text(
-                          context.locale.languageCode == 'ar'
-                              ? 'لا توجد أخبار حالياً'
-                              : 'No news available',
+                          AppLocalKay.no_news.tr(),
                           style: AppTextStyle.text16MSecond(context, color: Colors.grey),
                         ),
                       ),
@@ -232,11 +230,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                                   color: AppColor.primaryColor(context),
                                 ),
                                 const Gap(10),
-                                Text(
-                                  context.locale.languageCode == 'ar'
-                                      ? 'لا توجد خدمات مطابقة'
-                                      : 'No matching services',
-                                ),
+                                Text(AppLocalKay.noServices.tr()),
                               ],
                             ),
                           );

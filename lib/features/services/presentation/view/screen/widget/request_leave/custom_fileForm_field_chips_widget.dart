@@ -48,9 +48,7 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
   void _pickFiles() async {
     if (widget.controller.text.trim().isEmpty) {
       CommonMethods.showToast(
-        message: context.locale.languageCode == 'ar'
-            ? 'يرجى إدخال وصف المرفق أولاً'
-            : 'Please enter attachment description first',
+        message: AppLocalKay.enter_attachment_description_first.tr(),
         type: ToastType.warning,
       );
       return;
@@ -90,10 +88,7 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
 
   void _showSelectedFilesSheet(BuildContext context) {
     if (selectedFilesMap.isEmpty) {
-      CommonMethods.showToast(
-        message: context.locale.languageCode == 'ar' ? 'لا توجد ملفات مختارة' : 'No files selected',
-        type: ToastType.warning,
-      );
+      CommonMethods.showToast(message: AppLocalKay.no_files_selected.tr(), type: ToastType.warning);
       return;
     }
 
@@ -109,7 +104,7 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                context.locale.languageCode == 'ar' ? 'الملفات المختارة' : 'Selected Files',
+                AppLocalKay.selected_files.tr(),
                 style: AppTextStyle.formTitleStyle(context, color: AppColor.primaryColor(context)),
               ),
               const SizedBox(height: 12),
@@ -180,8 +175,6 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
         if (status.isLoading) return;
 
         if (status.isSuccess) {
-          // تحويل List<String> → List<Map<String,String>>
-          // مع الحفاظ على المسارات المحلية للمعاينة
           final responseFiles = (status.data as List<String>).asMap().entries.map((entry) {
             final index = entry.key;
             final serverPath = entry.value;
@@ -202,9 +195,7 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
           widget.onFilesChanged(selectedFilesMap);
 
           CommonMethods.showToast(
-            message: context.locale.languageCode == 'ar'
-                ? 'تم رفع الملفات بنجاح'
-                : 'Files uploaded successfully',
+            message: AppLocalKay.files_uploaded_successfully.tr(),
             type: ToastType.success,
           );
         } else if (status.isFailure) {
@@ -240,9 +231,8 @@ class _CustomFileFormFieldChipsState extends State<CustomFileFormFieldChips> {
               ),
               icon: const Icon(Icons.folder_open),
               label: Text(
-                context.locale.languageCode == 'ar'
-                    ? 'عرض الملفات المختارة'
-                    : 'Show Selected Files',
+                AppLocalKay.selected_files.tr(),
+                style: AppTextStyle.formTitleStyle(context, color: AppColor.whiteColor(context)),
               ),
               onPressed: () => _showSelectedFilesSheet(context),
             ),

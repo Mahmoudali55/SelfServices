@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_template/core/cache/hive/hive_methods.dart';
 import 'package:my_template/core/custom_widgets/custom_toast/custom_toast.dart';
 import 'package:my_template/core/theme/app_colors.dart';
+import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/features/profile/data/model/employee_change_photo_request.dart';
 import 'package:my_template/features/profile/presentation/cubit/prefile_cubit.dart';
@@ -86,9 +87,7 @@ class _UploadProfileWidgetState extends State<UploadProfileWidget> {
       listener: (context, state) async {
         if (state.employeechangephoto?.isSuccess ?? false) {
           CommonMethods.showToast(
-            message: context.locale.languageCode == 'ar'
-                ? 'تم تغيير صورة الموظف بنجاح'
-                : 'Employee photo changed successfully',
+            message: AppLocalKay.photo_changed_success.tr(),
             type: ToastType.success,
           );
 

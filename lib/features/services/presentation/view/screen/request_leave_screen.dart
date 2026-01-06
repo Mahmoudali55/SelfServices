@@ -118,7 +118,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
               servicesList.map(
                 (e) => {
                   'id': e.id.toString(),
-                  'servcdesc': context.locale.languageCode == 'ar'
+                  'servcdesc': context.locale.languageCode == 'en'
                       ? e.serviceDesc ?? ''
                       : e.serviceDescEn ?? '',
                 },
@@ -273,14 +273,12 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
           }
 
           CommonMethods.showToast(
-            message: context.locale.languageCode == 'ar'
-                ? 'تم تسجيل طلب الإجازة بنجاح'
-                : 'Submit vacation request successfully',
+            message: AppLocalKay.request_submit_success.tr(),
             type: ToastType.success,
           );
         }
         if (state.submitVacationStatus.isFailure) {
-          final error = state.submitVacationStatus.error ?? 'حص';
+          final error = state.submitVacationStatus.error ?? AppLocalKay.errorOccurred.tr();
           CommonMethods.showToast(message: error, type: ToastType.error);
         }
       },
@@ -312,9 +310,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                       _requestNumber.text = response.reqNo.toString();
                     }
                     CommonMethods.showToast(
-                      message: context.locale.languageCode == 'ar'
-                          ? 'تم تعديل طلب الإجازة بنجاح'
-                          : 'Submit vacation request successfully',
+                      message: AppLocalKay.request_update_success.tr(),
                       type: ToastType.success,
                     );
                     NavigatorMethods.pushNamedAndRemoveUntil(
@@ -334,9 +330,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                       _requestNumber.text = response.reqNo.toString();
                     }
                     CommonMethods.showToast(
-                      message: context.locale.languageCode == 'ar'
-                          ? 'تم تسجيل طلب الإجازة بنجاح'
-                          : 'Submit vacation request successfully',
+                      message: AppLocalKay.request_submit_success.tr(),
                       type: ToastType.success,
                     );
                     NavigatorMethods.pushNamedAndRemoveUntil(
@@ -379,9 +373,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
 
                       if (checkResult != null && checkResult.column1 == 136) {
                         CommonMethods.showToast(
-                          message: context.locale.languageCode == 'ar'
-                              ? 'عفوا ... هناك طلب مقدم سابقا تحت الاجراء'
-                              : 'Employee already has a pending leave request',
+                          message: AppLocalKay.request_pending_error.tr(),
                           type: ToastType.error,
                         );
                         return;
@@ -393,22 +385,18 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                               borderRadius: BorderRadius.circular(12.r),
                             ),
                             content: Text(
-                              context.locale.languageCode == 'ar'
-                                  ? 'هل تريد الاستمرار في عمل طلب الاجازة؟'
-                                  : 'Do you want to continue with the leave request?',
+                              AppLocalKay.continue_leave_request_message.tr(),
                               style: AppTextStyle.text14RGrey(context),
                             ),
                             title: Text(
-                              context.locale.languageCode == 'ar'
-                                  ? 'عفوا ... لا يمكن عمل طلب الاجازة ... الموظف بديل لموظف اخر لم يعد من اجازته بعد'
-                                  : 'Employee already has a pending leave request',
+                              AppLocalKay.continue_leave_request_title.tr(),
                               style: AppTextStyle.text16MSecond(context),
                             ),
                             actions: [
                               CustomButton(
                                 color: Colors.red,
                                 onPressed: () => Navigator.pop(context, false),
-                                text: context.locale.languageCode == 'ar' ? 'لا' : 'No',
+                                text: AppLocalKay.no.tr(),
                                 radius: 12.r,
                               ),
                               SizedBox(height: 10.w),
@@ -463,7 +451,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                                     );
                                   }
                                 },
-                                text: context.locale.languageCode == 'ar' ? 'نعم' : 'Yes',
+                                text: AppLocalKay.yes.tr(),
                                 radius: 12.r,
                               ),
                             ],
@@ -473,9 +461,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                         if (confirm != true) return;
                       } else if (checkResult != null && checkResult.column1 == 149) {
                         CommonMethods.showToast(
-                          message: context.locale.languageCode == 'ar'
-                              ? 'عفوا ... لا يمكن عمل طلب الاجازة ... الموظف بديل لموظف اخر له طلب اجازه مقدم'
-                              : 'Employee already has a pending leave request',
+                          message: AppLocalKay.employee_alternative_error_2.tr(),
                           type: ToastType.error,
                         );
                         return;
@@ -595,7 +581,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                               title: AppLocalKay.requestNumber.tr(),
                               readOnly: true,
                               controller: _requestNumber,
-                              hintText: context.locale.languageCode == 'ar' ? 'تلقائي' : 'Auto',
+                              hintText: AppLocalKay.auto.tr(),
                             ),
                           ),
                           Expanded(
@@ -646,7 +632,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
 
                               onEmployeeSelected: (emp) {
                                 ownerEmpIdController.text = emp.empCode.toString();
-                                ownerEmpNameController.text = context.locale.languageCode == 'ar'
+                                ownerEmpNameController.text = context.locale.languageCode == 'en'
                                     ? emp.empName.replaceFirst(RegExp(r'^[0-9]+\s*'), '') ??
                                           '' ??
                                           ''
@@ -684,7 +670,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                         nameController: transferEmpNameController,
                         onEmployeeSelected: (emp) {
                           transferEmpIdController.text = emp.empCode.toString();
-                          transferEmpNameController.text = context.locale.languageCode == 'ar'
+                          transferEmpNameController.text = context.locale.languageCode == 'en'
                               ? emp.empName.replaceFirst(RegExp(r'^[0-9]+\s*'), '')
                               : emp.empNameE.replaceFirst(RegExp(r'^[0-9]+\s*'), '');
                           context.read<ServicesCubit>().selectedEmployee = emp;
@@ -903,7 +889,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                                                     children: [
                                                       const SizedBox(height: 12),
                                                       Text(
-                                                        context.locale.languageCode == 'ar'
+                                                        context.locale.languageCode == 'en'
                                                             ? 'المرفقات'
                                                             : 'Attachments',
                                                         style: const TextStyle(
@@ -916,7 +902,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                                                         Padding(
                                                           padding: const EdgeInsets.all(16.0),
                                                           child: Text(
-                                                            context.locale.languageCode == 'ar'
+                                                            context.locale.languageCode == 'en'
                                                                 ? 'لا توجد مرفقات'
                                                                 : 'No attachments',
                                                           ),
@@ -1000,9 +986,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                                         );
                                       } else {
                                         CommonMethods.showToast(
-                                          message: context.locale.languageCode == 'ar'
-                                              ? 'حدث خطأ أثناء تحميل الملفات'
-                                              : 'Failed to load attachments',
+                                          message: AppLocalKay.suggestion_error.tr(),
                                           type: ToastType.error,
                                         );
                                       }

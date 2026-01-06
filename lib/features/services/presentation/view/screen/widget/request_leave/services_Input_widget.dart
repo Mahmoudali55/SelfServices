@@ -71,7 +71,7 @@ Future<void> showServicesBottomSheet({
           }
 
           void toggleService(dynamic service) {
-            final map = parseService(service, isArabic: context.locale.languageCode == 'ar');
+            final map = parseService(service, isArabic: context.locale.languageCode != 'en');
             final isSelected = tempSelected.any((s) => s['id'] == map['id']);
             setState(() {
               if (isSelected) {
@@ -130,7 +130,7 @@ Future<void> showServicesBottomSheet({
                           final service = apiServices[index];
                           final map = parseService(
                             service,
-                            isArabic: context.locale.languageCode == 'ar',
+                            isArabic: context.locale.languageCode != 'en',
                           );
                           final isSelected = tempSelected.any((s) => s['id'] == map['id']);
 
@@ -196,7 +196,7 @@ Future<void> showServicesBottomSheet({
                                           (s) =>
                                               parseService(
                                                 s,
-                                                isArabic: context.locale.languageCode == 'ar',
+                                                isArabic: context.locale.languageCode != 'en',
                                               )['id'] ==
                                               id,
                                         );

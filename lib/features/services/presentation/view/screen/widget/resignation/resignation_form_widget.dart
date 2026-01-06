@@ -34,7 +34,7 @@ class ResignationForm extends StatelessWidget {
             children: [
               Expanded(
                 child: CustomFormField(
-                  hintText: context.locale.languageCode == 'ar' ? 'تلقائي' : 'Auto',
+                  hintText: AppLocalKay.auto.tr(),
                   title: AppLocalKay.requestNumber.tr(),
                   readOnly: true,
                   controller: requestIdController,
@@ -57,9 +57,7 @@ class ResignationForm extends StatelessWidget {
             }
 
             if (dateController.text.isEmpty) {
-              return context.locale.languageCode == 'ar'
-                  ? 'اختر تاريخ الطلب أولاً'
-                  : 'Select request date first';
+              return AppLocalKay.select_request_date_first.tr();
             }
 
             final requestDate = DateTime.tryParse(dateController.text);
@@ -67,9 +65,7 @@ class ResignationForm extends StatelessWidget {
 
             // ❌ لو تاريخ آخر يوم أقل من تاريخ الطلب
             if (lastWorkDate?.isBefore(requestDate ?? DateTime.now()) ?? false) {
-              return context.locale.languageCode == 'ar'
-                  ? 'تاريخ آخر يوم عمل لا يمكن أن يكون قبل تاريخ الطلب'
-                  : 'Last working day cannot be before request date';
+              return AppLocalKay.last_work_day_error.tr();
             }
 
             // ✅ نفس اليوم أو بعده

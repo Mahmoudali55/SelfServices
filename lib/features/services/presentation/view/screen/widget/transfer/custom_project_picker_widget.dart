@@ -90,9 +90,7 @@ class CustomProjectPickerWidget extends StatelessWidget {
                       padding: const EdgeInsets.all(12.0),
                       child: CustomFormField(
                         prefixIcon: const Icon(Icons.search),
-                        hintText: context.locale.languageCode == 'ar'
-                            ? 'ابحث باسم المشروع'
-                            : 'Search by project name',
+                        hintText: AppLocalKay.search_by_project_name.tr(),
                         onChanged: (val) => setState(() => searchQuery = val),
                       ),
                     ),
@@ -151,7 +149,7 @@ class CustomProjectPickerWidget extends StatelessWidget {
                               separatorBuilder: (_, __) => const Divider(),
                               itemBuilder: (context, index) {
                                 final proj = filtered[index];
-                                final displayName = context.locale.languageCode == 'ar'
+                                final displayName = context.locale.languageCode == 'en'
                                     ? proj.projectName
                                     : (proj.projectNameEng ?? '-');
                                 return ListTile(

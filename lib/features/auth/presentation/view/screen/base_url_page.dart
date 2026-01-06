@@ -44,16 +44,12 @@ class BaseUrlPage extends StatelessWidget {
                   hintText: 'https://www.example.com',
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return context.locale.languageCode == 'ar'
-                          ? 'الرابط لا يمكن أن يكون فارغًا'
-                          : 'URL can not be empty';
+                      return AppLocalKay.url_empty.tr();
                     }
                     final pattern = r'^(http|https)://[^\s/$.?#].[^\s]*$';
                     final regExp = RegExp(pattern);
                     if (!regExp.hasMatch(value.trim())) {
-                      return context.locale.languageCode == 'ar'
-                          ? 'الرابط غير صحيح'
-                          : 'Invalid URL';
+                      return AppLocalKay.url_invalid.tr();
                     }
                     return null;
                   },
@@ -74,9 +70,7 @@ class BaseUrlPage extends StatelessWidget {
                         await Constants.loadBaseUrl();
 
                         CommonMethods.showToast(
-                          message: context.locale.languageCode == 'ar'
-                              ? 'تم حفظ الرابط وتحديثه بنجاح'
-                              : 'Base URL updated successfully',
+                          message: AppLocalKay.base_url_saved.tr(),
                           seconds: 3,
                           type: ToastType.success,
                         );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_template/core/custom_widgets/custom_toast/custom_toast.dart';
 import 'package:my_template/core/network/status.state.dart';
+import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/features/request_history/data/repo/vacation_requests_repo.dart';
 
@@ -51,7 +52,7 @@ class VacationRequestsCubit extends Cubit<VacationRequestsState> {
       (success) {
         emit(state.copyWith(deleteRequestStatus: StatusState.success(success)));
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar' ? 'تم الحذف بنجاح' : 'Deleted successfully',
+          message: AppLocalKay.deleted_successfully.tr(),
           type: ToastType.success,
         );
         getVacationRequests(empcode: empcodeadmin);
@@ -94,7 +95,7 @@ class VacationRequestsCubit extends Cubit<VacationRequestsState> {
       (success) {
         emit(state.copyWith(deleteRequestBackStatus: StatusState.success(success)));
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar' ? 'تم الحذف بنجاح' : 'Deleted successfully',
+          message: AppLocalKay.deleted_successfully.tr(),
           type: ToastType.success,
         );
         getRequestVacationBack(empCode: empcodeadmin);
@@ -136,7 +137,7 @@ class VacationRequestsCubit extends Cubit<VacationRequestsState> {
       (success) {
         emit(state.copyWith(deleteSolfaStatus: StatusState.success(success)));
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar' ? 'تم الحذف بنجاح' : 'Deleted successfully',
+          message: AppLocalKay.deleted_successfully.tr(),
           type: ToastType.success,
         );
         getSolfaRequests(empCode: empcodeadmin);
@@ -202,7 +203,7 @@ class VacationRequestsCubit extends Cubit<VacationRequestsState> {
       (success) {
         emit(state.copyWith(deleteHousingAllowanceStatus: StatusState.success(success)));
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar' ? 'تم الحذف بنجاح' : 'Deleted successfully',
+          message: AppLocalKay.deleted_successfully.tr(),
           type: ToastType.success,
         );
         getAllHousingAllowance(empCode: empcodeadmin);
@@ -233,7 +234,7 @@ class VacationRequestsCubit extends Cubit<VacationRequestsState> {
       (success) {
         emit(state.copyWith(deleteResignationStatus: StatusState.success(success)));
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar' ? 'تم الحذف بنجاح' : 'Deleted successfully',
+          message: AppLocalKay.deleted_successfully.tr(),
           type: ToastType.success,
         );
         getAllResignationInProccissing(empCode: empcodeadmin);
@@ -275,7 +276,7 @@ class VacationRequestsCubit extends Cubit<VacationRequestsState> {
       (success) {
         emit(state.copyWith(deleteCarStatus: StatusState.success(success)));
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar' ? 'تم الحذف بنجاح' : 'Deleted successfully',
+          message: AppLocalKay.deleted_successfully.tr(),
           type: ToastType.success,
         );
         getAllCars(empCode: empcodeadmin);
@@ -317,7 +318,7 @@ class VacationRequestsCubit extends Cubit<VacationRequestsState> {
       (success) {
         emit(state.copyWith(deleteTransferStatus: StatusState.success(success)));
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar' ? 'تم الحذف بنجاح' : 'Deleted successfully',
+          message: AppLocalKay.deleted_successfully.tr(),
           type: ToastType.success,
         );
         getAllTransfer(empCode: empcodeadmin);
@@ -369,7 +370,7 @@ class VacationRequestsCubit extends Cubit<VacationRequestsState> {
       (success) {
         emit(state.copyWith(deleteTicketStatus: StatusState.success(success)));
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar' ? 'تم الحذف بنجاح' : 'Deleted successfully',
+          message: AppLocalKay.deleted_successfully.tr(),
           type: ToastType.success,
         );
         getTicketRequests(empCode: empcodeadmin);
@@ -402,7 +403,7 @@ class VacationRequestsCubit extends Cubit<VacationRequestsState> {
       (success) {
         emit(state.copyWith(deleteDynamicOrderStatus: StatusState.success(success)));
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar' ? 'تم الحذف بنجاح' : 'Deleted successfully',
+          message: AppLocalKay.deleted_successfully.tr(),
           type: ToastType.success,
         );
         getAllRequestsGeneral(empCode: empcodeadmin, requestId: requesttypeid);

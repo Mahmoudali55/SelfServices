@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:my_template/core/custom_widgets/custom_toast/custom_toast.dart';
 import 'package:my_template/core/network/status.state.dart';
+import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/features/profile/data/model/employee_change_photo_request.dart';
 import 'package:my_template/features/services/data/model/Cars/add_new_car_request_model.dart';
@@ -177,7 +178,7 @@ class ServicesCubit extends Cubit<ServicesState> {
     ) {
       emit(state.copyWith(services: StatusState.success(success)));
       CommonMethods.showToast(
-        message: context.locale.languageCode == 'ar' ? 'تم الحذف بنجاح' : 'Deleted successfully',
+        message: AppLocalKay.message_deleted_success.tr(),
         type: ToastType.success,
       );
       getServices(requestId: requestId);
@@ -202,7 +203,7 @@ class ServicesCubit extends Cubit<ServicesState> {
       (success) {
         emit(state.copyWith(deleteattachmentStatus: StatusState.success(success)));
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar' ? 'تم الحذف بنجاح' : 'Deleted successfully',
+          message: AppLocalKay.message_deleted_success.tr(),
           type: ToastType.success,
         );
         getAttachments(requestId: requestId, attchmentType: attchmentType);
@@ -688,10 +689,7 @@ class ServicesCubit extends Cubit<ServicesState> {
 
   Future<void> imageFileName(String filePaths, BuildContext context) async {
     emit(state.copyWith(imageFileNameStatus: const StatusState.loading()));
-    CommonMethods.showToast(
-      message: context.locale.languageCode == 'ar' ? ' جاري التحميل.....' : 'Uploading.....',
-      type: ToastType.help,
-    );
+    CommonMethods.showToast(message: AppLocalKay.loadingdata.tr(), type: ToastType.help);
     final result = await leavesRepo.imageFileName(filePath: filePaths);
 
     result.fold(

@@ -45,7 +45,7 @@ class _SalaryVocabularyScreenState extends State<SalaryVocabularyScreen> {
       currentMonth.year,
       empCode,
       currentMonth.month,
-      context.locale.languageCode == 'ar' ? 'ar' : 'EN-GB',
+      context.locale.languageCode == 'ar' || context.locale.languageCode == 'ur' ? 'ar' : 'EN-GB',
     );
   }
 
@@ -128,7 +128,7 @@ class _SalaryVocabularyScreenState extends State<SalaryVocabularyScreen> {
                       return const Center(child: CustomShimmerList());
                     }
                     if (status.isFailure) {
-                      return Center(child: Text(status.error ?? 'Error'));
+                      return Center(child: Text(status.error ?? AppLocalKay.errorOccurred.tr()));
                     }
 
                     if (status.isSuccess) {

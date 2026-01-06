@@ -33,7 +33,9 @@ class CustomSolfeAllEmployeeWidgetLight extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
             if (state.employeeListStatus.isFailure) {
-              return Center(child: Text(state.employeeListStatus.error ?? 'حدث خطأ'));
+              return Center(
+                child: Text(state.employeeListStatus.error ?? AppLocalKay.generic_error.tr()),
+              );
             }
 
             final employees = state.employeeListStatus.data ?? [];
@@ -74,9 +76,9 @@ class CustomSolfeAllEmployeeWidgetLight extends StatelessWidget {
                       padding: const EdgeInsets.all(12.0),
                       child: CustomFormField(
                         prefixIcon: const Icon(Icons.search),
-                        hintText: context.locale.languageCode == 'ar'
-                            ? 'ابحث بالاسم'
-                            : 'Search by name',
+                        hintText: context.locale.languageCode == 'en'
+                            ? AppLocalKay.search_by_name.tr()
+                            : AppLocalKay.search_by_name.tr(),
                         onChanged: (val) => setState(() => searchQuery = val),
                       ),
                     ),
@@ -121,7 +123,7 @@ class CustomSolfeAllEmployeeWidgetLight extends StatelessWidget {
                               separatorBuilder: (_, __) => const Divider(),
                               itemBuilder: (context, index) {
                                 final emp = filtered[index];
-                                final displayName = context.locale.languageCode == 'ar'
+                                final displayName = context.locale.languageCode == 'en'
                                     ? emp.empName.replaceFirst(RegExp(r'^[0-9]+\s*'), '')
                                     : emp.empNameE.replaceFirst(RegExp(r'^[0-9]+\s*'), '');
                                 return ListTile(

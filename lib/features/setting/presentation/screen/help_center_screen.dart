@@ -70,7 +70,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                             children: [
                               ListTile(
                                 leading: const Icon(Icons.email_outlined),
-                                title: const Text(' erp@delta-asg.com'),
+                                title: Text(AppLocalKay.contact_email.tr()),
                                 onTap: () =>
                                     UrlLauncherMethods.makeMailMessage(' erp@delta-asg.com'),
                               ),
@@ -83,7 +83,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                                       children: [
-                                        const Text(' 580926448 966+'),
+                                        Text(AppLocalKay.contact_phone_riyadh.tr()),
                                         Text(
                                           AppLocalKay.branchRiyadh.tr(),
                                           style: AppTextStyle.text16MSecond(context),
@@ -98,7 +98,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                                       children: [
-                                        const Text(' 503605031 966+'),
+                                        Text(AppLocalKay.contact_phone_jeddah.tr()),
                                         Text(
                                           AppLocalKay.branchJeddah.tr(),
                                           style: AppTextStyle.text16MSecond(context),
@@ -113,7 +113,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                                       children: [
-                                        const Text(' 507409010 966+'),
+                                        Text(AppLocalKay.contact_phone_dammam.tr()),
                                         Text(
                                           AppLocalKay.branchDammam.tr(),
                                           style: AppTextStyle.text16MSecond(context),

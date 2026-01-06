@@ -104,26 +104,22 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
 
                       if (title.isEmpty || suggestion.isEmpty) {
                         CommonMethods.showToast(
-                          message: lang == 'ar'
-                              ? 'يرجى كتابة العنوان والمقترح قبل الإرسال ✏️'
-                              : 'Please fill in both title and suggestion ✏️',
+                          message: AppLocalKay.suggestion_required_error.tr(),
                           type: ToastType.error,
                         );
                         return;
                       }
 
-                      final message = (lang == 'ar')
-                          ? '⭐ * اقتراح جديد *:\nالعنوان: $title\nالمقترح: $suggestion'
-                          : '⭐ *New Suggestion - SelfServices*:\nTitle: $title\nSuggestion: $suggestion';
+                      final message = AppLocalKay.suggestion_whatsapp_content.tr(
+                        args: [title, suggestion],
+                      );
 
                       const phoneNumber = '966503432569';
 
                       try {
                         await UrlLauncherMethods.launchWhatsApp(phoneNumber, message: message);
                         CommonMethods.showToast(
-                          message: lang == 'ar'
-                              ? 'تم إرسال الاقتراح بنجاح ✅'
-                              : 'Suggestion sent successfully ✅',
+                          message: AppLocalKay.suggestion_sent_success.tr(),
                           type: ToastType.success,
                         );
 
@@ -133,9 +129,7 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                         Navigator.pop(context);
                       } catch (e) {
                         CommonMethods.showToast(
-                          message: lang == 'ar'
-                              ? 'حدث خطأ ما، يرجى المحاولة مرة اخرى'
-                              : 'An error occurred, please try again later',
+                          message: AppLocalKay.suggestion_error.tr(),
                           type: ToastType.error,
                         );
                       }

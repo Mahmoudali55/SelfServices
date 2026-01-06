@@ -15,7 +15,9 @@ class TimeSheetPdfGenerator {
     DateTime date,
   ) async {
     final pdf = pw.Document();
-    final isArabic = context.locale.languageCode == 'ar';
+    final isArabic = context.locale.languageCode == 'ar' || context.locale.languageCode == 'ur';
+    final isUrdu = context.locale.languageCode == 'ur';
+    final isRtl = isArabic || isUrdu;
 
     // Load fonts
     final fontRegular = await rootBundle.load("assets/font/Cairo-Regular.ttf");
@@ -31,7 +33,7 @@ class TimeSheetPdfGenerator {
       pw.Page(
         theme: theme,
         pageFormat: PdfPageFormat.a4.landscape, // Landscape for more columns
-        textDirection: isArabic ? pw.TextDirection.rtl : pw.TextDirection.ltr,
+        textDirection: isRtl ? pw.TextDirection.rtl : pw.TextDirection.ltr,
         build: (pw.Context context) {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.stretch,
@@ -85,8 +87,8 @@ class TimeSheetPdfGenerator {
                         _buildCell(item.signInDate),
                         _buildCell(item.signInTime ?? '-'),
                         _buildCell(item.signOutTime ?? '-'),
-                        _buildCell(item.projectSignInTime),
-                        _buildCell(item.projectSignOutTime),
+                        _buildCell(item.projectSignInTime.toString()),
+                        _buildCell(item.projectSignOutTime.toString()),
                         _buildCell(TimeSheetCalculator.formatDuration(calc.delay)),
                         _buildCell(TimeSheetCalculator.formatDuration(calc.overtime)),
                         _buildCell(

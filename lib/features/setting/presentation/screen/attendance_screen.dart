@@ -98,9 +98,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       final deviceId = await getDeviceId();
       final savedDeviceId = HiveMethods.getDeviceId();
       if (savedDeviceId != null && savedDeviceId != deviceId) {
-        status = context.locale.languageCode == 'ar'
-            ? 'عذرًا، هذا الجهاز مسجل باسم موظف غير موجود، ولا يُسمح بتسجيل البصمة من خلاله.'
-            : 'Sorry, this device is registered with a different employee name and is not allowed to sign in with it.';
+        status = AppLocalKay.device_registered_different_user.tr();
         CommonMethods.showToast(message: status, type: ToastType.error);
         return;
       }
@@ -160,9 +158,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         CommonMethods.showToast(
-          message: context.locale.languageCode == 'ar'
-              ? 'يرجى السماح بالوصول للموقع أولاً'
-              : 'Please allow location access first',
+          message: AppLocalKay.location_permission_denied.tr(),
           type: ToastType.error,
         );
         return false;
@@ -171,9 +167,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
     if (permission == LocationPermission.deniedForever) {
       CommonMethods.showToast(
-        message: context.locale.languageCode == 'ar'
-            ? 'تم منع التطبيق من الوصول للموقع نهائيًا، الرجاء تعديل الإعدادات'
-            : 'Location permission is permanently denied, please go to settings and allow location access',
+        message: AppLocalKay.location_permission_permanently_denied.tr(),
         type: ToastType.error,
       );
       return false;
@@ -337,9 +331,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      context.locale.languageCode == 'ar'
-                                          ? 'اختر نوع الحضور'
-                                          : 'Select Check In Type',
+                                      AppLocalKay.select_check_in_type.tr(),
                                       style: AppTextStyle.text18MSecond(
                                         context,
                                         color: AppColor.primaryColor(context),
@@ -348,9 +340,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                     const SizedBox(height: 16),
                                     ListTile(
                                       title: Text(
-                                        context.locale.languageCode == 'ar'
-                                            ? 'تسجيل حضور '
-                                            : 'Check In for Self',
+                                        AppLocalKay.check_in_self.tr(),
                                         style: const TextStyle(fontWeight: FontWeight.bold),
                                       ),
                                       trailing: const Icon(
@@ -385,9 +375,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                   onSubmit: () async {
                                                     Navigator.pop(context);
                                                     CommonMethods.showToast(
-                                                      message: context.locale.languageCode == 'ar'
-                                                          ? 'تم تسجيل الجهاز بنجاح'
-                                                          : 'Device registered successfully',
+                                                      message: AppLocalKay.device_registered_success
+                                                          .tr(),
                                                       type: ToastType.success,
                                                     );
                                                     ();
@@ -404,9 +393,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                             await _markAttendance(true, empId, currentDeviceId);
                                           } else if (mobileSerNo != currentDeviceId) {
                                             CommonMethods.showToast(
-                                              message: context.locale.languageCode == 'ar'
-                                                  ? 'عذرا ، يوجد جهاز اخر مسجل لهذا المستخدم'
-                                                  : 'This device is already registered by another user',
+                                              message: AppLocalKay.device_already_registered.tr(),
                                               type: ToastType.error,
                                             );
                                           } else {}
@@ -446,9 +433,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                       onSubmit: () async {
                                         Navigator.pop(context);
                                         CommonMethods.showToast(
-                                          message: context.locale.languageCode == 'ar'
-                                              ? 'تم تسجيل الجهاز بنجاح'
-                                              : 'Device registered successfully',
+                                          message: AppLocalKay.device_registered_success.tr(),
                                           type: ToastType.success,
                                         );
                                         ();
@@ -461,9 +446,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                 await _markAttendance(true, empId, currentDeviceId);
                               } else if (mobileSerNo != currentDeviceId) {
                                 CommonMethods.showToast(
-                                  message: context.locale.languageCode == 'ar'
-                                      ? 'عذرا ، يوجد جهاز اخر مسجل لهذا المستخدم'
-                                      : 'This device is already registered by another user',
+                                  message: AppLocalKay.device_already_registered.tr(),
                                   type: ToastType.error,
                                 );
                               } else {}
@@ -503,9 +486,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      context.locale.languageCode == 'ar'
-                                          ? 'اختر نوع الانصراف'
-                                          : 'Select Check Out Type',
+                                      AppLocalKay.select_check_out_type.tr(),
                                       style: AppTextStyle.text18MSecond(
                                         context,
                                         color: AppColor.primaryColor(context),
@@ -540,9 +521,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                       onSubmit: () async {
                                         Navigator.pop(context);
                                         CommonMethods.showToast(
-                                          message: context.locale.languageCode == 'ar'
-                                              ? 'تم تسجيل الجهاز بنجاح'
-                                              : 'Device registered successfully',
+                                          message: AppLocalKay.device_registered_success.tr(),
                                           type: ToastType.success,
                                         );
                                         ();
@@ -555,9 +534,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                 await _markAttendance(false, empId, currentDeviceId);
                               } else if (mobileSerNo != currentDeviceId) {
                                 CommonMethods.showToast(
-                                  message: context.locale.languageCode == 'ar'
-                                      ? 'عذرا ، يوجد جهاز اخر مسجل لهذا المستخدم'
-                                      : 'This device is already registered by another user',
+                                  message: AppLocalKay.deviceNotFound.tr(),
                                   type: ToastType.error,
                                 );
                               } else {}
@@ -614,9 +591,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            context.locale.languageCode == 'ar'
-                                ? 'تغير مشروعك الي مشروع اخر'
-                                : 'Change your project to another project',
+                            AppLocalKay.change_project_title.tr(),
                             style: AppTextStyle.text16MSecond(context).copyWith(
                               color: AppColor.primaryColor(context),
                               fontWeight: FontWeight.bold,
@@ -639,9 +614,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   ListTile customCheckOutforAnotherEmployee(BuildContext context) {
     return ListTile(
       title: Text(
-        context.locale.languageCode == 'ar'
-            ? 'تسجيل انصراف لموظف آخر'
-            : 'Check Out for another employee',
+        AppLocalKay.check_out_other.tr(),
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
@@ -661,16 +634,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CustomFormField(
-                  title: context.locale.languageCode == 'ar' ? 'رقم الموظف' : 'Employee ID',
-                  hintText: context.locale.languageCode == 'ar'
-                      ? 'ادخل رقم الموظف'
-                      : 'Enter employee ID',
+                  title: AppLocalKay.employee_id.tr(),
+                  hintText: AppLocalKay.enter_employee_id.tr(),
                   controller: empIdController,
                   keyboardType: TextInputType.number,
                 ),
                 const Spacer(),
                 CustomButton(
-                  text: context.locale.languageCode == 'ar' ? 'تسجيل انصراف' : 'Check Out',
+                  text: AppLocalKay.check_out_self.tr(),
                   onPressed: () async {
                     Navigator.pop(context);
                     await _markAttendance(false, int.parse(empIdController.text), '');
@@ -688,7 +659,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   ListTile customCheckOut(BuildContext context, String currentDeviceId) {
     return ListTile(
       title: Text(
-        context.locale.languageCode == 'ar' ? 'تسجيل انصراف ' : 'Check Out',
+        AppLocalKay.check_out_self.tr(),
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
@@ -711,11 +682,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 padding: MediaQuery.of(context).viewInsets,
                 child: AddDeviceBottomSheet(
                   onSubmit: () async {
-                    Navigator.pop(context);
                     CommonMethods.showToast(
-                      message: context.locale.languageCode == 'ar'
-                          ? 'تم تسجيل الجهاز بنجاح'
-                          : 'Device registered successfully',
+                      message: AppLocalKay.device_registered_success.tr(),
                       type: ToastType.success,
                     );
                     ();
@@ -728,9 +696,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             await _markAttendance(false, empId, currentDeviceId);
           } else if (mobileSerNo != currentDeviceId) {
             CommonMethods.showToast(
-              message: context.locale.languageCode == 'ar'
-                  ? 'عذرا ، يوجد جهاز اخر مسجل لهذا المستخدم'
-                  : 'This device is already registered by another user',
+              message: AppLocalKay.device_already_registered.tr(),
               type: ToastType.error,
             );
           } else {}
@@ -744,9 +710,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   ListTile customCheckInforAnotherEmployee(BuildContext context) {
     return ListTile(
       title: Text(
-        context.locale.languageCode == 'ar'
-            ? 'تسجيل حضور لموظف آخر'
-            : 'Check In for Another Employee',
+        AppLocalKay.check_in_other.tr(),
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
@@ -767,16 +731,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CustomFormField(
-                  title: context.locale.languageCode == 'ar' ? 'رقم الموظف' : 'Employee ID',
-                  hintText: context.locale.languageCode == 'ar'
-                      ? 'ادخل رقم الموظف'
-                      : 'Enter Employee ID',
+                  title: AppLocalKay.employee_id.tr(),
+                  hintText: AppLocalKay.enter_employee_id.tr(),
                   controller: empIdController,
                   keyboardType: TextInputType.number,
                 ),
                 const Spacer(),
                 CustomButton(
-                  text: context.locale.languageCode == 'ar' ? 'تسجيل حضور' : 'Check In',
+                  text: AppLocalKay.check_in_self.tr(),
                   onPressed: () async {
                     Navigator.pop(context);
                     await _markAttendance(true, int.parse(empIdController.text), '');

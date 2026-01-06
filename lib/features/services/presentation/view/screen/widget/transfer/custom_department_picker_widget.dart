@@ -88,9 +88,7 @@ class CustomDepartmentPickerWidget extends StatelessWidget {
                       padding: const EdgeInsets.all(12.0),
                       child: CustomFormField(
                         prefixIcon: const Icon(Icons.search),
-                        hintText: context.locale.languageCode == 'ar'
-                            ? 'ابحث باسم الادارة'
-                            : 'Search by department name',
+                        hintText: AppLocalKay.search_by_department_name.tr(),
                         onChanged: (val) => setState(() => searchQuery = val),
                       ),
                     ),
@@ -147,7 +145,7 @@ class CustomDepartmentPickerWidget extends StatelessWidget {
                               separatorBuilder: (_, __) => const Divider(),
                               itemBuilder: (context, index) {
                                 final dep = filtered[index];
-                                final displayName = context.locale.languageCode == 'ar'
+                                final displayName = context.locale.languageCode == 'en'
                                     ? dep.dName
                                     : (dep.dNameE ?? dep.dName);
                                 return ListTile(
