@@ -186,6 +186,7 @@ class AppLocalKay {
   static const String discountstartdate = 'discount_start_date';
   static const String ar = 'ar';
   static const String en = 'en';
+  static const String ur = 'ur';
   static const String pleaseEnterAmount = 'pleaseEnterAmount';
   static const String selectDepartment = 'selectDepartment';
   static const String departmentName = 'departmentName';

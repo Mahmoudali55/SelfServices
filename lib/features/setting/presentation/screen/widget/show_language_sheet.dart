@@ -63,6 +63,21 @@ void showLanguageSheet(BuildContext parentContext) {
                   Navigator.pop(bottomSheetContext);
                 },
               ),
+              ListTile(
+                leading: Image.asset('assets/global_icon/flag.png', width: 30, height: 30),
+                title: Text(
+                  AppLocalKay.ur.tr(),
+                  style: AppTextStyle.text16MSecond(
+                    bottomSheetContext,
+                    color: AppColor.blackColor(bottomSheetContext),
+                  ),
+                ),
+                onTap: () {
+                  bottomSheetContext.setLocale(const Locale('ur'));
+                  HiveMethods.updateLang(const Locale('ur'));
+                  Navigator.pop(bottomSheetContext);
+                },
+              ),
               const SizedBox(height: 10),
             ],
           ),
