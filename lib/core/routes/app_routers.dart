@@ -169,6 +169,10 @@ class AppRouters {
           builder: (_) =>
               GeneralRequestDetailsScreen(request: settings.arguments as DynamicOrderModel),
         );
+      case RoutesName.faceRecognitionAttendanceScreen:
+        return MaterialPageRoute(builder: (_) => const FaceRecognitionAttendanceScreen());
+      case RoutesName.studentFaceRegistrationScreen:
+        return MaterialPageRoute(builder: (_) => const EmployeesFaceRegistrationScreen());
       default:
         return null;
     }

@@ -45,8 +45,16 @@ flutter {
     source = "../.."
 }
 
+configurations.all {
+    resolutionStrategy {
+        force("androidx.activity:activity-ktx:1.9.0")
+        force("androidx.activity:activity:1.9.0")
+    }
+}
+
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
     implementation("com.google.firebase:firebase-analytics")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
 }
+

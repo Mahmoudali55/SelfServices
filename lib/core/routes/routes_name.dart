@@ -46,4 +46,6 @@ class RoutesName {
   static const String carDetailsScreen = 'CarDetailsScreen';
   static const String housingAllowanceDetailsScreen = 'housingAllowanceDetailsScreen';
   static const String generalRequestDetailsScreen = 'generalRequestDetailsScreen';
+  static const String faceRecognitionAttendanceScreen = 'faceRecognitionAttendanceScreen';
+  static const String studentFaceRegistrationScreen = 'studentFaceRegistrationScreen';
 }

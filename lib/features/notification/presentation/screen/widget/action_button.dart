@@ -16,6 +16,7 @@ class ActionButton extends StatelessWidget {
         onTap: onTap,
         child: Container(
           height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 2),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: color),
           alignment: Alignment.center,
           child: Text(
@@ -23,7 +24,7 @@ class ActionButton extends StatelessWidget {
             style: AppTextStyle.text14RGrey(
               context,
               color: AppColor.whiteColor(context),
-            ).copyWith(fontWeight: FontWeight.bold),
+            ).copyWith(fontWeight: FontWeight.bold, fontSize: 12),
           ),
         ),
       ),

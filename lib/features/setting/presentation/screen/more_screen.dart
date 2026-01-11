@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:my_template/core/cache/hive/hive_methods.dart';
@@ -11,6 +12,7 @@ import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
+import 'package:my_template/features/home/presentation/cubit/home_cubit.dart';
 import 'package:my_template/features/setting/presentation/screen/rate_app_screen.dart';
 import 'package:my_template/features/setting/presentation/screen/suggestions_screen.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/show_change_password_sheet_widget.dart';
@@ -29,6 +31,7 @@ class _MoreScreenState extends State<MoreScreen> {
   bool isEmailOn = false;
   String appVersion = '';
   String buildNumber = '';
+
   @override
   void initState() {
     super.initState();
@@ -37,10 +40,20 @@ class _MoreScreenState extends State<MoreScreen> {
 
   Future<void> _loadAppInfo() async {
     final info = await PackageInfo.fromPlatform();
+    if (!mounted) return;
     setState(() {
       appVersion = info.version;
       buildNumber = info.buildNumber;
     });
+  }
+
+  Future<void> loadVacationAdditionalPrivilages() async {
+    final homeCubit = context.read<HomeCubit>();
+    final empId = HiveMethods.getEmpCode();
+    await homeCubit.loadVacationAdditionalPrivilages(
+      pageID: 14,
+      empId: int.tryParse(empId.toString()) ?? 0,
+    );
   }
 
   @override
@@ -48,14 +61,18 @@ class _MoreScreenState extends State<MoreScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? AppColor.whiteColor(context) : AppColor.blackColor(context);
 
+    final homeCubit = context.watch<HomeCubit>();
+    final privilegeData = homeCubit.state.vacationStatus.data;
+    final pagePrivID = (privilegeData != null) ? privilegeData.pagePrivID : 0;
+
     return Scaffold(
       backgroundColor: AppColor.scaffoldColor(context),
-
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Gap(40.h),
 
+          // Account Section
           _sectionTitle(AppLocalKay.account.tr(), textColor),
           _settingCard([
             _listTile(
@@ -76,7 +93,31 @@ class _MoreScreenState extends State<MoreScreen> {
               title: AppLocalKay.timesheet.tr(),
               onTap: () => NavigatorMethods.pushNamed(context, RoutesName.timeSheetScreen),
             ),
+            pagePrivID == 1 || pagePrivID == 2
+                ? _listTile(
+                    icon: Icons.fingerprint,
+                    color: Colors.teal,
+                    title: 'تسجيل وجوه الموظفين',
+                    onTap: () => NavigatorMethods.pushNamed(
+                      context,
+                      RoutesName.studentFaceRegistrationScreen,
+                    ),
+                  )
+                : Container(),
+            pagePrivID == 1 || pagePrivID == 2
+                ? _listTile(
+                    icon: Icons.fingerprint,
+                    color: Colors.teal,
+                    title: 'تسجيل الحضور والانصراف',
+                    onTap: () => NavigatorMethods.pushNamed(
+                      context,
+                      RoutesName.faceRecognitionAttendanceScreen,
+                    ),
+                  )
+                : Container(),
           ]),
+
+          // Language Section
           _sectionTitle(AppLocalKay.language.tr(), textColor),
           _settingCard([
             _listTile(
@@ -86,6 +127,8 @@ class _MoreScreenState extends State<MoreScreen> {
               onTap: () => showLanguageSheet(context),
             ),
           ]),
+
+          // Privacy Section
           _sectionTitle(AppLocalKay.privacy.tr(), textColor),
           _settingCard([
             _listTile(
@@ -96,6 +139,7 @@ class _MoreScreenState extends State<MoreScreen> {
             ),
           ]),
 
+          // Support Section
           _sectionTitle(AppLocalKay.support.tr(), textColor),
           _settingCard([
             _listTile(
@@ -122,12 +166,10 @@ class _MoreScreenState extends State<MoreScreen> {
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
-
                 context: context,
                 builder: (context) => SizedBox(height: 400.h, child: const RateAppScreen()),
               ),
             ),
-
             _listTile(
               icon: Icons.question_answer_outlined,
               color: Colors.purple,
@@ -145,25 +187,30 @@ class _MoreScreenState extends State<MoreScreen> {
               ),
             ),
           ]),
+
+          // App Info Section
           _sectionTitle(AppLocalKay.AppInfo.tr(), textColor),
           _settingCard([
             ListTile(
               leading: _circleIcon(Icons.info_outline, Colors.blue),
               title: Text(
                 AppLocalKay.AppVersion.tr(),
-                style: TextStyle(color: AppColor.blackColor(context), fontWeight: FontWeight.w500),
+                style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
               ),
-              subtitle: Text('$appVersion '),
+              subtitle: Text('$appVersion'),
             ),
             ListTile(
               leading: _circleIcon(Icons.copyright, Colors.grey),
               title: Text(
                 AppLocalKay.copyright.tr(),
-                style: TextStyle(color: AppColor.blackColor(context), fontWeight: FontWeight.w500),
+                style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
               ),
             ),
           ]),
+
           Gap(20.h),
+
+          // Logout Section
           _settingCard([
             _listTile(
               icon: Icons.logout,
@@ -173,6 +220,7 @@ class _MoreScreenState extends State<MoreScreen> {
               onTap: () => _logoutDialog(context),
             ),
           ]),
+
           Gap(MediaQuery.of(context).padding.bottom + 24),
         ],
       ),
@@ -216,26 +264,12 @@ class _MoreScreenState extends State<MoreScreen> {
     );
   }
 
-  Widget _switchTile({
-    required IconData icon,
-    required Color color,
-    required String title,
-    required bool value,
-    required Function(bool) onChanged,
-  }) {
-    return SwitchListTile(
-      secondary: _circleIcon(icon, color),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-      value: value,
-      onChanged: onChanged,
-    );
-  }
-
   Widget _circleIcon(IconData icon, Color color) => Container(
     padding: const EdgeInsets.all(8),
     decoration: BoxDecoration(color: color.withOpacity(0.15), shape: BoxShape.circle),
     child: Icon(icon, color: color, size: 20),
   );
+
   Future<void> _logoutDialog(BuildContext context) async {
     final shouldLogout = await showDialog<bool>(
       context: context,

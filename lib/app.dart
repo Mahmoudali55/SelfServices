@@ -7,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_template/core/routes/app_routers_import.dart';
 import 'package:my_template/core/services/notification_service.dart';
 import 'package:my_template/core/services/services_locator.dart';
+import 'package:my_template/features/attendance/cubit/attendance_cubit.dart';
+import 'package:my_template/features/attendance/cubit/face_recognition_cubit.dart';
 import 'package:my_template/features/auth/presentation/view/cubit/auth_cubit.dart';
 import 'package:my_template/features/chat/presentation/cubit/chat_cubit.dart';
 import 'package:my_template/features/chat/presentation/cubit/group_cubit.dart';
@@ -68,6 +70,8 @@ class _SelfServicesState extends State<SelfServices> {
         BlocProvider(create: (context) => sl<SettingCubit>()),
         BlocProvider(create: (context) => sl<ChatCubit>()),
         BlocProvider(create: (context) => sl<GroupCubit>()),
+        BlocProvider(create: (context) => sl<FaceRecognitionCubit>()),
+        BlocProvider(create: (context) => sl<AttendanceCubit>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(360, 690),
@@ -81,6 +85,15 @@ class _SelfServicesState extends State<SelfServices> {
             ],
             supportedLocales: context.supportedLocales,
             locale: context.locale,
+            // Provide fallback for locales not supported by all delegates
+            localeResolutionCallback: (locale, supportedLocales) {
+              // If the locale is Urdu and CountryLocalizations doesn't support it,
+              // fallback to Arabic for country picker
+              if (locale?.languageCode == 'ur') {
+                return locale;
+              }
+              return locale;
+            },
             debugShowCheckedModeBanner: false,
             theme: appThemeData(context),
             initialRoute: RoutesName.splashScreen,
