@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:camera/camera.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/features/attendance/cubit/face_recognition_cubit.dart';
+import 'package:my_template/features/profile/data/model/employee_change_photo_request.dart';
 import 'package:my_template/features/services/data/model/request_leave/employee_model.dart';
 import 'package:my_template/features/services/presentation/cubit/services_cubit.dart';
 
@@ -20,17 +23,45 @@ class EmployeesFaceRegistrationScreen extends StatefulWidget {
   State<EmployeesFaceRegistrationScreen> createState() => _EmployeesFaceRegistrationScreenState();
 }
 
-class _EmployeesFaceRegistrationScreenState extends State<EmployeesFaceRegistrationScreen> {
+class _EmployeesFaceRegistrationScreenState extends State<EmployeesFaceRegistrationScreen>
+    with TickerProviderStateMixin {
   static const String globalClassId = 'employees';
+
   String? selectedEmployeeId;
   String? selectedEmployeeName;
-  bool isCapturing = false;
+
   Set<String> registeredEmployees = {};
+
+  late AnimationController _scanController;
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
-    _loadRegisteredEmployees();
+    _scanController = AnimationController(vsync: this, duration: const Duration(seconds: 2))
+      ..repeat();
+
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+
+    _pulseAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.1,
+    ).animate(CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadRegisteredEmployees();
+    });
+  }
+
+  @override
+  void dispose() {
+    _scanController.dispose();
+    _pulseController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadRegisteredEmployees() async {
@@ -56,57 +87,60 @@ class _EmployeesFaceRegistrationScreenState extends State<EmployeesFaceRegistrat
       return;
     }
 
-    setState(() {
-      isCapturing = true;
-    });
-
     final cubit = context.read<FaceRecognitionCubit>();
     await cubit.initializeCamera();
 
-    // Open camera in BottomSheet
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.black.withOpacity(0.8),
-      builder: (_) => SizedBox(
-        height: MediaQuery.of(context).size.height * 0.85,
-        child: _buildCameraView(cubit.state),
+      backgroundColor: Colors.black,
+      enableDrag: false,
+      builder: (_) => BlocBuilder<FaceRecognitionCubit, FaceRecognitionState>(
+        builder: (context, state) {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: _buildCameraView(state),
+          );
+        },
       ),
     ).whenComplete(() {
-      setState(() {
-        isCapturing = false;
-      });
       cubit.disposeResources();
     });
   }
 
   Future<void> _captureAndRegister() async {
     if (selectedEmployeeId == null || selectedEmployeeName == null) return;
+    context.read<FaceRecognitionCubit>().captureAndExtractFeatures();
+  }
 
-    final cubit = context.read<FaceRecognitionCubit>();
-
-    // تسجيل الوجه
-    await cubit.registerStudentFace(
-      studentId: selectedEmployeeId!,
-      studentName: selectedEmployeeName!,
-      classId: globalClassId,
+  /// ✅ هذه الدالة تم نقلها داخل الـ State لتعمل مع context و setState
+  Future<void> _deleteRegistration(String employeeId) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(AppLocalKay.delete_user_message.tr()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(AppLocalKay.cancel.tr()),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(AppLocalKay.delete.tr()),
+          ),
+        ],
+      ),
     );
 
-    // بعد ما يخلص التسجيل
-    if (mounted) {
-      // غلق الـ BottomSheet
-      Navigator.pop(context);
+    if (confirm == true) {
+      await context.read<FaceRecognitionCubit>().deleteStudentFace(employeeId);
 
-      // إعادة تهيئة الحالة
       setState(() {
-        isCapturing = false;
-        selectedEmployeeId = null;
-        selectedEmployeeName = null;
+        registeredEmployees.remove(employeeId);
       });
 
-      // اظهار Toast نجاح
       CommonMethods.showToast(
-        message: AppLocalKay.face_registered_successfully.tr(),
+        message: AppLocalKay.face_registration_deleted.tr(),
         type: ToastType.success,
       );
     }
@@ -133,103 +167,99 @@ class _EmployeesFaceRegistrationScreenState extends State<EmployeesFaceRegistrat
             style: AppTextStyle.appBarStyle(context).copyWith(fontWeight: FontWeight.bold),
           ),
         ),
-        body: BlocConsumer<FaceRecognitionCubit, FaceRecognitionState>(
-          listener: (context, state) {
-            if (state is FaceRecognitionRegistered) {
-              setState(() {
-                registeredEmployees.add(state.faceModel.studentId);
-                selectedEmployeeId = null;
-                selectedEmployeeName = null;
-              });
+        body: MultiBlocListener(
+          listeners: [
+            BlocListener<FaceRecognitionCubit, FaceRecognitionState>(
+              listener: (context, state) async {
+                if (state is FaceRecognitionCaptured) {
+                  final servicesCubit = context.read<ServicesCubit>();
+                  final faceCubit = context.read<FaceRecognitionCubit>();
 
-              CommonMethods.showToast(
-                message: AppLocalKay.face_registered_successfully.tr(),
-                type: ToastType.success,
+                  await servicesCubit.uploadFiles([state.imageFile.path]);
+
+                  await servicesCubit.employeefacephoto(
+                    EmployeeChangePhotoRequest(
+                      empId: int.parse(selectedEmployeeId!),
+                      empPhotoWeb: state.imageFile.path,
+                    ),
+                  );
+
+                  await faceCubit.completeRegistration(
+                    studentId: selectedEmployeeId!,
+                    studentName: selectedEmployeeName!,
+                    classId: globalClassId,
+                    imageFile: state.imageFile,
+                    features: state.features,
+                    qualityScore: state.qualityScore,
+                    serverPath: state.imageFile.path,
+                  );
+                } else if (state is FaceRecognitionRegistered) {
+                  setState(() {
+                    registeredEmployees.add(state.faceModel.studentId);
+                    selectedEmployeeId = null;
+                    selectedEmployeeName = null;
+                  });
+
+                  if (mounted && Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+
+                  CommonMethods.showToast(
+                    message: AppLocalKay.face_registered_successfully.tr(),
+                    type: ToastType.success,
+                  );
+                } else if (state is FaceRecognitionError) {
+                  CommonMethods.showToast(message: state.message, type: ToastType.error);
+                } else if (state is FaceRecognitionRegisteredStudentsLoaded) {
+                  setState(() {
+                    registeredEmployees = state.students.map((e) => e.studentId).toSet();
+                  });
+                }
+              },
+            ),
+          ],
+          child: BlocBuilder<FaceRecognitionCubit, FaceRecognitionState>(
+            builder: (context, state) {
+              final employees = context.select(
+                (ServicesCubit cubit) => cubit.state.employeesStatus.data ?? [],
               );
-            } else if (state is FaceRecognitionError) {
-              CommonMethods.showToast(message: state.message, type: ToastType.error);
-            } else if (state is FaceRecognitionRegisteredStudentsLoaded) {
-              setState(() {
-                registeredEmployees = state.students.map((e) => e.studentId).toSet();
-              });
-            }
-          },
-          builder: (context, state) {
-            final employees = context.select(
-              (ServicesCubit cubit) => cubit.state.employeesStatus.data ?? [],
-            );
-            final notRegistered = employees
-                .where((e) => !registeredEmployees.contains(e.empCode.toString()))
-                .toList();
-            final registered = employees
-                .where((e) => registeredEmployees.contains(e.empCode.toString()))
-                .toList();
 
-            return DefaultTabController(
-              length: 2,
-              child: Column(
-                children: [
-                  TabBar(
-                    indicatorColor: AppColor.primaryColor(context),
-                    indicatorWeight: 3,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    labelColor: AppColor.primaryColor(context),
-                    unselectedLabelColor: AppColor.blackColor(context),
-                    tabs: [
-                      Tab(text: AppLocalKay.employees_not_registered.tr()),
-                      Tab(text: AppLocalKay.employees_registered.tr()),
-                    ],
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        _buildEmployeeListView(notRegistered, false),
-                        _buildEmployeeListView(registered, true),
+              final notRegistered = employees
+                  .where((e) => !registeredEmployees.contains(e.empCode.toString()))
+                  .toList();
+
+              final registered = employees
+                  .where((e) => registeredEmployees.contains(e.empCode.toString()))
+                  .toList();
+
+              return DefaultTabController(
+                length: 2,
+                child: Column(
+                  children: [
+                    TabBar(
+                      indicatorColor: AppColor.primaryColor(context),
+                      labelColor: AppColor.primaryColor(context),
+                      unselectedLabelColor: AppColor.blackColor(context),
+                      tabs: [
+                        Tab(text: AppLocalKay.employees_not_registered.tr()),
+                        Tab(text: AppLocalKay.employees_registered.tr()),
                       ],
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatistics(List<EmployeeModel> registered, List<EmployeeModel> notRegistered) {
-    return Container(
-      margin: EdgeInsets.all(16.w),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: AppColor.primaryColor(context).withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildStat(AppLocalKay.employees_registered.tr(), '${registered.length}', Colors.green),
-          _buildStat(
-            AppLocalKay.employees_not_registered.tr(),
-            '${notRegistered.length}',
-            Colors.orange,
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          _buildEmployeeListView(notRegistered, false),
+                          _buildEmployeeListView(registered, true),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStat(String title, String value, Color color) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: AppTextStyle.formTitle20Style(
-            context,
-          ).copyWith(fontWeight: FontWeight.bold, color: color),
         ),
-        Text(title, style: AppTextStyle.text14RGrey(context).copyWith(color: Colors.grey)),
-      ],
+      ),
     );
   }
 
@@ -244,79 +274,34 @@ class _EmployeesFaceRegistrationScreenState extends State<EmployeesFaceRegistrat
     }
 
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.all(16.w),
       itemCount: employees.length,
       itemBuilder: (context, index) {
         final employee = employees[index];
-        final empId = employee.empCode.toString();
-        final empName = context.locale.languageCode == 'ar'
+        final id = employee.empCode.toString();
+        final name = context.locale.languageCode == 'ar'
             ? (employee.empName ?? '')
             : (employee.empNameE ?? '');
-        return _buildEmployeeCard(empId, empName, isRegistered);
+        return _buildEmployeeCard(id, name, isRegistered);
       },
     );
   }
 
   Widget _buildEmployeeCard(String id, String name, bool isRegistered) {
-    final isSelected = selectedEmployeeId == id;
-
-    return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: isSelected ? AppColor.primaryColor(context).withOpacity(0.1) : Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          ListTile(
-            leading: CircleAvatar(
-              radius: 26,
-              backgroundColor: isRegistered
-                  ? Colors.green.withOpacity(0.15)
-                  : Colors.orange.withOpacity(0.15),
-              child: Icon(
-                isRegistered ? Icons.verified : Icons.person_outline,
-                color: isRegistered ? Colors.green : Colors.orange,
-              ),
+    return ListTile(
+      title: Text(name),
+      trailing: isRegistered
+          ? IconButton(
+              icon: const Icon(Icons.delete_outline, color: Colors.red),
+              onPressed: () => _deleteRegistration(id),
+            )
+          : ElevatedButton(
+              onPressed: () {
+                _selectEmployee(id, name);
+                _openCamera();
+              },
+              child: Text(AppLocalKay.face_registration.tr()),
             ),
-            title: Text(name, style: AppTextStyle.text16MSecond(context)),
-            subtitle: Text(
-              isRegistered
-                  ? AppLocalKay.face_registered_successfully.tr()
-                  : AppLocalKay.register_face.tr(),
-              style: AppTextStyle.text14RGrey(context),
-            ),
-          ),
-
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: isRegistered
-                ? IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.red),
-                    onPressed: () => _deleteRegistration(id),
-                  )
-                : ElevatedButton(
-                    onPressed: () {
-                      _selectEmployee(id, name);
-                      _openCamera();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColor.primaryColor(context),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: Text(AppLocalKay.face_registration.tr()),
-                  ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -328,120 +313,234 @@ class _EmployeesFaceRegistrationScreenState extends State<EmployeesFaceRegistrat
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Stack(
-      children: [
-        CameraPreview(controller),
-        // Overlay
-        Positioned(
-          top: 24.h,
-          left: 16.w,
-          right: 16.w,
-          child: Container(
-            padding: EdgeInsets.all(14.w),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.6),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Column(
+    final isProcessing = state is FaceRecognitionProcessing || state is FaceRecognitionCaptured;
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          CameraPreview(controller),
+          ColorFiltered(
+            colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.srcOut),
+            child: Stack(
+              fit: StackFit.expand,
               children: [
-                Text(
-                  selectedEmployeeName ?? '',
-                  style: AppTextStyle.text16MSecond(context).copyWith(color: Colors.white),
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                    backgroundBlendMode: BlendMode.dstOut,
+                  ),
                 ),
-                SizedBox(height: 6.h),
-                Text(
-                  AppLocalKay.position_face_in_frame.tr(),
-                  style: AppTextStyle.text14RGrey(context),
+                Center(
+                  child: Container(
+                    width: 320.w,
+                    height: 320.w,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(160.w),
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
-        ),
-        Center(
-          child: Container(
-            width: 260.w,
-            height: 320.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(160),
-              border: Border.all(color: Colors.white.withOpacity(0.8), width: 2.5),
+          Center(
+            child: RotationTransition(
+              turns: _scanController,
+              child: Container(
+                width: 330.w,
+                height: 330.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.transparent, width: 4.w),
+                ),
+                child: CustomPaint(
+                  painter: _ScannerRingPainter(color: Colors.blue.withOpacity(0.8)),
+                ),
+              ),
             ),
           ),
-        ),
-        // Capture Button
-        Positioned(
-          bottom: 40.h,
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              FloatingActionButton(
-                heroTag: 'cancel',
-                onPressed: () => Navigator.pop(context),
-                backgroundColor: Colors.red,
-                child: const Icon(Icons.close),
+          Center(
+            child: ScaleTransition(
+              scale: _pulseAnimation,
+              child: Container(
+                width: 315.w,
+                height: 315.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.blue.withOpacity(0.3), width: 2.w),
+                ),
               ),
-              FloatingActionButton.extended(
-                heroTag: 'capture',
-                onPressed: state is FaceRecognitionProcessing ? null : _captureAndRegister,
-                backgroundColor: AppColor.primaryColor(context),
-                icon: state is FaceRecognitionProcessing
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                    : const Icon(Icons.camera),
-                label: Text(AppLocalKay.capture_face.tr()),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: ClipRRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  height: 100.h,
+                  padding: EdgeInsets.only(top: 40.h, left: 16.w, right: 16.w),
+                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(
+                        selectedEmployeeName ?? '',
+                        style: AppTextStyle.text14MPrimary(
+                          context,
+                        ).copyWith(color: AppColor.whiteColor(context)),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ],
+            ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _deleteRegistration(String employeeId) async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            const Icon(Icons.warning_amber_rounded, color: Colors.red),
-            SizedBox(width: 8.w),
-            Text(AppLocalKay.delete_face_registration.tr()),
-          ],
-        ),
-        content: Text(AppLocalKay.delete_user_message.tr()),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(AppLocalKay.cancel.tr()),
+          Positioned(
+            bottom: 60.h,
+            left: 0,
+            right: 0,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!isProcessing)
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 40.w),
+                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(30.r),
+                      border: Border.all(color: Colors.white24),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.face, color: Colors.blue[300], size: 20.sp),
+                        SizedBox(width: 12.w),
+                        Flexible(
+                          child: Text(
+                            AppLocalKay.position_face_in_frame.tr(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                SizedBox(height: 40.h),
+                GestureDetector(
+                  onTap: isProcessing ? null : _captureAndRegister,
+                  child: Container(
+                    width: 85.w,
+                    height: 85.w,
+                    padding: EdgeInsets.all(6.w),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isProcessing ? Colors.blue.withOpacity(0.5) : Colors.white,
+                        width: 4.w,
+                      ),
+                    ),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      decoration: BoxDecoration(
+                        color: isProcessing ? Colors.blue.withOpacity(0.3) : Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          if (!isProcessing)
+                            BoxShadow(
+                              color: Colors.white.withOpacity(0.5),
+                              blurRadius: 15,
+                              spreadRadius: 2,
+                            ),
+                        ],
+                      ),
+                      child: isProcessing
+                          ? const Center(
+                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                            )
+                          : Icon(Icons.camera_alt, color: Colors.black, size: 30.sp),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(AppLocalKay.delete.tr()),
-          ),
+          if (isProcessing)
+            Positioned.fill(
+              child: ClipRRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                  child: Container(
+                    color: Colors.black45,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(24.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const CircularProgressIndicator(
+                              color: Colors.blue,
+                              strokeWidth: 4,
+                            ),
+                          ),
+                          SizedBox(height: 24.h),
+                          Text(
+                            AppLocalKay.loading.tr(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
-
-    if (confirm == true) {
-      final cubit = context.read<FaceRecognitionCubit>();
-      await cubit.deleteStudentFace(employeeId);
-
-      setState(() {
-        registeredEmployees.remove(employeeId);
-      });
-
-      if (mounted) {
-        CommonMethods.showToast(
-          message: AppLocalKay.face_registration_deleted.tr(),
-          type: ToastType.success,
-        );
-      }
-    }
   }
+}
+
+class _ScannerRingPainter extends CustomPainter {
+  final Color color;
+  _ScannerRingPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..shader = SweepGradient(
+        colors: [color.withOpacity(0.01), color],
+        stops: const [0.7, 1.0],
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4.0
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawArc(Rect.fromLTWH(0, 0, size.width, size.height), 0, 3.14 * 2, false, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

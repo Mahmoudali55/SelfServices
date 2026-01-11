@@ -23,18 +23,26 @@ class FaceRecognitionRepo {
     required String classId,
     required File faceImage,
     Map<String, dynamic>? metadata,
+    bool skipLocalSave = false,
+    String? customPath,
   }) async {
     try {
-      // Save image to app directory
-      final directory = await getApplicationDocumentsDirectory();
-      final facesDir = Directory('${directory.path}/student_faces');
-      if (!await facesDir.exists()) {
-        await facesDir.create(recursive: true);
-      }
+      String filePath;
 
-      final fileName = '${studentId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final filePath = '${facesDir.path}/$fileName';
-      await faceImage.copy(filePath);
+      if (skipLocalSave && customPath != null) {
+        filePath = customPath;
+      } else {
+        // Save image to app directory
+        final directory = await getApplicationDocumentsDirectory();
+        final facesDir = Directory('${directory.path}/student_faces');
+        if (!await facesDir.exists()) {
+          await facesDir.create(recursive: true);
+        }
+
+        final fileName = '${studentId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        filePath = '${facesDir.path}/$fileName';
+        await faceImage.copy(filePath);
+      }
 
       // Create model
       final faceModel = StudentFaceModel(

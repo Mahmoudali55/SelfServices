@@ -90,6 +90,7 @@ class ServicesState extends Equatable {
   final StatusState<TicketResponse> addnewTicketStatus;
   final StatusState<UpdateTicketsResponseModel> updataTicketStatus;
   final StatusState<EmployeechangephotoResponse>? employeechangephoto;
+  final StatusState<EmployeechangephotoResponse>? employeefacephotoStatus;
   //طلب عام
   final StatusState<CheckEmpHaveRequestsModel> checkEmpHaveGeneralRequestsStatus;
   final StatusState<AddNewDynamicOrderResponse> addnewGeneralStatus;
@@ -141,6 +142,7 @@ class ServicesState extends Equatable {
     this.checkEmpHaveGeneralRequestsStatus = const StatusState.initial(),
     this.addnewGeneralStatus = const StatusState.initial(),
     this.updataGeneralStatus = const StatusState.initial(),
+    this.employeefacephotoStatus = const StatusState.initial(),
   });
 
   ServicesState copyWith({
@@ -190,6 +192,7 @@ class ServicesState extends Equatable {
     StatusState<CheckEmpHaveRequestsModel>? checkEmpHaveGeneralRequestsStatus,
     StatusState<AddNewDynamicOrderResponse>? addnewGeneralStatus,
     StatusState<UpdataNewDynamicOrderResponse>? updataGeneralStatus,
+    StatusState<EmployeechangephotoResponse>? employeefacephotoStatus,
   }) {
     return ServicesState(
       leavesStatus: leavesStatus ?? this.leavesStatus,
@@ -247,6 +250,7 @@ class ServicesState extends Equatable {
           checkEmpHaveGeneralRequestsStatus ?? this.checkEmpHaveGeneralRequestsStatus,
       addnewGeneralStatus: addnewGeneralStatus ?? this.addnewGeneralStatus,
       updataGeneralStatus: updataGeneralStatus ?? this.updataGeneralStatus,
+      employeefacephotoStatus: employeefacephotoStatus ?? this.employeefacephotoStatus,
     );
   }
 
@@ -299,5 +303,6 @@ class ServicesState extends Equatable {
     checkEmpHaveGeneralRequestsStatus,
     addnewGeneralStatus,
     updataGeneralStatus,
+    employeefacephotoStatus,
   ];
 }

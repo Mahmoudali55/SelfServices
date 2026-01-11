@@ -189,4 +189,5 @@ class EndPoints {
   static const String updateRequestGeneral = '/DeltagroupService/Dynamic/update_Dynamicorder';
   static String requestDynamicCount(int Empid, int typeid) =>
       '/DeltagroupService/Users/DynamicRequestsCountToDecide?empcode=$Empid&RequestType=$typeid';
+  static String employeefacephoto = '/DeltagroupService/Users/Employeefacephoto';
 }

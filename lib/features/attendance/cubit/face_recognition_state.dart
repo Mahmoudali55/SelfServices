@@ -60,6 +60,21 @@ class FaceRecognitionRegisteredStudentsLoaded extends FaceRecognitionState {
 
 class FaceRecognitionFaceDeleted extends FaceRecognitionState {}
 
+class FaceRecognitionCaptured extends FaceRecognitionState {
+  final File imageFile;
+  final List<double> features;
+  final double qualityScore;
+
+  const FaceRecognitionCaptured({
+    required this.imageFile,
+    required this.features,
+    required this.qualityScore,
+  });
+
+  @override
+  List<Object?> get props => [imageFile, features, qualityScore];
+}
+
 class FaceRecognitionError extends FaceRecognitionState {
   final String message;
 
@@ -67,4 +82,29 @@ class FaceRecognitionError extends FaceRecognitionState {
 
   @override
   List<Object?> get props => [message];
+}
+
+class FaceRecognitionSyncing extends FaceRecognitionState {
+  final int total;
+  final int processed;
+  final String currentEmployee;
+
+  const FaceRecognitionSyncing({
+    required this.total,
+    required this.processed,
+    required this.currentEmployee,
+  });
+
+  @override
+  List<Object?> get props => [total, processed, currentEmployee];
+}
+
+class FaceRecognitionSyncCompleted extends FaceRecognitionState {
+  final int successCount;
+  final int failCount;
+
+  const FaceRecognitionSyncCompleted({required this.successCount, required this.failCount});
+
+  @override
+  List<Object?> get props => [successCount, failCount];
 }

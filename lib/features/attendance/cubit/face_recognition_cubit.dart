@@ -63,11 +63,105 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
     }
   }
 
+  /// Capture and extract face features without full registration
+  Future<void> captureAndExtractFeatures() async {
+    emit(FaceRecognitionProcessing());
+
+    try {
+      final imageFile = await cameraService.captureImage();
+
+      if (imageFile == null) {
+        emit(const FaceRecognitionError('Failed to capture image'));
+        return;
+      }
+
+      final hasValidFace = await faceDetectionService.hasValidFace(imageFile);
+      if (!hasValidFace) {
+        emit(const FaceRecognitionError('No clear face detected. Please try again.'));
+        return;
+      }
+
+      final qualityScore = await faceDetectionService.getFaceQualityScore(imageFile);
+      if (qualityScore < 50) {
+        emit(
+          const FaceRecognitionError(
+            'Face quality is too low. Please ensure good lighting and face the camera directly.',
+          ),
+        );
+        return;
+      }
+
+      final faces = await faceDetectionService.detectFacesInFile(imageFile);
+      if (faces.isEmpty) {
+        emit(const FaceRecognitionError('No face detected during processing.'));
+        return;
+      }
+
+      final features = faceDetectionService.extractFaceFeatures(faces.first);
+      if (features.isEmpty) {
+        emit(
+          const FaceRecognitionError(
+            'Could not extract face features. Please ensure face is clearly visible.',
+          ),
+        );
+        return;
+      }
+
+      emit(
+        FaceRecognitionCaptured(
+          imageFile: imageFile,
+          features: features,
+          qualityScore: qualityScore,
+        ),
+      );
+    } catch (e) {
+      emit(FaceRecognitionError('Capture error: ${e.toString()}'));
+    }
+  }
+
+  /// Complete registration after server upload
+  Future<void> completeRegistration({
+    required String studentId,
+    required String studentName,
+    required String classId,
+    required File imageFile,
+    required List<double> features,
+    required double qualityScore,
+    String? serverPath,
+  }) async {
+    emit(FaceRecognitionProcessing());
+
+    try {
+      final result = await faceRecognitionRepo.registerStudentFace(
+        studentId: studentId,
+        studentName: studentName,
+        classId: classId,
+        faceImage: imageFile,
+        skipLocalSave: serverPath != null,
+        customPath: serverPath,
+        metadata: {
+          'qualityScore': qualityScore,
+          'registrationTimestamp': DateTime.now().toIso8601String(),
+          'features': features,
+        },
+      );
+
+      result.fold(
+        (error) => emit(FaceRecognitionError(error)),
+        (faceModel) => emit(FaceRecognitionRegistered(faceModel)),
+      );
+    } catch (e) {
+      emit(FaceRecognitionError('Final registration error: ${e.toString()}'));
+    }
+  }
+
   /// Capture and register student face
   Future<void> registerStudentFace({
     required String studentId,
     required String studentName,
     required String classId,
+    bool skipLocalSave = false, // Added
+    String? customPath, // Added
   }) async {
     emit(FaceRecognitionProcessing());
 
@@ -124,6 +218,8 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
         studentName: studentName,
         classId: classId,
         faceImage: imageFile,
+        skipLocalSave: skipLocalSave, // Passed
+        customPath: customPath, // Passed
         metadata: {
           'qualityScore': qualityScore,
           'registrationTimestamp': DateTime.now().toIso8601String(),

@@ -645,12 +645,17 @@
 "manual_attendance_disabled": "Manual attendance is disabled. Please use face recognition for verification.",
 "delete_face_title": "Delete Face Recognition",
 "face_not_recognized_retry": "Face not recognized. Please ensure registration or try again.",
-"attendance_marked_success": "Attendance marked ✓",
-"no_registered_students_for_face": "No Employees registered for face recognition",
-"verify_face": "Verify Face",
-"face_recognition_success": "(Verified successfully)",
-"delete_face_confirm_message": "Are you sure you want to delete the face recognition for this Employees? The Employees will be removed from this list after deletion.",
-"delete_user_message": "Are you sure you want to delete the user?"
-
-
+  "user_management_absent": "Absent",
+  "user_management_percentage": "Percentage",
+  "user_management_save": "Save Attendance",
+  "manual_attendance_disabled": "Manual attendance is disabled. Please use face recognition for verification.",
+  "delete_face_title": "Delete Face Recognition",
+  "face_not_recognized_retry": "Face not recognized. Please ensure registration or try again.",
+  "attendance_marked_success": "Attendance marked ✓",
+  "no_registered_students_for_face": "No Employees registered for face recognition",
+  "verify_face": "Verify Face",
+  "face_recognition_success": "(Verified successfully)",
+  "delete_face_confirm_message": "Are you sure you want to delete the face recognition for this Employees? The Employees will be removed from this list after deletion.",
+  "delete_user_message": "Are you sure you want to delete the user?",
+  "position_face_in_frame": "Position your face within the frame"
 }

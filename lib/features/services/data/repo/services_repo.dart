@@ -181,6 +181,10 @@ abstract interface class ServicesRepo {
   Future<Either<Failure, EmployeechangephotoResponse>> employeechangephoto(
     EmployeeChangePhotoRequest request,
   );
+  Future<Either<Failure, EmployeechangephotoResponse>> employeefacephoto(
+    EmployeeChangePhotoRequest request,
+  );
+
   //طلب عام
   Future<Either<Failure, List<CheckEmpHaveRequestsModel>>> checkEmpHaveGeneral({
     required int empCode,
@@ -810,6 +814,18 @@ class ServicesRepoImpl implements ServicesRepo {
           EndPoints.employeechangephoto,
           body: request.toJson(),
         );
+        return EmployeechangephotoResponse.fromJson(response);
+      },
+    );
+  }
+
+  @override
+  Future<Either<Failure, EmployeechangephotoResponse>> employeefacephoto(
+    EmployeeChangePhotoRequest request,
+  ) {
+    return handleDioRequest(
+      request: () async {
+        final response = await apiConsumer.put(EndPoints.employeefacephoto, body: request.toJson());
         return EmployeechangephotoResponse.fromJson(response);
       },
     );

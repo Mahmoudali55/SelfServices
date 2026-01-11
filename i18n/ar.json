@@ -607,13 +607,27 @@
 "delete_face_title": "حذف بصمة الوجه",
 "face_not_recognized_retry": "لم يتم التعرف على الوجه. يرجى التأكد من التسجيل أو المحاولة مرة أخرى.",
 "attendance_marked_success": "تم التحضير ✓",
-"no_registered_students_for_face": "لا يوجد مواظفين مسجلين للتعرف على الوجه",
-"verify_face": "تحقق من الوجه",
-"face_recognition_success":"(تم التحقق بنجاح)",
-"delete_face_confirm_message":"هل أنت متأكد من رغبتك في حذف بصمة الوجه لهذا الموظف؟ سيختفي الموظف من هذه القائمة بعد الحذف.",
-"delete_user_message": "هل أنت متأكد من أنك تريد حذف المستخدم",
-"login_success":"تم تسجيل الدخول بنجاح"
-
-
+  "switch_to_manual": "التبديل إلى اليدوي",
+  "face_registration": "تسجيل الوجه",
+  "select_student_to_register": "اختر طالباً لتسجيل وجهه",
+  "Employees_registered": "  المسجلين ",
+  "Employees_not_registered": " غير المسجلين",
+  "re_register_face": "إعادة تسجيل الوجه",
+  "delete_face_registration": "حذف تسجيل الوجه",
+  "face_registration_deleted": "تم حذف تسجيل الوجه",
+  "user_management_attendees":"الحاضرون",
+  "user_management_absent":"الغائبون",
+  "user_management_percentage":"النسبة",
+  "user_management_save":"حفظ الحضور",
+  "manual_attendance_disabled": "التحضير اليدوي معطل. يرجى استخدام بصمة الوجه للتحقق.",
+  "delete_face_title": "حذف بصمة الوجه",
+  "face_not_recognized_retry": "لم يتم التعرف على الوجه. يرجى التأكد من التسجيل أو المحاولة مرة أخرى.",
+  "attendance_marked_success": "تم التحضير ✓",
+  "no_registered_students_for_face": "لا يوجد مواظفين مسجلين للتعرف على الوجه",
+  "verify_face": "تحقق من الوجه",
+  "face_recognition_success":"(تم التحقق بنجاح)",
+  "delete_face_confirm_message":"هل أنت متأكد من رغبتك في حذف بصمة الوجه لهذا الموظف؟ سيختفي الموظف من هذه القائمة بعد الحذف.",
+  "delete_user_message": "هل أنت متأكد من أنك تريد حذف المستخدم",
+  "login_success":"تم تسجيل الدخول بنجاح",
+  "position_face_in_frame": "ضع وجهك داخل الإطار"
 }
-

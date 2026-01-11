@@ -716,6 +716,19 @@ class ServicesCubit extends Cubit<ServicesState> {
     );
   }
 
+  Future<void> employeefacephoto(EmployeeChangePhotoRequest request) async {
+    emit(state.copyWith(employeefacephotoStatus: const StatusState.loading()));
+    final result = await leavesRepo.employeefacephoto(request);
+    result.fold(
+      (failure) =>
+          emit(state.copyWith(employeefacephotoStatus: StatusState.failure(failure.errMessage))),
+      (success) {
+        emit(state.copyWith(employeefacephotoStatus: StatusState.success(success)));
+        emit(state.copyWith(employeefacephotoStatus: const StatusState.initial()));
+      },
+    );
+  }
+
   Future<CheckEmpHaveRequestsModel?> checkEmpGeneral({
     required int empCode,
     required int requesttypeid,
