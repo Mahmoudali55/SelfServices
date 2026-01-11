@@ -497,12 +497,10 @@
   "attachments_title": "منسلکات",
   "no_attachments_found": "کوئی منسلک نہیں ملا",
   "attachment_load_error": "منسلکات لوڈ کرنے میں ناکامی",
-  "reason_required": "وجہ ضروری ہے",
+
   "request_pending_error": "معذرت... ایک پہلے سے جمع شدہ درخواست عمل میں ہے",
   "employee_alternative_error_1": "معذرت... چھٹی کی درخواست نہیں کر سکتے... ملازم کسی دوسرے ملازم کا متبادل ہے جو ابھی چھٹی سے واپس نہیں آیا",
   "employee_alternative_error_2": "معذرت... چھٹی کی درخواست نہیں کر سکتے... ملازم کسی دوسرے ملازم کا متبادل ہے جس کی چھٹی کی درخواست جمع ہے",
-  "request_update_success": "درخواست کامیابی کے ساتھ اپ ڈیٹ ہو گئی",
-  "request_submit_success": "درخواست کامیابی کے ساتھ جمع کر دی گئی",
   "chatbot_welcome": "میں آج آپ کی کیسے مدد کر سکتا ہوں",
   "chatbot_hint": "اپنا سوال یہاں لکھیں...",
   "suggestion_required_error": "براہ کرم بھیجنے سے پہلے عنوان اور رائے دونوں پر کریں ✏️",
@@ -553,7 +551,6 @@
   "total": "کل",
   "device_not_registered": "یہ ڈیوائس پہلے رجسٹرڈ نہیں ہے",
   "add_new_device": "نیا آلہ شامل کریں",
-  "generic_error": "کچھ غلط ہو گیا",
   "mandatory_password_change_message": "آپ اپنا پاس ورڈ تبدیل کرنے تک ایپ استعمال نہیں کر سکتے",
   "search_by_department_name": "محکمہ کے نام سے تلاش کریں",
   "search_by_name_or_code": "نام یا ملازم کوڈ کے ذریعے تلاش کریں...",
@@ -593,7 +590,6 @@
   "section_older": "پرانی",
   "you": "آپ",
   "edited": "ترمیم شدہ ",
-  "file": "فائل",
   "photo_changed_success": "ملازم کی تصویر کامیابی سے تبدیل ہوگئی",
   "deleted_successfully": "کامیابی سے حذف ہو گیا",
   "ticket_type": "ٹکٹ کی قسم",
@@ -658,6 +654,7 @@
 "face_recognition_success": "(کامیابی سے تصدیق ہو گئی)",
 "delete_face_confirm_message": "کیا آپ واقعی اس طالب علم کی چہرے کی شناخت حذف کرنا چاہتے ہیں؟ حذف کرنے کے بعد ملازم علم اس فہرست سے غائب ہو جائے گا۔",
 "delete_user_message": "کیا آپ واقعی اس صارف کو حذف کرنا چاہتے ہیں؟"
+
 
 }
 

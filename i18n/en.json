@@ -481,18 +481,13 @@
   "from_date": "From Date",
   "to_date": "To Date",
   "days_count": "Days Count",
-
-
   "request_status": "Request Status",
   "status_description": "Description",
   "status_number": "Status Number",
-
   "alternative_employee": "Alternative Employee",
   "alternative_name": "Alternative Name",
   "alternative_name_en": "Alternative Name (EN)",
   "alternative_code": "Alternative Code",
-
-
   "attachment_name": "Attachment Name",
   "no_attachment": "No attachment",
   "followed_actions": "Followed Actions",
@@ -507,12 +502,9 @@
   "attachments_title": "Attachments",
   "no_attachments_found": "No attachments",
   "attachment_load_error": "Failed to load attachments",
-  "reason_required": "Reason is required",
   "request_pending_error": "Sorry... There is a previously submitted request under process",
   "employee_alternative_error_1": "Sorry... Cannot make a leave request... The employee is a replacement for another employee who has not returned from leave yet",
   "employee_alternative_error_2": "Sorry... Cannot make a leave request... The employee is a replacement for another employee who has a submitted leave request",
-  "request_update_success": "Request updated successfully",
-  "request_submit_success": "Request submitted successfully",
   "chatbot_welcome": "How can I help you today",
   "chatbot_hint": "Type your question here...",
   "suggestion_required_error": "Please fill in both title and suggestion ✏️",
@@ -593,7 +585,6 @@
   "vacation_type_sick": "Sick Leave",
   "vacation_type_unpaid": "Unpaid Leave",
   "vacation_type_special": "Special Leave",
-
   "generic_error": "An error occurred, please try again",
   "housing_allowance_update_success": "Housing allowance request updated successfully",
   "housing_allowance_submit_success": "Housing allowance request submitted successfully",
@@ -639,23 +630,10 @@
   "delete_face_registration": "Delete Face Registration",
   "face_registration_deleted": "Face registration deleted",
   "user_management_attendees": "Present",
-"user_management_absent": "Absent",
-"user_management_percentage": "Percentage",
-"user_management_save": "Save Attendance",
-"manual_attendance_disabled": "Manual attendance is disabled. Please use face recognition for verification.",
-"delete_face_title": "Delete Face Recognition",
-"face_not_recognized_retry": "Face not recognized. Please ensure registration or try again.",
-  "user_management_absent": "Absent",
-  "user_management_percentage": "Percentage",
-  "user_management_save": "Save Attendance",
-  "manual_attendance_disabled": "Manual attendance is disabled. Please use face recognition for verification.",
-  "delete_face_title": "Delete Face Recognition",
-  "face_not_recognized_retry": "Face not recognized. Please ensure registration or try again.",
   "attendance_marked_success": "Attendance marked ✓",
   "no_registered_students_for_face": "No Employees registered for face recognition",
   "verify_face": "Verify Face",
   "face_recognition_success": "(Verified successfully)",
   "delete_face_confirm_message": "Are you sure you want to delete the face recognition for this Employees? The Employees will be removed from this list after deletion.",
-  "delete_user_message": "Are you sure you want to delete the user?",
-  "position_face_in_frame": "Position your face within the frame"
+  "delete_user_message": "Are you sure you want to delete the user?"
 }
