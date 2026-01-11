@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:camera/camera.dart';
@@ -177,10 +179,13 @@ class _EmployeesFaceRegistrationScreenState extends State<EmployeesFaceRegistrat
 
                   await servicesCubit.uploadFiles([state.imageFile.path]);
 
+                  final bytes = await File(state.imageFile.path).readAsBytes();
+                  final base64Image = base64Encode(bytes);
+
                   await servicesCubit.employeefacephoto(
                     EmployeeChangePhotoRequest(
                       empId: int.parse(selectedEmployeeId!),
-                      empPhotoWeb: state.imageFile.path,
+                      empPhotoWeb: base64Image,
                     ),
                   );
 
