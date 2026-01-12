@@ -23,6 +23,10 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
   List<StudentFaceModel> _remoteFaces = [];
   Map<String, List<double>> _remoteFeaturesMap = {};
 
+  // Local file based cache: empId -> {hash: String, features: List<double>}
+  Map<String, dynamic> _featuresCache = {};
+  bool _cacheLoaded = false;
+
   FaceRecognitionCubit({required this.cameraService, required this.faceDetectionService})
     : super(FaceRecognitionInitial());
 
@@ -271,59 +275,150 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
     }
   }
 
-  /// Process remote faces and store in memory
+  /// Process remote faces and store in memory (Optimized for speed + Caching)
   Future<void> loadFacesFromRemote(List<EmployeeModel> employees, ServicesRepo servicesRepo) async {
     _remoteFaces.clear();
     _remoteFeaturesMap.clear();
+    // Initial loading state
     emit(FaceRecognitionLoading());
+
+    // Load cache from disk if not already loaded
+    if (!_cacheLoaded) {
+      await _loadCache();
+    }
 
     final tempDir = await getTemporaryDirectory();
 
-    for (var emp in employees) {
-      if (emp.empCode == null) continue;
+    // Process in chunks to balance concurrency and resource usage
+    const int chunkSize = 5;
 
-      try {
-        final empCode = emp.empCode;
-        final result = await servicesRepo.getEmployeeFaceImage(empCode);
+    for (var i = 0; i < employees.length; i += chunkSize) {
+      final end = (i + chunkSize < employees.length) ? i + chunkSize : employees.length;
+      final chunk = employees.sublist(i, end);
 
-        await result.fold((failure) async {}, (base64Img) async {
-          if (base64Img.isNotEmpty) {
-            try {
-              // Decode and save to temp
-              final bytes = base64Decode(base64Img);
-              final tempFile = File('${tempDir.path}/remote_${empCode}.jpg');
-              await tempFile.writeAsBytes(bytes);
+      await Future.wait(chunk.map((emp) => _processEmployeeFace(emp, servicesRepo, tempDir)));
 
-              // Extract features
-              final faces = await faceDetectionService.detectFacesInFile(tempFile);
-              if (faces.isNotEmpty) {
-                final features = faceDetectionService.extractFaceFeatures(faces.first);
-                if (features.isNotEmpty) {
-                  // Create Transient Model
-                  final model = StudentFaceModel(
-                    studentId: empCode.toString(),
-                    studentName: emp.empName ?? emp.empNameE ?? '',
-                    faceImagePath: tempFile.path, // Use temp path for display
-                    registrationDate: DateTime.now(),
-                    classId: 'employees',
-                    faceMetadata: {'features': features},
-                  );
-
-                  _remoteFaces.add(model);
-                  _remoteFeaturesMap[empCode.toString()] = features;
-                }
-              }
-            } catch (e) {
-              print('Error processing remote face for $empCode: $e');
-            }
-          }
-        });
-      } catch (e) {
-        print('Error fetching remote face for $emp: $e');
+      // Emit incremental update
+      if (!isClosed) {
+        emit(FaceRecognitionRegisteredStudentsLoaded(List.from(_remoteFaces)));
       }
     }
 
-    emit(FaceRecognitionRegisteredStudentsLoaded(_remoteFaces));
+    // Save cache to disk after all processing is done
+    await _saveCache();
+
+    // Final emit
+    if (!isClosed) {
+      emit(FaceRecognitionRegisteredStudentsLoaded(List.from(_remoteFaces)));
+    }
+  }
+
+  Future<void> _processEmployeeFace(
+    EmployeeModel emp,
+    ServicesRepo servicesRepo,
+    Directory tempDir,
+  ) async {
+    if (emp.empCode == null) return;
+    final empIdStr = emp.empCode.toString();
+
+    try {
+      final result = await servicesRepo.getEmployeeFaceImage(emp.empCode);
+
+      await result.fold((failure) async {}, (base64Img) async {
+        if (base64Img.isNotEmpty) {
+          try {
+            // 1. Calculate Signature of the image data (Length + Prefix)
+            // This avoids adding the 'crypto' dependency while being safer than just length
+            final prefixLen = base64Img.length > 50 ? 50 : base64Img.length;
+            final signature = '${base64Img.length}_${base64Img.substring(0, prefixLen)}';
+
+            List<double> features = [];
+
+            // 2. Check Cache
+            if (_featuresCache.containsKey(empIdStr)) {
+              final cachedData = _featuresCache[empIdStr];
+              if (cachedData['hash'] == signature && cachedData['features'] != null) {
+                // Cache Hit! Use cached features
+                features = List<double>.from(cachedData['features']);
+
+                // We still need the file for display purposes in the list (UI uses FileImage)
+                final tempFile = File('${tempDir.path}/remote_${emp.empCode}.jpg');
+                if (!await tempFile.exists()) {
+                  await tempFile.writeAsBytes(base64Decode(base64Img));
+                }
+
+                _addFaceToMemory(emp, tempFile, features);
+                return; // Done
+              }
+            }
+
+            // 3. Cache Miss (or signature mismatch) -> Run ML
+            final bytes = base64Decode(base64Img);
+            final tempFile = File('${tempDir.path}/remote_${emp.empCode}.jpg');
+            await tempFile.writeAsBytes(bytes);
+
+            final faces = await faceDetectionService.detectFacesInFile(tempFile);
+            if (faces.isNotEmpty) {
+              features = faceDetectionService.extractFaceFeatures(faces.first);
+              if (features.isNotEmpty) {
+                // 4. Update Cache
+                _featuresCache[empIdStr] = {
+                  'hash': signature,
+                  'features': features,
+                  'lastUpdated': DateTime.now().toIso8601String(),
+                };
+
+                _addFaceToMemory(emp, tempFile, features);
+              }
+            }
+          } catch (e) {
+            print('Error processing remote face for ${emp.empCode}: $e');
+          }
+        }
+      });
+    } catch (e) {
+      print('Error fetching remote face for $emp: $e');
+    }
+  }
+
+  void _addFaceToMemory(EmployeeModel emp, File imageFile, List<double> features) {
+    final model = StudentFaceModel(
+      studentId: emp.empCode.toString(),
+      studentName: emp.empName ?? emp.empNameE ?? '',
+      faceImagePath: imageFile.path,
+      registrationDate: DateTime.now(),
+      classId: 'employees',
+      faceMetadata: {'features': features},
+    );
+
+    _remoteFaces.add(model);
+    _remoteFeaturesMap[emp.empCode.toString()] = features;
+  }
+
+  Future<void> _loadCache() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/face_features_cache.json');
+      if (await file.exists()) {
+        final content = await file.readAsString();
+        final jsonMap = jsonDecode(content) as Map<String, dynamic>;
+        _featuresCache = jsonMap;
+      }
+      _cacheLoaded = true;
+    } catch (e) {
+      print('Error loading face cache: $e');
+      _featuresCache = {};
+    }
+  }
+
+  Future<void> _saveCache() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/face_features_cache.json');
+      await file.writeAsString(jsonEncode(_featuresCache));
+    } catch (e) {
+      print('Error saving face cache: $e');
+    }
   }
 
   /// Dispose resources

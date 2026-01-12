@@ -9,10 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:my_template/core/cache/hive/hive_methods.dart';
 import 'package:my_template/core/custom_widgets/buttons/custom_button.dart';
 import 'package:my_template/core/custom_widgets/custom_app_bar/custom_app_bar.dart';
+import 'package:my_template/core/custom_widgets/custom_form_field/custom_form_field.dart';
 import 'package:my_template/core/custom_widgets/custom_toast/custom_toast.dart';
 import 'package:my_template/core/network/status.state.dart';
 import 'package:my_template/core/theme/app_colors.dart';
@@ -476,15 +478,13 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20.h),
-                TextFormField(
+                CustomFormField(
                   controller: empCodeController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: AppLocalKay.empCode.tr(),
-                    prefixIcon: const Icon(Icons.badge),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                  ),
+                  hintText: AppLocalKay.empCode.tr(),
+                  title: AppLocalKay.empCode.tr(),
+                  prefixIcon: const Icon(Icons.badge),
+
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return AppLocalKay.required_field.tr();
@@ -601,7 +601,9 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
                         child: BlocBuilder<ServicesCubit, ServicesState>(
                           builder: (context, state) {
                             if (state.employeefacephotoStatus!.isLoading) {
-                              return const CircularProgressIndicator(color: Colors.white);
+                              return Column(
+                                children: [const CircularProgressIndicator(color: Colors.white)],
+                              );
                             }
                             return Text(
                               AppLocalKay.register_attendance.tr(),
@@ -830,7 +832,7 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
                   label: AppLocalKay.checkOut.tr(),
                   isSelected: !isCheckingIn,
                   onTap: () => setState(() => isCheckingIn = false),
-                  color: Colors.grey,
+                  color: Colors.red,
                 ),
               ),
             ],
@@ -956,7 +958,22 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
       builder: (context, state) {
         final employees = state.employeesStatus.data ?? [];
         if (employees.isEmpty && state.employeesStatus.isLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return Scaffold(
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Column(
+                    children: [
+                      CircularProgressIndicator(color: AppColor.primaryColor(context)),
+                      Gap(8.h),
+                      Text(AppLocalKay.loading.tr()),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
         } else if (employees.isEmpty) {
           return Center(
             child: Column(
