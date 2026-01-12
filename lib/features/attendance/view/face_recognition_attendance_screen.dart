@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
@@ -360,6 +361,175 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
     );
   }
 
+  void _showRegistrationDialog({
+    required File imageFile,
+    required List<double> features,
+    required double qualityScore,
+  }) {
+    final TextEditingController empCodeController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          left: 16.w,
+          right: 16.w,
+          top: 16.h,
+        ),
+        child: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 50.w,
+                  height: 5.h,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  AppLocalKay.register_new_face.tr(),
+                  style: AppTextStyle.textFormStyle(
+                    context,
+                    color: Colors.black,
+                    listen: false,
+                  ).copyWith(color: Colors.black, fontSize: 18.sp),
+                ),
+                SizedBox(height: 16.h),
+                Container(
+                  height: 180.h,
+                  width: 180.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColor.primaryColor(context), width: 3),
+                    image: DecorationImage(image: FileImage(imageFile), fit: BoxFit.cover),
+                  ),
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  AppLocalKay.face_not_recognized_register.tr(),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 20.h),
+                TextFormField(
+                  controller: empCodeController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: AppLocalKay.empCode.tr(),
+                    prefixIcon: const Icon(Icons.badge),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return AppLocalKay.required_field.tr();
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 24.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _startScanning();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text(AppLocalKay.cancel.tr()),
+                      ),
+                    ),
+                    SizedBox(width: 16.w),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            final empCode = empCodeController.text;
+                            final employees =
+                                context.read<ServicesCubit>().state.employeesStatus.data ?? [];
+
+                            final employee = employees.firstWhere(
+                              (e) => e.empCode.toString() == empCode,
+                              orElse: () => const EmployeeModel(
+                                empCode: -1,
+                                dCode: 0,
+                                makerWork: 0,
+                                jobId: 0,
+                                empBranch: 0,
+                                naGroup: 0,
+                              ),
+                            );
+
+                            if (employee.empCode == -1) {
+                              CommonMethods.showToast(
+                                message: AppLocalKay.employee_not_found.tr(),
+                                type: ToastType.error,
+                              );
+                              return;
+                            }
+
+                            Navigator.pop(context);
+
+                            final name = context.locale.languageCode == 'ar'
+                                ? (employee.empName ?? '')
+                                : (employee.empNameE ?? '');
+
+                            final cubit = context.read<FaceRecognitionCubit>();
+                            await cubit.completeRegistration(
+                              studentId: empCode,
+                              studentName: name,
+                              classId: globalClassId,
+                              imageFile: imageFile,
+                              features: features,
+                              qualityScore: qualityScore,
+                              serverPath: imageFile.path,
+                            );
+
+                            _markAttendanceForEmployee(empCode, name);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColor.primaryColor(context),
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text(
+                          AppLocalKay.register_attendance.tr(),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 30.h),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Map<String, int> _getStats() {
     // Only count students who have a registered face (the ones visible in the list)
     final activeRecords = attendanceRecords.values.where((r) {
@@ -425,17 +595,26 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
                     _markAttendanceForEmployee(studentId, studentName);
                   }
                 } else if (state is FaceRecognitionNoMatch) {
-                  // In continuous mode, we DON'T show error or stop scanning.
-                  // We just let the timer trigger the next attempt silently.
-                  if (!isContinuousMode) {
+                  // Stop scanning to show dialog/play sound
+                  _stopScanning();
+
+                  // Play Error Sound ("Buzz")
+                  SystemSound.play(SystemSoundType.alert);
+                  // Or use specific sound plugin if needed
+
+                  if (state.imageFile != null && state.features != null) {
+                    _showRegistrationDialog(
+                      imageFile: state.imageFile!,
+                      features: state.features!,
+                      qualityScore: state.qualityScore ?? 0,
+                    );
+                  } else {
+                    // Fallback if no data somehow
                     CommonMethods.showToast(
                       message: AppLocalKay.face_not_recognized_retry.tr(),
-                      seconds: 5,
                       type: ToastType.error,
                     );
-
-                    // Auto stop camera if single scan fails
-                    _stopScanning();
+                    _startScanning();
                   }
                 } else if (state is FaceRecognitionError) {
                   if (state.message.contains('No registered faces')) {

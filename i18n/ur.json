@@ -653,8 +653,10 @@
 "verify_face": "چہرے کی تصدیق کریں",
 "face_recognition_success": "(کامیابی سے تصدیق ہو گئی)",
 "delete_face_confirm_message": "کیا آپ واقعی اس طالب علم کی چہرے کی شناخت حذف کرنا چاہتے ہیں؟ حذف کرنے کے بعد ملازم علم اس فہرست سے غائب ہو جائے گا۔",
-"delete_user_message": "کیا آپ واقعی اس صارف کو حذف کرنا چاہتے ہیں؟"
-
-
+"delete_user_message": "کیا آپ واقعی صارف کو حذف کرنا چاہتے ہیں؟",
+"register_new_face": "نیا چہرہ رجسٹر کریں",
+"face_not_recognized_register": "چہرہ نہیں پہچانا گیا۔ رجسٹر کرنے کے لیے آئی ڈی درج کریں۔",
+"employee_not_found": "ملازم نہیں ملا",
+"register_attendance": "رجسٹر اور حاضری",
+"required_field": "مطلوبہ فیلڈ"
 }
-

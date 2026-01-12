@@ -635,5 +635,10 @@
   "verify_face": "Verify Face",
   "face_recognition_success": "(Verified successfully)",
   "delete_face_confirm_message": "Are you sure you want to delete the face recognition for this Employees? The Employees will be removed from this list after deletion.",
-  "delete_user_message": "Are you sure you want to delete the user?"
+  "delete_user_message": "Are you sure you want to delete the user?",
+  "register_new_face": "Register New Face",
+  "face_not_recognized_register": "Face not recognized. Enter ID to register.",
+  "employee_not_found": "Employee not found",
+  "register_attendance": "Register & Attend",
+  "required_field": "Required field"
 }

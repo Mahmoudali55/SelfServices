@@ -93,17 +93,17 @@ class _MoreScreenState extends State<MoreScreen> {
               title: AppLocalKay.timesheet.tr(),
               onTap: () => NavigatorMethods.pushNamed(context, RoutesName.timeSheetScreen),
             ),
-            pagePrivID == 1 || pagePrivID == 2
-                ? _listTile(
-                    icon: Icons.fingerprint,
-                    color: Colors.teal,
-                    title: 'تسجيل وجوه الموظفين',
-                    onTap: () => NavigatorMethods.pushNamed(
-                      context,
-                      RoutesName.studentFaceRegistrationScreen,
-                    ),
-                  )
-                : Container(),
+            // pagePrivID == 1 || pagePrivID == 2
+            //     ? _listTile(
+            //         icon: Icons.fingerprint,
+            //         color: Colors.teal,
+            //         title: 'تسجيل وجوه الموظفين',
+            //         onTap: () => NavigatorMethods.pushNamed(
+            //           context,
+            //           RoutesName.studentFaceRegistrationScreen,
+            //         ),
+            //       )
+            //     : Container(),
             pagePrivID == 1 || pagePrivID == 2
                 ? _listTile(
                     icon: Icons.fingerprint,

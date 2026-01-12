@@ -47,7 +47,16 @@ class FaceRecognitionStudentRecognized extends FaceRecognitionState {
   List<Object?> get props => [student, confidence];
 }
 
-class FaceRecognitionNoMatch extends FaceRecognitionState {}
+class FaceRecognitionNoMatch extends FaceRecognitionState {
+  final File? imageFile;
+  final List<double>? features;
+  final double? qualityScore;
+
+  const FaceRecognitionNoMatch({this.imageFile, this.features, this.qualityScore});
+
+  @override
+  List<Object?> get props => [imageFile, features, qualityScore];
+}
 
 class FaceRecognitionRegisteredStudentsLoaded extends FaceRecognitionState {
   final List<StudentFaceModel> students;

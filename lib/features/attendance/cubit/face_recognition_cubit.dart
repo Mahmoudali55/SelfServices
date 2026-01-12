@@ -283,7 +283,13 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
 
       if (features.isEmpty) {
         // Face found but features (landmarks) not clear enough
-        emit(FaceRecognitionNoFaceDetected());
+        emit(
+          FaceRecognitionNoMatch(
+            imageFile: capturedImage,
+            features: features,
+            qualityScore: 0, // Unknown quality if we failed extraction or just pass generic
+          ),
+        );
         return;
       }
 
@@ -366,7 +372,16 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
           ),
         );
       } else {
-        emit(FaceRecognitionNoMatch());
+        // We have features but no match -> New Person?
+        // Pass the data so the UI can offer registration
+        emit(
+          FaceRecognitionNoMatch(
+            imageFile: capturedImage,
+            features: features,
+            qualityScore:
+                100.0, // We don't have explicit score here, assume good enough if extracted
+          ),
+        );
       }
     } catch (e) {
       emit(FaceRecognitionError('Recognition error: ${e.toString()}'));

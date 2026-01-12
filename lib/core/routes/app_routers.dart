@@ -171,8 +171,8 @@ class AppRouters {
         );
       case RoutesName.faceRecognitionAttendanceScreen:
         return MaterialPageRoute(builder: (_) => const FaceRecognitionAttendanceScreen());
-      case RoutesName.studentFaceRegistrationScreen:
-        return MaterialPageRoute(builder: (_) => const EmployeesFaceRegistrationScreen());
+      // case RoutesName.studentFaceRegistrationScreen:
+      //   return MaterialPageRoute(builder: (_) => const EmployeesFaceRegistrationScreen());
       default:
         return null;
     }

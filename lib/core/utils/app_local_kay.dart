@@ -655,4 +655,9 @@ class AppLocalKay {
   static const String user_management_attendees = 'user_management_attendees';
   static const String user_management_absent = 'user_management_absent';
   static const String user_management_percentage = 'user_management_percentage';
+  static const String register_new_face = 'register_new_face';
+  static const String face_not_recognized_register = 'face_not_recognized_register';
+  static const String employee_not_found = 'employee_not_found';
+  static const String register_attendance = 'register_attendance';
+  static const String required_field = 'required_field';
 }
