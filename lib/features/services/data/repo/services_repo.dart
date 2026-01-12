@@ -196,6 +196,8 @@ abstract interface class ServicesRepo {
   Future<Either<Failure, UpdataNewDynamicOrderResponse>> updataGeneralRequest(
     UpdataRequestGeneralModel request,
   );
+
+  Future<Either<Failure, String>> getEmployeeFaceImage(int empCode);
 }
 
 class ServicesRepoImpl implements ServicesRepo {
@@ -872,6 +874,30 @@ class ServicesRepoImpl implements ServicesRepo {
           body: request.toJson(),
         );
         return UpdataNewDynamicOrderResponse.fromJson(response);
+      },
+    );
+  }
+
+  @override
+  Future<Either<Failure, String>> getEmployeeFaceImage(int empCode) {
+    return handleDioRequest(
+      request: () async {
+        final response = await apiConsumer.get(EndPoints.employeeFaceImage(empCode));
+
+        final String dataString = response['Data'] ?? '';
+        if (dataString.isEmpty) return '';
+
+        try {
+          final dynamic decoded = jsonDecode(dataString);
+          if (decoded is List && decoded.isNotEmpty) {
+            return decoded[0]['emp_photo']?.toString() ?? '';
+          } else if (decoded is Map<String, dynamic>) {
+            return decoded['emp_photo']?.toString() ?? '';
+          }
+        } catch (e) {
+          return dataString;
+        }
+        return '';
       },
     );
   }

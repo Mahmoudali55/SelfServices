@@ -31,11 +31,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<FaceDetectionService>(() => FaceDetectionService());
   sl.registerFactory<AttendanceCubit>(() => AttendanceCubit(attendanceRepo: sl()));
   sl.registerFactory<FaceRecognitionCubit>(
-    () => FaceRecognitionCubit(
-      cameraService: sl(),
-      faceDetectionService: sl(),
-      faceRecognitionRepo: sl(),
-    ),
+    () => FaceRecognitionCubit(cameraService: sl(), faceDetectionService: sl()),
   );
   sl.registerFactory<ChatRepository>(() => ChatRepository(firestore: FirebaseFirestore.instance));
   sl.registerFactory<ChatCubit>(

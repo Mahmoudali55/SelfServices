@@ -190,4 +190,6 @@ class EndPoints {
   static String requestDynamicCount(int Empid, int typeid) =>
       '/DeltagroupService/Users/DynamicRequestsCountToDecide?empcode=$Empid&RequestType=$typeid';
   static String employeefacephoto = '/DeltagroupService/Users/Employeefacephoto';
+  static String employeeFaceImage(int empCode) =>
+      '/DeltagroupService/Users/Employeefaceimage?empcode=$empCode';
 }
