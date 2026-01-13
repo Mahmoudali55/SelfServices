@@ -288,6 +288,19 @@ class NotificationService {
     }
   }
 
+  /// Remove FCM token from Firestore on logout
+  static Future<void> removeTokenFromFirestore(int userId) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(userId.toString()).update({
+        'fcmToken': FieldValue.delete(),
+        'lastTokenUpdate': FieldValue.serverTimestamp(),
+      });
+      log('FCM Token removed for user $userId');
+    } catch (e) {
+      log('Error removing FCM token: $e');
+    }
+  }
+
   // Helper to get a user's token from Firestore
   static Future<String?> getUserToken(int userId) async {
     final doc = await FirebaseFirestore.instance.collection('users').doc(userId.toString()).get();

@@ -61,12 +61,11 @@ class _ResignationRequestScreenState extends State<ResignationRequestScreen> {
           widget.resignationModel!.lastWorkDate.isNotEmpty) {
         try {
           final rawDate = widget.resignationModel!.lastWorkDate;
-
           DateTime parsedDate;
 
           if (rawDate.contains('/')) {
-            // yyyy/MM/dd
-            parsedDate = DateFormat('yyyy/MM/dd', 'en').parse(rawDate);
+            // dd/MM/yyyy  ← الصحيح
+            parsedDate = DateFormat('dd/MM/yyyy', 'en').parse(rawDate);
           } else {
             // yyyy-MM-dd أو ISO
             parsedDate = DateTime.parse(rawDate);

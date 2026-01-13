@@ -889,9 +889,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                                                     children: [
                                                       const SizedBox(height: 12),
                                                       Text(
-                                                        context.locale.languageCode == 'en'
-                                                            ? 'المرفقات'
-                                                            : 'Attachments',
+                                                        AppLocalKay.attachments.tr(),
                                                         style: const TextStyle(
                                                           fontSize: 18,
                                                           fontWeight: FontWeight.bold,
@@ -902,9 +900,8 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                                                         Padding(
                                                           padding: const EdgeInsets.all(16.0),
                                                           child: Text(
-                                                            context.locale.languageCode == 'en'
-                                                                ? 'لا توجد مرفقات'
-                                                                : 'No attachments',
+                                                            AppLocalKay.noAttachments.tr(),
+                                                            style: const TextStyle(fontSize: 16),
                                                           ),
                                                         )
                                                       else

@@ -136,9 +136,8 @@ void showChangePasswordSheet(BuildContext context) {
                       const SizedBox(height: 10),
                       storedPassword == null || storedPassword.isEmpty || storedPassword == ''
                           ? Text(
-                              context.locale.languageCode == 'en'
-                                  ? AppLocalKay.mandatory_password_change_message.tr()
-                                  : 'You cannot use the app until you change your password',
+                              AppLocalKay.mandatory_password_change_message.tr(),
+
                               style: Theme.of(
                                 context,
                               ).textTheme.bodySmall?.copyWith(color: Colors.redAccent),

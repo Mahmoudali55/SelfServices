@@ -297,11 +297,18 @@ class _MoreScreenState extends State<MoreScreen> {
 
     if (shouldLogout != true) return;
 
-    final empId = HiveMethods.getEmpCode();
+    // Get empCode before clearing data
+    final empCodeStr = HiveMethods.getEmpCode();
+    if (empCodeStr != null) {
+      final empCode = int.tryParse(empCodeStr);
+      if (empCode != null) {
+        // Remove FCM token from Firestore
+        await NotificationService.removeTokenFromFirestore(empCode);
+      }
+    }
 
-    await HiveMethods.deleteBoxFromDisk('chat_messages_$empId');
-    await HiveMethods.deleteEmpCode();
-    await HiveMethods.deleteToken();
+    // Clear all user data (token, names, password, device info, etc.)
+    await HiveMethods.clearAllUserData();
     await NotificationService.stopListening();
 
     if (!context.mounted) return;

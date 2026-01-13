@@ -40,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
 
   @override
   void initState() {
-    super.initState();
     _focusNode = FocusNode();
     empCode = HiveMethods.getEmpCode() ?? '0';
 
@@ -63,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
         });
       }
     });
+    super.initState();
   }
 
   @override
@@ -72,6 +72,20 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
     empName = lang == 'ar' || lang == 'ur'
         ? HiveMethods.getEmpNameAR() ?? ''
         : HiveMethods.getEmpNameEn() ?? '';
+  }
+
+  @override
+  void didUpdateWidget(HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If empId changed (e.g., after logout/login), reload data
+    if (oldWidget.empId != widget.empId && widget.empId != null && widget.empId! > 0) {
+      final homeCubit = context.read<HomeCubit>();
+      final servicesCubit = context.read<ServicesCubit>();
+      homeCubit.loadHomeData();
+      homeCubit.loadVacationAdditionalPrivilages(pageID: 14, empId: widget.empId!);
+      servicesCubit.getEmployees(empcode: widget.empId!, privid: 1);
+      context.read<PrefileCubit>().getProfile(empId: widget.empId!);
+    }
   }
 
   @override

@@ -120,7 +120,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           signInDate: todayDate,
           signInTime: nowTime,
           mobileSerNo: mobileser ?? '',
-          projectCode: int.tryParse(projectIdController.text) ?? HiveMethods.getProjectId() ?? 0,
+          projectCode: int.tryParse(projectIdController.text) ?? 1,
         );
         await settingCubit.addTimeSheetIn(request);
         _handleResponse(settingCubit.state.timeSheetStatus, isCheckIn: true);

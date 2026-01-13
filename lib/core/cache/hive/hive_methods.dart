@@ -62,8 +62,8 @@ class HiveMethods {
     _box.put('EMP_CODE', empCode);
   }
 
-  static deleteEmpCode() {
-    _box.delete('EMP_CODE');
+  static Future<void> deleteEmpCode() async {
+    await _box.delete('EMP_CODE');
   }
 
   static String? getEmpCode() {
@@ -149,5 +149,38 @@ class HiveMethods {
 
   static Future<void> deleteBoxFromDisk(String empId) async {
     return _box.delete('chat_messages_$empId');
+  }
+
+  /// Clears all user-specific data while preserving app-level settings
+  /// Preserves: lang, theme, isFirstTime
+  /// Deletes: all user data (token, names, password, device info, etc.)
+  static Future<void> clearAllUserData() async {
+    // Get empId before deleting to clean up chat messages
+    final empId = getEmpCode();
+
+    // Delete all user-specific data
+    await Future.wait<void>([
+      // Auth data
+      deleteToken(),
+      deleteEmpCode(),
+      _box.delete('EMP_NAME_AR'),
+      _box.delete('EMP_NAME_EN'),
+      _box.delete('EMP_PASSWORD'),
+
+      // Device & session data
+      _box.delete('DEVICE_ID'),
+      _box.delete(_empIdKey),
+      _box.delete('PAGE_PRIV_ID'),
+
+      // User content
+      deleteEmpPhoto(),
+      deleteProjectId(),
+      _box.delete(_notificationCountKey),
+    ]);
+
+    // Delete chat messages separately
+    if (empId != null) {
+      await deleteBoxFromDisk(empId);
+    }
   }
 }

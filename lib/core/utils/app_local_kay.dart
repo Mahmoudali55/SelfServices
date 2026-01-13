@@ -660,4 +660,20 @@ class AppLocalKay {
   static const String employee_not_found = 'employee_not_found';
   static const String register_attendance = 'register_attendance';
   static const String required_field = 'required_field';
+  static const String PleaseCheckYourConnectionAndTryAgain = 'PleaseCheckYourConnectionAndTryAgain';
+  static const String searchForService = 'searchForService';
+  static const String noMatchingServices = 'noMatchingServices';
+  static const String urgentNews = 'urgentNews';
+  static const String newUpdate = 'newUpdate';
+  static const String noInternetTitle = 'noInternetTitle';
+  static const String noInternetMessage = 'noInternetMessage';
+  static const String ok = 'ok';
+  static const String markeds = 'markeds';
+  static const String suggestion_success = 'suggestion_success';
+  static const String select_department_first = 'select_department_first';
+  static const String working_hours = 'working_hours';
+  static const String mapLocation = 'mapLocation';
+  static const String loan_request_submit_success = 'loan_request_submit_success';
+  static const String request_type = 'request_type';
+  static const String servicess = 'servicess';
 }

@@ -662,7 +662,6 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
         bottomNavigationBar: _buildActionButtons(),
         appBar: CustomAppBar(
           automaticallyImplyLeading: false,
-          leading: const SizedBox.shrink(),
           context,
           title: Text(
             AppLocalKay.face_recognition_attendance.tr(),
@@ -690,7 +689,8 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
                   // Stop scanning to show dialog/play sound
                   _stopScanning();
 
-                  // Play Error Sound ("Buzz")
+                  // Play Error Sound ("Buzz") and Vibrate
+                  HapticFeedback.heavyImpact();
                   SystemSound.play(SystemSoundType.alert);
                   // Or use specific sound plugin if needed
 
