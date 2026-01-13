@@ -72,9 +72,7 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
     _loadTodayAttendance();
   }
 
-  void _loadRegisteredEmployees() {
-    // Local load removed - we use remote load in _initializeAttendance
-  }
+  void _loadRegisteredEmployees() {}
 
   void _loadTodayAttendance() {
     context.read<AttendanceCubit>().loadAttendance(classId: globalClassId, date: DateTime.now());
@@ -1032,6 +1030,22 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
     final faceModel = registeredFaces[studentId];
     final hasRegisteredFace = faceModel != null;
 
+    // Determine status icon based on attendance
+    // Green checkmark = Checked In (Present)
+    // Red X = Checked Out (Absent after checking in)
+    Widget? statusIcon;
+
+    // Only show icon if attendance was actually marked (checkInTime is set)
+    if (record.checkInTime != null) {
+      if (isPresent) {
+        // Check-In: Green checkmark
+        statusIcon = Icon(Icons.check_circle, color: Colors.green, size: 32.sp);
+      } else {
+        // Check-Out: Red X
+        statusIcon = Icon(Icons.cancel, color: Colors.red, size: 32.sp);
+      }
+    }
+
     return InkWell(
       onLongPress: () => _deleteStudentRegistration(studentId),
       child: Card(
@@ -1065,6 +1079,7 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
             overflow: TextOverflow.ellipsis,
             style: AppTextStyle.text16MSecond(context),
           ),
+          trailing: statusIcon,
         ),
       ),
     );
