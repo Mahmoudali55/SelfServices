@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
+import 'dart:ui';
 
+import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 
 class FaceDetectionService {
@@ -66,17 +68,55 @@ class FaceDetectionService {
     }
   }
 
-  /// Detect faces from InputImage (for camera frames)
-  Future<List<Face>> detectFaces(InputImage inputImage) async {
+  /// Detect faces from CameraImage stream
+  Future<List<Face>> detectFacesFromStream(CameraImage image, int sensorOrientation) async {
     if (!_isInitialized) {
       await initialize();
     }
 
     try {
+      final inputImage = _convertCameraImageToInputImage(image, sensorOrientation);
+      if (inputImage == null) return [];
+
       final faces = await _faceDetector.processImage(inputImage);
       return faces;
     } catch (e) {
-      throw Exception('Failed to detect faces: ${e.toString()}');
+      return []; // Return empty on error for stream stability
+    }
+  }
+
+  /// Convert CameraImage to InputImage for ML Kit
+  InputImage? _convertCameraImageToInputImage(CameraImage image, int sensorOrientation) {
+    try {
+      final WriteBuffer allBytes = WriteBuffer();
+      for (final Plane plane in image.planes) {
+        allBytes.putUint8List(plane.bytes);
+      }
+      final bytes = allBytes.done().buffer.asUint8List();
+
+      final InputImageMetadata metadata = InputImageMetadata(
+        size: Size(image.width.toDouble(), image.height.toDouble()),
+        rotation: _rotationFromOrientation(sensorOrientation),
+        format: InputImageFormatValue.fromRawValue(image.format.raw) ?? InputImageFormat.nv21,
+        bytesPerRow: image.planes[0].bytesPerRow,
+      );
+
+      return InputImage.fromBytes(bytes: bytes, metadata: metadata);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  InputImageRotation _rotationFromOrientation(int orientation) {
+    switch (orientation) {
+      case 90:
+        return InputImageRotation.rotation90deg;
+      case 180:
+        return InputImageRotation.rotation180deg;
+      case 270:
+        return InputImageRotation.rotation270deg;
+      default:
+        return InputImageRotation.rotation0deg;
     }
   }
 
@@ -197,9 +237,9 @@ class FaceDetectionService {
 
     final distance = sqrt(sumSquaredDiff);
 
-    // Stricter mapping: Distance of 0.1 -> ~70% similarity, 0.2 -> ~40%
-    // This makes the system much more sensitive to differences.
-    final similarity = (1.0 - (distance * 3.0)).clamp(0.0, 1.0) * 100;
+    // More forgiving mapping for phone-like experience:
+    // Distance 0.2 -> ~70% similarity, 0.3 -> ~55%
+    final similarity = (1.0 - (distance * 1.5)).clamp(0.0, 1.0) * 100;
     return similarity;
   }
 

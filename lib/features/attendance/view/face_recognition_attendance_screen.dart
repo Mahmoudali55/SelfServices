@@ -6,7 +6,6 @@ import 'package:camera/camera.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -24,6 +23,7 @@ import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/features/attendance/cubit/attendance_cubit.dart';
 import 'package:my_template/features/attendance/cubit/face_recognition_cubit.dart';
 import 'package:my_template/features/attendance/data/models/attendance_record_model.dart';
+import 'package:my_template/features/attendance/view/widgets/attendance/face_scanner_frame.dart';
 import 'package:my_template/features/profile/data/model/employee_change_photo_request.dart';
 import 'package:my_template/features/services/data/model/request_leave/employee_model.dart';
 import 'package:my_template/features/services/presentation/cubit/services_cubit.dart';
@@ -44,25 +44,28 @@ class FaceRecognitionAttendanceScreen extends StatefulWidget {
 class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttendanceScreen> {
   static const String globalClassId = 'employees';
   bool isScanning = false;
-  bool isContinuousMode = false;
-  bool isCheckingIn = true; // New state for In/Out toggle
-  bool isMarkingAttendance = false; // To prevent concurrent API calls for same recognition
+  bool isContinuousMode = true; // Enabled by default for ease
+  bool isCheckingIn = true;
+  bool isMarkingAttendance = false;
   Timer? _scanTimer;
   final Map<String, AttendanceRecordModel> attendanceRecords = {};
-  final Map<String, dynamic> registeredFaces = {}; // employeeId -> StudentFaceModel
-  final Set<String> recognizedStudents = {}; // To track session recognitions
+  final Map<String, dynamic> registeredFaces = {};
+  final Set<String> recognizedStudents = {};
 
-  // Face ID style success overlay
+  // Phone-style UX states
   String? _lastRecognizedName;
   bool _showSuccessOverlay = false;
   bool _showFailureOverlay = false;
+  String? _statusMessage;
+  int _consecutiveNoMatchCount = 0; // To trigger registration delay
+  Timer? _registrationDelayTimer;
+
   File? _capturedAttendanceImage;
   List<double>? _capturedAttendanceFeatures;
   double? _capturedAttendanceQuality;
   Timer? _overlayTimer;
 
-  // New variables for pending registration
-  bool _isProcessing = false;
+  // Pending registration data
   String? _pendingRegistrationEmpCode;
   String? _pendingRegistrationEmpName;
   File? _pendingRegistrationImage;
@@ -74,6 +77,11 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
     super.initState();
     _loadRegisteredEmployees();
     _loadTodayAttendance();
+
+    // Auto-start scanning for phone-like ease
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startScanning();
+    });
   }
 
   void _loadRegisteredEmployees() {}
@@ -135,51 +143,45 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
       _capturedAttendanceImage = null;
       _showFailureOverlay = false;
       _showSuccessOverlay = false;
+      _consecutiveNoMatchCount = 0;
+      _statusMessage = AppLocalKay.scanning_faces.tr();
     });
 
     final cubit = context.read<FaceRecognitionCubit>();
     await cubit.initializeCamera(direction: CameraLensDirection.front);
 
-    // Do NOT perform recognition immediately. Let the user adjust and click the button.
-    // _performRecognition();
-
     if (isContinuousMode) {
-      _startContinuousScanning();
+      // High Performance: Use camera image stream instead of a timer
+      cubit.cameraService.startImageStream((image) {
+        if (isScanning && !isMarkingAttendance && !_showSuccessOverlay && !_showFailureOverlay) {
+          cubit.recognizeFromStream(image: image, threshold: 55.0);
+        }
+      });
     }
-  }
-
-  void _startContinuousScanning() {
-    // Face ID style: very rapid scanning (every 300ms)
-    _scanTimer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
-      if (isScanning) {
-        _performRecognition();
-      }
-    });
   }
 
   Future<void> _performRecognition({String? targetStudentId}) async {
     final cubit = context.read<FaceRecognitionCubit>();
     if (cubit.state is FaceRecognitionProcessing) return;
 
-    // If targetStudentId is provided, we only want to match that specific student
-    // or at least prioritize/highlight if we found someone else.
-    // For now, the cubit finds the best match among all registered.
     await cubit.recognizeStudent(
       classId: globalClassId,
-      threshold: 85.0,
-    ); // Increased to 85% with new complex geometry signature
+      threshold: 55.0, // Phone-like flexibility
+    );
   }
 
-  void _stopScanning() {
+  Future<void> _stopScanning() async {
     setState(() {
       isScanning = false;
+      _consecutiveNoMatchCount = 0;
+      _registrationDelayTimer?.cancel();
     });
 
     _scanTimer?.cancel();
     _scanTimer = null;
 
     final cubit = context.read<FaceRecognitionCubit>();
-    cubit.disposeResources();
+    await cubit.disposeResources();
   }
 
   void _toggleStudentAttendance(String studentId, bool isPresent) {
@@ -319,12 +321,14 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
 
       // Update local record to reflect success in the list
       setState(() {
-        final record = attendanceRecords[empCode]!;
-        attendanceRecords[empCode] = record.copyWith(
-          status: isCheckIn ? AttendanceStatus.present : AttendanceStatus.absent,
-          recognitionMethod: RecognitionMethod.faceRecognition,
-          checkInTime: DateTime.now(),
-        );
+        final record = attendanceRecords[empCode];
+        if (record != null) {
+          attendanceRecords[empCode] = record.copyWith(
+            status: isCheckIn ? AttendanceStatus.present : AttendanceStatus.absent,
+            recognitionMethod: RecognitionMethod.faceRecognition,
+            checkInTime: DateTime.now(),
+          );
+        }
 
         if (isCheckIn) {
           recognizedStudents.add(empCode);
@@ -335,6 +339,20 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
         // Face ID style success overlay
         _lastRecognizedName = empName;
         _showSuccessOverlay = true;
+        _statusMessage = isCheckIn
+            ? AppLocalKay.checkInSuccess.tr()
+            : AppLocalKay.checkInSuccess.tr();
+      });
+
+      // Auto-hide success and keep scanning in continuous mode
+      _overlayTimer?.cancel();
+      _overlayTimer = Timer(const Duration(seconds: 2), () {
+        if (mounted) {
+          setState(() {
+            _showSuccessOverlay = false;
+            _statusMessage = AppLocalKay.scanning_faces.tr();
+          });
+        }
       });
     } else if (state.isFailure) {
       String status = '';
@@ -356,7 +374,22 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
         default:
           status = AppLocalKay.errorOccurred.tr();
       }
-      CommonMethods.showToast(message: '$empName: $status', type: ToastType.error);
+
+      setState(() {
+        _showFailureOverlay = true;
+        _statusMessage = status;
+        _consecutiveNoMatchCount = 0; // Reset count since it was an API failure
+      });
+
+      _overlayTimer?.cancel();
+      _overlayTimer = Timer(const Duration(seconds: 3), () {
+        if (mounted) {
+          setState(() {
+            _showFailureOverlay = false;
+            _statusMessage = AppLocalKay.scanning_faces.tr();
+          });
+        }
+      });
     }
   }
 
@@ -390,39 +423,13 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
     _markAttendanceForEmployee(empCode, empName);
   }
 
-  void _deleteStudentRegistration(String studentId) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalKay.delete_face_title.tr()),
-        content: Text(AppLocalKay.delete_face_confirm_message.tr()),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalKay.cancel.tr())),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              final cubit = context.read<FaceRecognitionCubit>();
-              await cubit.deleteStudentFace(studentId);
-              _loadRegisteredEmployees(); // Refresh the list
-            },
-            child: Text(AppLocalKay.delete.tr(), style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showRegistrationDialog({
-    required File imageFile,
-    required List<double> features,
-    required double qualityScore,
-  }) {
+  void _showRegistrationDialog({File? imageFile, List<double>? features, double? qualityScore}) {
     final TextEditingController empCodeController = TextEditingController();
     final formKey = GlobalKey<FormState>();
-    File? currentImage;
-    List<double>? currentFeatures;
-    double? currentQuality;
-    bool isRetaking = true; // Start with camera open by default
+    File? currentImage = imageFile;
+    List<double>? currentFeatures = features;
+    double? currentQuality = qualityScore;
+    bool isRetaking = imageFile == null; // Start with camera if no image provided
 
     // Initialize camera immediately
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -474,33 +481,25 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
                     ).copyWith(color: Colors.black, fontSize: 18.sp),
                   ),
                   SizedBox(height: 16.h),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(125.r),
-                    child: Container(
-                      height: 250.h,
-                      width: 250.h,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColor.primaryColor(context), width: 3),
-                      ),
-                      child: isRetaking
-                          ? BlocBuilder<FaceRecognitionCubit, FaceRecognitionState>(
-                              builder: (context, state) {
-                                final cubit = context.read<FaceRecognitionCubit>();
-                                final controller = cubit.cameraService.controller;
+                  FaceScannerFrame(
+                    isScanning: isRetaking,
+                    child: isRetaking
+                        ? BlocBuilder<FaceRecognitionCubit, FaceRecognitionState>(
+                            builder: (context, state) {
+                              final cubit = context.read<FaceRecognitionCubit>();
+                              final controller = cubit.cameraService.controller;
 
-                                if (controller == null || !controller.value.isInitialized) {
-                                  return const Center(child: CircularProgressIndicator());
-                                }
-                                return CameraPreview(controller);
-                              },
-                            )
-                          : (currentImage != null
-                                ? Image.file(currentImage!, fit: BoxFit.cover)
-                                : const Center(
-                                    child: Icon(Icons.person, size: 100, color: Colors.grey),
-                                  )),
-                    ),
+                              if (controller == null || !controller.value.isInitialized) {
+                                return const Center(child: CircularProgressIndicator());
+                              }
+                              return CameraPreview(controller);
+                            },
+                          )
+                        : (currentImage != null
+                              ? Image.file(currentImage!, fit: BoxFit.cover)
+                              : const Center(
+                                  child: Icon(Icons.person, size: 100, color: Colors.grey),
+                                )),
                   ),
                   SizedBox(height: 16.h),
                   if (!isRetaking)
@@ -772,58 +771,48 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
                     final studentId = state.student.studentId;
                     final studentName = state.student.studentName;
 
+                    setState(() {
+                      _consecutiveNoMatchCount = 0;
+                      _registrationDelayTimer?.cancel();
+                      _showFailureOverlay = false;
+                    });
+
                     if (!recognizedStudents.contains(studentId)) {
                       setState(() {
                         _capturedAttendanceImage = state.imageFile;
                       });
 
-                      // Face ID style: Only stop in single scan mode, keep scanning in continuous
-                      if (!isContinuousMode) {
-                        _stopScanning();
-                      }
-
                       // Call the API marking logic immediately
                       _markAttendanceForEmployee(studentId, studentName);
                     }
                   } else if (state is FaceRecognitionNoMatch) {
-                    // Stop scanning to show freeze frame/result
-                    _stopScanning();
-
+                    // Increment consecutive no-matches
                     setState(() {
-                      _capturedAttendanceImage = state.imageFile;
-                      _capturedAttendanceFeatures = state.features;
-                      _capturedAttendanceQuality = state.qualityScore;
-                      _showFailureOverlay = true;
+                      _consecutiveNoMatchCount++;
+                      _statusMessage = AppLocalKay.face_not_recognized_retry.tr();
                     });
 
-                    // Play Error Sound ("Buzz") and Vibrate
-                    HapticFeedback.heavyImpact();
-                    SystemSound.play(SystemSoundType.alert);
+                    // Start timer for registration popup if we keep failing
+                    if (_registrationDelayTimer == null || !_registrationDelayTimer!.isActive) {
+                      _registrationDelayTimer = Timer(const Duration(seconds: 2), () async {
+                        if (mounted && isScanning && _consecutiveNoMatchCount > 1) {
+                          // Show registration dialog after 2 seconds of consistent detection
+                          await _stopScanning(); // Await disposal to prevent camera conflict
 
-                    if (state.imageFile != null && state.features != null) {
-                      _showRegistrationDialog(
-                        imageFile: state.imageFile!,
-                        features: state.features!,
-                        qualityScore: state.qualityScore ?? 0,
-                      );
-                    } else if (state.imageFile == null) {
-                      CommonMethods.showToast(
-                        message: AppLocalKay.face_not_recognized_retry.tr(),
-                        type: ToastType.error,
-                      );
-                      _startScanning();
+                          if (mounted) {
+                            _showRegistrationDialog(
+                              imageFile: state.imageFile,
+                              features: state.features,
+                              qualityScore: state.qualityScore,
+                            );
+                          }
+                        }
+                      });
                     }
-                  } else if (state is FaceRecognitionError) {
-                    if (state.message.contains('No registered faces')) {
-                      CommonMethods.showToast(
-                        message: state.message,
-                        seconds: 5,
-                        type: ToastType.error,
-                      );
-                      _stopScanning();
-                    }
-                  } else if (state is FaceRecognitionLoading) {
-                    // Ensure loading state is handled by UI overlay
+                  } else if (state is FaceRecognitionNoFaceDetected) {
+                    setState(() {
+                      _statusMessage = AppLocalKay.no_face_detected.tr();
+                    });
                   } else if (state is FaceRecognitionRegisteredStudentsLoaded) {
                     setState(() {
                       registeredFaces.clear();
@@ -875,17 +864,11 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
                 },
               ),
             ],
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  if (isScanning)
-                    SizedBox(height: 300.h, child: _buildCameraView())
-                  else
-                    // Employee List (smaller when camera is active)
-                    SizedBox(height: 500, child: _buildEmployeeListWrapper()),
-                ],
-              ),
+            child: Column(
+              children: [
+                if (!isScanning) _buildHeader(),
+                if (isScanning) _buildCameraView() else _buildEmployeeListWrapper(),
+              ],
             ),
           ),
         ),
@@ -987,155 +970,26 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
           return const Center(child: CircularProgressIndicator());
         }
 
-        return Stack(
+        return Column(
           children: [
+            SizedBox(height: 20.h),
             SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: _capturedAttendanceImage != null
-                  ? Image.file(_capturedAttendanceImage!, fit: BoxFit.cover)
-                  : CameraPreview(controller),
-            ),
-            // Instruction overlay (top)
-            Positioned(
-              top: 16.h,
-              left: 0,
-              right: 0,
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 16.w),
-                padding: EdgeInsets.all(12.w),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Text(
-                  AppLocalKay.scanning_faces.tr(), // Use existing key or new "Capture when ready"
-                  style: AppTextStyle.text16MSecond(context).copyWith(color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
+              height: 350.h,
+              child: FaceScannerFrame(
+                isScanning: isScanning && !_showSuccessOverlay && !_showFailureOverlay,
+                isSuccess: _showSuccessOverlay,
+                isFailure: _showFailureOverlay,
+                message: _showSuccessOverlay
+                    ? (_lastRecognizedName ?? AppLocalKay.checkInSuccess.tr())
+                    : _statusMessage,
+                child: CameraPreview(controller),
               ),
             ),
-
-            // Manual Verify Button (bottom)
-            Positioned(
-              bottom: 24.h,
-              left: 40.w,
-              right: 40.w,
-              child: ElevatedButton.icon(
-                onPressed: state is FaceRecognitionProcessing ? null : () => _performRecognition(),
-                icon: state is FaceRecognitionProcessing
-                    ? SizedBox(
-                        width: 20.w,
-                        height: 20.w,
-                        child: const CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                    : const Icon(Icons.verified_user, color: Colors.white),
-                label: Text(
-                  state is FaceRecognitionProcessing
-                      ? AppLocalKay.loading.tr()
-                      : AppLocalKay.verify_face.tr(), // More specific for attendance
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColor.primaryColor(context),
-                  padding: EdgeInsets.symmetric(vertical: 12.h),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
-                  elevation: 8,
-                ),
-              ),
-            ),
-
-            // Failure Overlay
-            if (_showFailureOverlay)
-              Container(
-                color: Colors.red.withOpacity(0.4),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(24.w),
-                        decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
-                        child: Icon(Icons.close, color: Colors.white, size: 60.sp),
-                      ),
-                      SizedBox(height: 16.h),
-                      Text(
-                        AppLocalKay.unknown_face.tr(),
-                        style: AppTextStyle.formTitleStyle(context).copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          shadows: [const Shadow(color: Colors.black, blurRadius: 8)],
-                        ),
-                      ),
-                      SizedBox(height: 24.h),
-                      ElevatedButton.icon(
-                        onPressed: () => _startScanning(),
-                        icon: const Icon(Icons.refresh, color: Colors.red),
-                        label: Text(
-                          'اعادة المحاولة', // As requested "Retry"
-                          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-            // Face ID Style Success Overlay
-            if (_showSuccessOverlay)
-              Container(
-                color: Colors.green.withOpacity(0.4),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(24.w),
-                        decoration: const BoxDecoration(
-                          color: Colors.green,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(Icons.check, color: Colors.white, size: 60.sp),
-                      ),
-                      SizedBox(height: 16.h),
-                      Text(
-                        _lastRecognizedName ?? '',
-                        style: AppTextStyle.formTitleStyle(context).copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          shadows: [const Shadow(color: Colors.black, blurRadius: 8)],
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Text(
-                        AppLocalKay.attendance_marked_success.tr(),
-                        style: AppTextStyle.formTitleStyle(context).copyWith(
-                          color: Colors.white,
-                          shadows: [const Shadow(color: Colors.black, blurRadius: 8)],
-                        ),
-                      ),
-                      SizedBox(height: 24.h),
-                      ElevatedButton.icon(
-                        onPressed: () => _startScanning(),
-                        icon: const Icon(Icons.arrow_forward, color: Colors.green),
-                        label: Text(
-                          AppLocalKay.next.tr(), // "Next" or "Done"
-                          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+            SizedBox(height: 20.h),
+            if (!isContinuousMode)
+              CustomButton(
+                text: AppLocalKay.verify_face.tr(),
+                onPressed: () => _performRecognition(),
               ),
           ],
         );
@@ -1148,29 +1002,14 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
       builder: (context, state) {
         final employees = state.employeesStatus.data ?? [];
         if (employees.isEmpty && state.employeesStatus.isLoading) {
-          return Scaffold(
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: Column(
-                    children: [
-                      CircularProgressIndicator(color: AppColor.primaryColor(context)),
-                      Gap(8.h),
-                      Text(AppLocalKay.loading.tr()),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
+          return Center(child: CircularProgressIndicator(color: AppColor.primaryColor(context)));
         } else if (employees.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.face_retouching_off, size: 64, color: Colors.grey),
-                SizedBox(height: 16.h),
+                const Icon(Icons.face_retouching_off, size: 60, color: Colors.grey),
+                Gap(16.h),
                 Text(
                   AppLocalKay.no_registered_students_for_face.tr(),
                   style: AppTextStyle.text16MSecond(context),
@@ -1179,7 +1018,7 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
             ),
           );
         }
-        return _buildEmployeeList(employees);
+        return Expanded(child: _buildEmployeeList(employees));
       },
     );
   }
@@ -1239,7 +1078,6 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
     }
 
     return InkWell(
-      onLongPress: () => _deleteStudentRegistration(studentId),
       child: Card(
         margin: EdgeInsets.only(bottom: 12.h),
         child: ListTile(

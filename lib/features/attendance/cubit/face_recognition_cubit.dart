@@ -142,7 +142,83 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
     }
   }
 
-  /// Recognize student from captured image
+  bool _isProcessingStream = false;
+  DateTime? _lastProcessingTime;
+
+  /// Recognize student from CameraImage stream (Instant recognition)
+  Future<void> recognizeFromStream({required CameraImage image, required double threshold}) async {
+    // Throttle: Only process if at least 500ms passed since last frame
+    final now = DateTime.now();
+    if (_lastProcessingTime != null && now.difference(_lastProcessingTime!).inMilliseconds < 500) {
+      return;
+    }
+
+    if (_isProcessingStream) return;
+    _isProcessingStream = true;
+    _lastProcessingTime = now;
+
+    try {
+      final sensorOrientation = cameraService.controller?.description.sensorOrientation ?? 90;
+      final faces = await faceDetectionService.detectFacesFromStream(image, sensorOrientation);
+
+      if (faces.isEmpty) {
+        emit(FaceRecognitionNoFaceDetected());
+        _isProcessingStream = false;
+        return;
+      }
+
+      final features = faceDetectionService.extractFaceFeatures(faces.first);
+      if (features.isEmpty) {
+        _isProcessingStream = false;
+        return;
+      }
+
+      // If no faces are registered yet, it's definitely a No Match
+      if (_remoteFaces.isEmpty) {
+        emit(FaceRecognitionNoMatch(imageFile: null, features: features, qualityScore: 100.0));
+        _isProcessingStream = false;
+        return;
+      }
+
+      final match = await faceDetectionService.findBestMatch(
+        capturedFeatures: features,
+        registeredFeatures: _remoteFeaturesMap,
+        threshold: threshold,
+      );
+
+      if (match != null) {
+        // Capture a high-quality photo once recognized for record-keeping
+        final capturedImage = await cameraService.captureImage();
+
+        final matchedStudent = _remoteFaces.firstWhere(
+          (face) => face.studentId == match['studentId'],
+        );
+
+        emit(
+          FaceRecognitionStudentRecognized(
+            student: matchedStudent,
+            confidence: match['confidence'],
+            imageFile: capturedImage,
+          ),
+        );
+      } else {
+        // No match found in the stream
+        emit(
+          FaceRecognitionNoMatch(
+            imageFile: null, // No image file for stream failures to save memory
+            features: features,
+            qualityScore: 100.0,
+          ),
+        );
+      }
+    } catch (e) {
+      // Silent error for stream stability
+    } finally {
+      _isProcessingStream = false;
+    }
+  }
+
+  /// Recognize student from captured image (Old method, kept for reference/manual capture)
   Future<void> recognizeStudent({required String classId, required double threshold}) async {
     emit(FaceRecognitionProcessing());
 
@@ -155,7 +231,6 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
         return;
       }
 
-      // Detect faces
       final faces = await faceDetectionService.detectFacesInFile(capturedImage);
 
       if (faces.isEmpty) {
@@ -163,37 +238,18 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
         return;
       }
 
-      // Use the largest/main face
       final features = faceDetectionService.extractFaceFeatures(faces.first);
 
       if (features.isEmpty) {
-        // Face found but features (landmarks) not clear enough
-        emit(
-          FaceRecognitionNoMatch(
-            imageFile: capturedImage,
-            features: features,
-            qualityScore: 0, // Unknown quality if we failed extraction or just pass generic
-          ),
-        );
+        emit(FaceRecognitionNoMatch(imageFile: capturedImage, features: features, qualityScore: 0));
         return;
       }
 
-      // Use in-memory faces
       if (_remoteFaces.isEmpty || _remoteFeaturesMap.isEmpty) {
         emit(const FaceRecognitionError('No registered faces found from server'));
         return;
       }
 
-      if (_remoteFeaturesMap.isEmpty) {
-        emit(
-          const FaceRecognitionError(
-            'No valid face data found. Please ensure students are registered.',
-          ),
-        );
-        return;
-      }
-
-      // Find best match using cached data
       final match = await faceDetectionService.findBestMatch(
         capturedFeatures: features,
         registeredFeatures: _remoteFeaturesMap,
@@ -213,15 +269,8 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
           ),
         );
       } else {
-        // We have features but no match -> New Person?
-        // Pass the data so the UI can offer registration
         emit(
-          FaceRecognitionNoMatch(
-            imageFile: capturedImage,
-            features: features,
-            qualityScore:
-                100.0, // We don't have explicit score here, assume good enough if extracted
-          ),
+          FaceRecognitionNoMatch(imageFile: capturedImage, features: features, qualityScore: 100.0),
         );
       }
     } catch (e) {
