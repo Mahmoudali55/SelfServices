@@ -12,7 +12,7 @@ class ActionButtons extends StatelessWidget {
   final GetAllResignationModel request;
   final int empcoded;
 
-  const ActionButtons({required this.request, required this.empcoded});
+  const ActionButtons({super.key, required this.request, required this.empcoded});
 
   @override
   Widget build(BuildContext context) {

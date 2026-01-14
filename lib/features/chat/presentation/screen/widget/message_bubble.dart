@@ -182,14 +182,14 @@ class MessageBubble extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.insert_drive_file, color: Colors.teal),
+          const Icon(Icons.insert_drive_file, color: Colors.teal),
           const SizedBox(width: 8),
           Flexible(
             child: Text(
               message.fileName ?? AppLocalKay.file.tr(),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: Colors.black, decoration: TextDecoration.underline),
+              style: const TextStyle(color: Colors.black, decoration: TextDecoration.underline),
             ),
           ),
         ],

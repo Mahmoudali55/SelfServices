@@ -41,7 +41,6 @@ class _SesidChangeRequestScreenState extends State<SesidChangeRequestScreen> {
   final _dateController = TextEditingController();
 
   final _reason = TextEditingController();
-  bool _submitting = false;
 
   @override
   void initState() {
@@ -93,6 +92,7 @@ class _SesidChangeRequestScreenState extends State<SesidChangeRequestScreen> {
     return '';
   }
 
+  @override
   void dispose() {
     _employeeId.dispose();
     _newSesid.dispose();
@@ -233,7 +233,7 @@ class _SesidChangeRequestScreenState extends State<SesidChangeRequestScreen> {
                     widget.dynamicOrderModel == null
                         ? const SizedBox.shrink()
                         : Padding(
-                            padding: EdgeInsets.only(bottom: 0),
+                            padding: const EdgeInsets.only(bottom: 0),
                             child: GestureDetector(
                               onTap: () async {
                                 final cubit = context.read<ServicesCubit>();

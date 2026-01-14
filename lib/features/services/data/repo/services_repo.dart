@@ -735,6 +735,7 @@ class ServicesRepoImpl implements ServicesRepo {
     );
   }
 
+  @override
   Future<Either<Failure, List<String>>> uploadFile({required List<String> filePaths}) {
     return handleDioRequest(
       request: () async {
@@ -792,6 +793,7 @@ class ServicesRepoImpl implements ServicesRepo {
     );
   }
 
+  @override
   Future<Either<Failure, String>> imageFileName({required String filePath}) async {
     return handleDioRequest(
       request: () async {

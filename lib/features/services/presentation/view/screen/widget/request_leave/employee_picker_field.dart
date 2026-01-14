@@ -58,7 +58,7 @@ class EmployeePickerField extends StatelessWidget {
                 hintText: AppLocalKay.employeeName.tr(),
                 validator: validator,
                 onTap: () => _openEmployeeSearch(context),
-                suffixIcon: Icon(Icons.arrow_drop_down),
+                suffixIcon: const Icon(Icons.arrow_drop_down),
               ),
             ),
           ],

@@ -33,9 +33,9 @@ class TimeSheetCard extends StatelessWidget {
   }
 
   String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    return "${twoDigits(duration.inHours)}:$twoDigitMinutes";
+    return '${twoDigits(duration.inHours)}:$twoDigitMinutes';
   }
 
   @override
@@ -130,13 +130,13 @@ class TimeSheetCard extends StatelessWidget {
               ),
             ),
             Text(
-              model.nameGpf ?? '-',
+              model.nameGpf,
               style: AppTextStyle.text16MSecond(context, color: AppColor.greenColor(context)),
             ),
             Gap(10.h),
             TimeSheetRow(
               title: AppLocalKay.checkin.tr(),
-              value: model.signInTime ?? '-',
+              value: model.signInTime,
               color: AppColor.greenColor(context),
             ),
             TimeSheetRow(

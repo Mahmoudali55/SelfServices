@@ -23,8 +23,8 @@ class ChatRepository {
 
   Stream<List<ChatMessage>> getChatMessages(int currentUserId, int otherUserId) {
     final conversationId = currentUserId < otherUserId
-        ? '${currentUserId}_${otherUserId}'
-        : '${otherUserId}_${currentUserId}';
+        ? '${currentUserId}_$otherUserId'
+        : '${otherUserId}_$currentUserId';
 
     return firestore
         .collection('chats')
@@ -82,8 +82,8 @@ class ChatRepository {
 
   Future<void> updateTypingStatus(int currentUserId, int otherUserId, bool isTyping) async {
     final conversationId = currentUserId < otherUserId
-        ? '${currentUserId}_${otherUserId}'
-        : '${otherUserId}_${currentUserId}';
+        ? '${currentUserId}_$otherUserId'
+        : '${otherUserId}_$currentUserId';
 
     await firestore.collection('typing_status').doc(conversationId).set({
       currentUserId.toString(): {'isTyping': isTyping, 'lastUpdate': DateTime.now()},
@@ -92,8 +92,8 @@ class ChatRepository {
 
   Stream<bool> getTypingStatus(int currentUserId, int otherUserId) {
     final conversationId = currentUserId < otherUserId
-        ? '${currentUserId}_${otherUserId}'
-        : '${otherUserId}_${currentUserId}';
+        ? '${currentUserId}_$otherUserId'
+        : '${otherUserId}_$currentUserId';
 
     return firestore.collection('typing_status').doc(conversationId).snapshots().map((doc) {
       if (!doc.exists) return false;

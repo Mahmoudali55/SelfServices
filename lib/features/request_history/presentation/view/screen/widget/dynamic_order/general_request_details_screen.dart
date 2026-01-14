@@ -44,29 +44,26 @@ class GeneralRequestDetailsScreen extends StatelessWidget {
                   title: AppLocalKay.employee.tr(),
                   items: {
                     AppLocalKay.employeeName.tr(): langCode == 'en'
-                        ? (request.empNameE ?? '-')
-                        : (request.empName ?? '-'),
-                    AppLocalKay.employeeCode.tr(): request.empCode?.toString() ?? '-',
+                        ? (request.empNameE)
+                        : (request.empName),
+                    AppLocalKay.employeeCode.tr(): request.empCode.toString(),
                   },
                 ),
                 PrintSection(
                   title: AppLocalKay.requestgeneral.tr(),
                   items: {
-                    AppLocalKay.requestDate.tr(): request.requestDate ?? '-',
-                    AppLocalKay.reason.tr(): request.strField1 ?? '-',
-                    request.strField2.isEmpty
-                        ? AppLocalKay.notes.tr()
-                        : AppLocalKay.newDevice.tr(): request.strField2.isEmpty
-                        ? request.strNotes ?? '-'
-                        : request.strField2 ?? '-',
+                    AppLocalKay.requestDate.tr(): request.requestDate,
+                    AppLocalKay.reason.tr(): request.strField1,
+                    request.strField2.isEmpty ? AppLocalKay.notes.tr() : AppLocalKay.newDevice.tr():
+                        request.strField2.isEmpty ? request.strNotes : request.strField2,
                   },
                 ),
                 PrintSection(
                   title: AppLocalKay.status.tr(),
 
                   items: {
-                    AppLocalKay.status.tr(): request.requestDesc ?? '-',
-                    AppLocalKay.followedActions.tr(): request.actionNotes ?? '-',
+                    AppLocalKay.status.tr(): request.requestDesc,
+                    AppLocalKay.followedActions.tr(): request.actionNotes,
                   },
                 ),
               ],
@@ -81,18 +78,18 @@ class GeneralRequestDetailsScreen extends StatelessWidget {
             title: AppLocalKay.employee.tr(),
             items: {
               AppLocalKay.employeeName.tr(): langCode == 'en'
-                  ? (request.empNameE ?? '-')
-                  : (request.empName ?? '-'),
-              AppLocalKay.employeeCode.tr(): request.empCode?.toString() ?? '-',
+                  ? (request.empNameE)
+                  : (request.empName),
+              AppLocalKay.employeeCode.tr(): request.empCode.toString(),
             },
           ),
           SectionWidget(
             title: AppLocalKay.requestgeneral.tr(),
             items: {
-              AppLocalKay.requestDate.tr(): request.requestDate ?? '-',
-              AppLocalKay.reason.tr(): request.strField1 ?? '-',
+              AppLocalKay.requestDate.tr(): request.requestDate,
+              AppLocalKay.reason.tr(): request.strField1,
               request.strField2.isEmpty ? AppLocalKay.notes.tr() : AppLocalKay.newDevice.tr():
-                  request.strField2.isEmpty ? request.strNotes ?? '-' : request.strField2 ?? '-',
+                  request.strField2.isEmpty ? request.strNotes : request.strField2,
             },
           ),
           SectionWidget(
@@ -100,11 +97,11 @@ class GeneralRequestDetailsScreen extends StatelessWidget {
             color: request.reqDecideState == 2
                 ? Colors.red
                 : request.reqDecideState == 1
-                ? Color.fromARGB(255, 2, 217, 9)
+                ? const Color.fromARGB(255, 2, 217, 9)
                 : const Color.fromARGB(255, 200, 194, 26),
             items: {
-              AppLocalKay.status.tr(): request.requestDesc ?? '-',
-              AppLocalKay.followedActions.tr(): request.actionNotes ?? '-',
+              AppLocalKay.status.tr(): request.requestDesc,
+              AppLocalKay.followedActions.tr(): request.actionNotes,
             },
           ),
         ],

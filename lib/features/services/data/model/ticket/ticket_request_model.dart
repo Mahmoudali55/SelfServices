@@ -74,7 +74,5 @@ class TicketRequest extends Equatable {
 }
 
 Future<void> addNewTicketRequest(TicketRequest request) async {
-  final Map<String, dynamic> payload = request.toJson();
-
   await Future.delayed(const Duration(seconds: 1));
 }

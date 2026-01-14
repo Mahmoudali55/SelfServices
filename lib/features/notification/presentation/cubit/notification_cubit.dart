@@ -12,10 +12,10 @@ import 'package:my_template/features/notification/presentation/cubit/notificatio
 import '../../../../core/error/failures.dart';
 import '../../../../core/network/status.state.dart';
 
-class NotifictionCubit extends Cubit<NotificationState> {
-  final NotifictionRepo repo;
+class NotificationsCubit extends Cubit<NotificationState> {
+  final NotificationsRepo repo;
 
-  NotifictionCubit(this.repo) : super(const NotificationState());
+  NotificationsCubit(this.repo) : super(const NotificationState());
 
   Future<void> getReqCount({required int empId}) async {
     emit(state.copyWith(reqCountStatus: const StatusState.loading()));

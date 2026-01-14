@@ -114,7 +114,6 @@ class NotificationService {
   static Future<void> _handleInlineReply(Map<String, dynamic> data, String replyText) async {
     final senderId = data['senderId'] as int?;
     final currentUserId = data['currentUserId'] as int?;
-    final senderName = data['senderName'] as String?;
 
     if (senderId == null || currentUserId == null) return;
 
@@ -122,8 +121,8 @@ class NotificationService {
 
     final repo = sl<ChatRepository>();
     final conversationId = currentUserId < senderId
-        ? '${currentUserId}_${senderId}'
-        : '${senderId}_${currentUserId}';
+        ? '${currentUserId}_$senderId'
+        : '${senderId}_$currentUserId';
 
     final message = ChatMessage(
       senderId: currentUserId,

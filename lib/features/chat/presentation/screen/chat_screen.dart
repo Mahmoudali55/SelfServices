@@ -92,6 +92,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     });
   }
 
+  @override
   void dispose() {
     _typingTimer?.cancel();
     _controller.dispose();
@@ -519,9 +520,9 @@ class _SelectUserScreenState extends State<SelectUserScreen> {
                     onChanged: (val) {
                       setState(() {
                         if (val == true) {
-                          selectedUserIds.add(user.empCode ?? 0);
+                          selectedUserIds.add(user.empCode);
                         } else {
-                          selectedUserIds.remove(user.empCode ?? 0);
+                          selectedUserIds.remove(user.empCode);
                         }
                       });
                     },
@@ -573,7 +574,7 @@ class _SelectUserScreenState extends State<SelectUserScreen> {
                                   return Padding(
                                     padding: const EdgeInsets.only(right: 6.0),
                                     child: Text(
-                                      '${name}  , ',
+                                      '$name  , ',
                                       style: AppTextStyle.text14MPrimary(
                                         context,
                                         color: AppColor.blackColor(context),
@@ -606,7 +607,7 @@ class _SelectUserScreenState extends State<SelectUserScreen> {
                                   MaterialPageRoute(
                                     builder: (_) => ChatScreen(
                                       currentUserId: widget.currentUserId,
-                                      otherUserId: firstUser.empCode ?? 0,
+                                      otherUserId: firstUser.empCode,
                                       otherUserName: firstUser.empName ?? '',
                                     ),
                                   ),

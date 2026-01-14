@@ -20,8 +20,8 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
   final FaceDetectionService faceDetectionService;
 
   // Cache for registered face features to speed up recognition
-  List<StudentFaceModel> _remoteFaces = [];
-  Map<String, List<double>> _remoteFeaturesMap = {};
+  final List<StudentFaceModel> _remoteFaces = [];
+  final Map<String, List<double>> _remoteFeaturesMap = {};
 
   // Local file based cache: empId -> {hash: String, features: List<double>}
   Map<String, dynamic> _featuresCache = {};
@@ -368,7 +368,6 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
     ServicesRepo servicesRepo,
     Directory tempDir,
   ) async {
-    if (emp.empCode == null) return;
     final empIdStr = emp.empCode.toString();
 
     try {

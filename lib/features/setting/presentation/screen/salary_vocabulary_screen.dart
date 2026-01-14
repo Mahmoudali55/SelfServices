@@ -10,7 +10,7 @@ import 'package:my_template/core/theme/app_text_style.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/features/setting/data/model/employee_salary_model.dart';
 import 'package:my_template/features/setting/presentation/cubit/setting_state.dart';
-import 'package:my_template/features/setting/presentation/cubit/settting_cubit.dart';
+import 'package:my_template/features/setting/presentation/cubit/setting_cubit.dart';
 import 'package:my_template/features/setting/presentation/screen/utils/salary_pdf_generator.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/salary_vocabulary/empty_salary_widget.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/salary_vocabulary/month_selector_widget.dart';

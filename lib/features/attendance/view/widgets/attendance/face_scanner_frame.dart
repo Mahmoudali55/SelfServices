@@ -108,7 +108,7 @@ class _FaceScannerFrameState extends State<FaceScannerFrame> with SingleTickerPr
             _buildStatusOverlay(
               icon: Icons.check_circle,
               color: Colors.green,
-              text: widget.message ?? "Success",
+              text: widget.message ?? 'Success',
             ),
 
           // Failure Overlay
@@ -116,7 +116,7 @@ class _FaceScannerFrameState extends State<FaceScannerFrame> with SingleTickerPr
             _buildStatusOverlay(
               icon: Icons.error,
               color: Colors.red,
-              text: widget.message ?? "Not Recognized",
+              text: widget.message ?? 'Not Recognized',
             ),
         ],
       ),
@@ -142,7 +142,7 @@ class _FaceScannerFrameState extends State<FaceScannerFrame> with SingleTickerPr
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 14.sp,
-                shadows: [Shadow(color: Colors.black, blurRadius: 4)],
+                shadows: const [Shadow(color: Colors.black, blurRadius: 4)],
               ),
             ),
           ),

@@ -154,7 +154,7 @@ class AppColor {
   static Color buttonColor(BuildContext context, {bool listen = true}) {
     return AppTheme.getByTheme(
       context,
-      light: Color.fromARGB(255, 2, 217, 9),
+      light: const Color.fromARGB(255, 2, 217, 9),
       dark: const Color(0xffffffff),
       listen: listen,
     );

@@ -89,7 +89,7 @@ class ChatCubit extends Cubit<ChatState> {
 
     final conversationId = currentUserId < otherUserId!
         ? '${currentUserId}_${otherUserId!}'
-        : '${otherUserId!}_${currentUserId}';
+        : '${otherUserId!}_$currentUserId';
 
     final message = ChatMessage(
       senderId: currentUserId,
@@ -118,8 +118,8 @@ class ChatCubit extends Cubit<ChatState> {
     if (content.trim().isEmpty) return;
 
     final conversationId = currentUserId < targetUserId
-        ? '${currentUserId}_${targetUserId}'
-        : '${targetUserId}_${currentUserId}';
+        ? '${currentUserId}_$targetUserId'
+        : '${targetUserId}_$currentUserId';
 
     final message = ChatMessage(
       senderId: currentUserId,

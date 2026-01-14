@@ -108,7 +108,7 @@ class HousingAllowanceRequestItem extends StatelessWidget {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: request.requestDesc ?? '',
+                                text: request.requestDesc,
                                 style: AppTextStyle.text14RGrey(
                                   context,
                                   color: statusColor,
@@ -164,13 +164,13 @@ class _Details extends StatelessWidget {
           icon: Icons.person,
           request: request,
           title: AppLocalKay.employee.tr(),
-          description: isEn ? (request.empNameE ?? '') : request.empName ?? '',
+          description: isEn ? (request.empNameE) : request.empName,
         ),
         CustomTitelCardWidget(
           icon: Icons.calendar_month,
           request: request,
           title: AppLocalKay.requestDate.tr(),
-          description: request.requestDate ?? '',
+          description: request.requestDate,
         ),
         CustomTitelCardWidget(
           icon: Icons.monetization_on,
@@ -191,28 +191,6 @@ class _Details extends StatelessWidget {
           description: request.strNotes.toString(),
         ),
       ],
-    );
-  }
-}
-
-class _StatusLabel extends StatelessWidget {
-  final String status;
-  final Color color;
-
-  const _StatusLabel({required this.status, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: Text(
-        status,
-        style: AppTextStyle.text14RGrey(
-          context,
-          color: color,
-        ).copyWith(fontWeight: FontWeight.bold),
-      ),
     );
   }
 }
@@ -268,8 +246,8 @@ class _ActionButtons extends StatelessWidget {
 
               if (confirm == true) {
                 context.read<VacationRequestsCubit>().deleteHousingAllowance(
-                  requestId: request.requestID ?? 0,
-                  empcode: request.empCode ?? 0,
+                  requestId: request.requestID,
+                  empcode: request.empCode,
                   empcodeadmin: empcoded,
                   context: context,
                 );

@@ -18,9 +18,7 @@ class GoogleDriveService {
 
   // تسجيل الدخول يدويًا إذا لم يكن مسجلاً
   Future<bool> signInIfNeeded() async {
-    if (_currentUser == null) {
-      _currentUser = await _googleSignIn.signIn();
-    }
+    _currentUser ??= await _googleSignIn.signIn();
     return _currentUser != null;
   }
 

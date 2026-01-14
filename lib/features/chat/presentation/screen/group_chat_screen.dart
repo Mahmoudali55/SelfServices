@@ -309,7 +309,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> with WidgetsBindingOb
         final searchController = TextEditingController();
         return StatefulBuilder(
           builder: (context, setState) {
-            void _filterEmployees(String query) {
+            void filterEmployees(String query) {
               final lowerQuery = query.toLowerCase();
               setState(() {
                 filteredEmployees = employees.where((emp) {
@@ -340,10 +340,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> with WidgetsBindingOb
                       const SizedBox(height: 10),
                       CustomFormField(
                         controller: searchController,
-                        hintText: context.locale.languageCode == 'ar'
-                            ? 'ابحث عن الموظف'
-                            : 'Search for employee',
-                        onChanged: _filterEmployees,
+                        hintText: AppLocalKay.search_employee.tr(),
+                        onChanged: filterEmployees,
                       ),
                       const SizedBox(height: 10),
                       Expanded(
@@ -371,17 +369,17 @@ class _GroupChatScreenState extends State<GroupChatScreen> with WidgetsBindingOb
                                 shrinkWrap: true,
                                 itemCount: filteredEmployees.length,
                                 itemBuilder: (context, index) {
-                                  String _cleanName(String name) =>
+                                  String cleanName(String name) =>
                                       name.replaceFirst(RegExp(r'^\d+\s*'), '').trim();
                                   final emp = filteredEmployees[index];
                                   final empName = context.locale.languageCode == 'ar'
-                                      ? _cleanName(emp.empName ?? 'الموظف')
-                                      : _cleanName(emp.empNameE ?? 'Employee');
+                                      ? cleanName(emp.empName ?? 'الموظف')
+                                      : cleanName(emp.empNameE ?? 'Employee');
                                   return ListTile(
                                     leading: CircleAvatar(
                                       child: Text(empName.isNotEmpty ? empName[0] : '?'),
                                     ),
-                                    title: Text(_cleanName(empName)),
+                                    title: Text(cleanName(empName)),
                                     onTap: () async {
                                       try {
                                         final state = cubit.state;

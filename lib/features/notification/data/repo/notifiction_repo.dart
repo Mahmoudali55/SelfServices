@@ -13,7 +13,7 @@ import 'package:my_template/features/notification/data/model/vacation_request_to
 
 import '../../../../core/error/failures.dart' hide handleDioRequest;
 
-abstract interface class NotifictionRepo {
+abstract interface class NotificationsRepo {
   Future<Either<Failure, ReqCountResponse>> getReqCounts({required int empId});
   Future<Either<Failure, List<VacationRequestToDecideModel>>> vacationRequestToDecideModel({
     required int empId,
@@ -50,7 +50,7 @@ abstract interface class NotifictionRepo {
   );
 }
 
-class NotifictionRepoImpl implements NotifictionRepo {
+class NotifictionRepoImpl implements NotificationsRepo {
   final ApiConsumer apiConsumer;
   NotifictionRepoImpl(this.apiConsumer);
 

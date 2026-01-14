@@ -4,7 +4,7 @@ import 'package:my_template/core/theme/app_text_style.dart';
 class SlidingTextWidget extends StatefulWidget {
   final String text;
 
-  const SlidingTextWidget({required this.text});
+  const SlidingTextWidget({super.key, required this.text});
 
   @override
   State<SlidingTextWidget> createState() => _SlidingTextWidgetState();

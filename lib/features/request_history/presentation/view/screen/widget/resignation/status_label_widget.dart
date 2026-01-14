@@ -5,7 +5,7 @@ class StatusLabel extends StatelessWidget {
   final String status;
   final Color color;
 
-  const StatusLabel({required this.status, required this.color});
+  const StatusLabel({super.key, required this.status, required this.color});
 
   @override
   Widget build(BuildContext context) {

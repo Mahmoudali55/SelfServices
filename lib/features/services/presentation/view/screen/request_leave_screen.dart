@@ -14,8 +14,7 @@ import 'package:my_template/core/utils/file_viewer_utils.dart';
 import 'package:my_template/core/utils/navigator_methods.dart';
 import 'package:my_template/features/services/data/model/request_leave/get_vacation_attachment_model.dart';
 import 'package:my_template/features/services/data/model/request_leave/vacation_request_model.dart';
-import 'package:my_template/features/services/data/model/request_leave/vacation_request_updata.dart'
-    hide AttachmentModel;
+import 'package:my_template/features/services/data/model/request_leave/vacation_request_updata.dart';
 import 'package:my_template/features/services/data/model/request_leave/vacation_requests_response_model.dart';
 import 'package:my_template/features/services/presentation/cubit/services_cubit.dart';
 import 'package:my_template/features/services/presentation/cubit/services_state.dart';
@@ -554,7 +553,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                       final balData = state.employeeBalStatus.data!;
                       if (balData.isNotEmpty) {
                         _ballController.text = balData
-                            .fold<double>(0, (sum, e) => sum + (e.column1 ?? 0))
+                            .fold<double>(0, (sum, e) => sum + (e.column1))
                             .toString();
                       }
                     }
@@ -564,7 +563,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                       final vacData = state.employeeVacationsStatus.data!;
                       if (vacData.isNotEmpty) {
                         _balanceController.text = vacData
-                            .fold<double>(0, (sum, e) => sum + (e.empVacBal ?? 0))
+                            .fold<double>(0, (sum, e) => sum + (e.empVacBal))
                             .toString();
                       }
                     }
@@ -825,7 +824,7 @@ class _RequestLeaveScreenState extends State<RequestLeaveScreen> {
                           widget.vacationRequestOrdersModel == null
                               ? const SizedBox.shrink()
                               : Padding(
-                                  padding: EdgeInsets.only(bottom: 0),
+                                  padding: const EdgeInsets.only(bottom: 0),
                                   child: GestureDetector(
                                     onTap: () async {
                                       final cubit = context.read<ServicesCubit>();

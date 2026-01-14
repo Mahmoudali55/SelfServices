@@ -19,7 +19,7 @@ import 'package:my_template/features/on_boarding/presentation/view/cubit/on_boar
 import 'package:my_template/features/profile/presentation/cubit/prefile_cubit.dart';
 import 'package:my_template/features/request_history/presentation/view/cubit/vacation_requests_cubit.dart';
 import 'package:my_template/features/services/presentation/cubit/services_cubit.dart';
-import 'package:my_template/features/setting/presentation/cubit/settting_cubit.dart';
+import 'package:my_template/features/setting/presentation/cubit/setting_cubit.dart';
 
 import 'core/cache/hive/hive_methods.dart';
 import 'core/routes/routes_name.dart';
@@ -66,7 +66,7 @@ class _SelfServicesState extends State<SelfServices> {
         BlocProvider(create: (context) => sl<ServicesCubit>()),
         BlocProvider(create: (context) => sl<VacationRequestsCubit>()),
         BlocProvider(create: (context) => sl<PrefileCubit>()),
-        BlocProvider(create: (context) => sl<NotifictionCubit>()),
+        BlocProvider(create: (context) => sl<NotificationsCubit>()),
         BlocProvider(create: (context) => sl<SettingCubit>()),
         BlocProvider(create: (context) => sl<ChatCubit>()),
         BlocProvider(create: (context) => sl<GroupCubit>()),

@@ -462,7 +462,7 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                             readOnly: true,
                             hintText: AppLocalKay.collateralname.tr(),
                             onTap: _openEmployeeSearch,
-                            suffixIcon: Icon(Icons.arrow_drop_down),
+                            suffixIcon: const Icon(Icons.arrow_drop_down),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return AppLocalKay.collateralname.tr();
@@ -512,7 +512,7 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                             readOnly: true,
                             hintText: AppLocalKay.collateralname2.tr(),
                             onTap: _openEmployee2Search,
-                            suffixIcon: Icon(Icons.arrow_drop_down),
+                            suffixIcon: const Icon(Icons.arrow_drop_down),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return AppLocalKay.collateral2.tr();
@@ -554,7 +554,7 @@ class _solfaRequestScreenState extends State<solfaRequestScreen> {
                     widget.solfaItem == null
                         ? const SizedBox.shrink()
                         : Padding(
-                            padding: EdgeInsets.only(bottom: 0),
+                            padding: const EdgeInsets.only(bottom: 0),
                             child: GestureDetector(
                               onTap: () async {
                                 final cubit = context.read<ServicesCubit>();

@@ -374,8 +374,8 @@ class _BackFromVacationScreenState extends State<BackFromVacationScreen> {
                                                   .toString();
                                               _requestOwnerController.text =
                                                   context.locale.languageCode == 'en'
-                                                  ? selected.empNameE ?? ''
-                                                  : selected.empName ?? '';
+                                                  ? selected.empNameE
+                                                  : selected.empName;
                                               idController.text = selected.empCode.toString();
                                               _returnDateController.text = '';
                                               _requestnumberController.text = selected.vacRequestId

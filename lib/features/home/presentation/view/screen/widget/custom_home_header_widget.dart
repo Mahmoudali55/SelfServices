@@ -44,13 +44,13 @@ class _CustomHomeHeaderWidgetState extends State<CustomHomeHeaderWidget> {
       }
 
       final empId = int.tryParse(HiveMethods.getEmpCode() ?? '0') ?? 0;
-      context.read<NotifictionCubit>().getReqCount(empId: empId);
-      context.read<NotifictionCubit>().getemployeeRequestsNotify(empId: empId);
-      context.read<NotifictionCubit>().getDynamicRequestToDecideModel(
+      context.read<NotificationsCubit>().getReqCount(empId: empId);
+      context.read<NotificationsCubit>().getemployeeRequestsNotify(empId: empId);
+      context.read<NotificationsCubit>().getDynamicRequestToDecideModel(
         empId: empId,
         requestType: 5007,
       );
-      context.read<NotifictionCubit>().getDynamicRequestToDecideModel(
+      context.read<NotificationsCubit>().getDynamicRequestToDecideModel(
         empId: empId,
         requestType: 5008,
       );
@@ -151,7 +151,7 @@ class _CustomHomeHeaderWidgetState extends State<CustomHomeHeaderWidget> {
   }
 
   Widget _buildNotificationIcon(BuildContext context) {
-    return BlocBuilder<NotifictionCubit, NotificationState>(
+    return BlocBuilder<NotificationsCubit, NotificationState>(
       builder: (context, state) {
         int cachedCount = HiveMethods.getNotificationCount() ?? 0;
 

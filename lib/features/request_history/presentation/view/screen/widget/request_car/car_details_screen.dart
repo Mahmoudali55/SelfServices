@@ -15,7 +15,6 @@ class CarDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final langCode = context.locale.languageCode;
-    final statusText = request.requestDesc ?? '';
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -36,17 +35,17 @@ class CarDetailsScreen extends StatelessWidget {
                 items: {
                   AppLocalKay.employeeName.tr(): langCode == 'en'
                       ? (request.empNameE ?? '-')
-                      : (request.empName ?? '-'),
-                  AppLocalKay.employeeCode.tr(): request.empCode?.toString() ?? '-',
+                      : (request.empName),
+                  AppLocalKay.employeeCode.tr(): request.empCode.toString(),
                 },
               ),
               PrintSection(
                 title: AppLocalKay.car.tr(),
                 items: {
-                  AppLocalKay.requestDate.tr(): request.requestDate ?? '-',
+                  AppLocalKay.requestDate.tr(): request.requestDate,
                   AppLocalKay.carType.tr(): langCode == 'en'
-                      ? (request.carTypeNameEng ?? '-')
-                      : (request.carTypeName ?? '-'),
+                      ? (request.carTypeNameEng)
+                      : (request.carTypeName),
                   AppLocalKay.reason.tr(): request.strNotes ?? '-',
                 },
               ),
@@ -54,7 +53,7 @@ class CarDetailsScreen extends StatelessWidget {
                 title: AppLocalKay.status.tr(),
 
                 items: {
-                  AppLocalKay.status.tr(): request.requestDesc ?? '-',
+                  AppLocalKay.status.tr(): request.requestDesc,
                   AppLocalKay.followedActions.tr(): request.actionNotes ?? '-',
                 },
               ),
@@ -70,17 +69,17 @@ class CarDetailsScreen extends StatelessWidget {
             items: {
               AppLocalKay.employeeName.tr(): langCode == 'en'
                   ? (request.empNameE ?? '-')
-                  : (request.empName ?? '-'),
-              AppLocalKay.employeeCode.tr(): request.empCode?.toString() ?? '-',
+                  : (request.empName),
+              AppLocalKay.employeeCode.tr(): request.empCode.toString(),
             },
           ),
           SectionWidget(
             title: AppLocalKay.car.tr(),
             items: {
-              AppLocalKay.requestDate.tr(): request.requestDate ?? '-',
+              AppLocalKay.requestDate.tr(): request.requestDate,
               AppLocalKay.carType.tr(): langCode == 'en'
-                  ? (request.carTypeNameEng ?? '-')
-                  : (request.carTypeName ?? '-'),
+                  ? (request.carTypeNameEng)
+                  : (request.carTypeName),
 
               AppLocalKay.reason.tr(): request.strNotes ?? '-',
             },
@@ -90,10 +89,10 @@ class CarDetailsScreen extends StatelessWidget {
             color: request.reqDecideState == 2
                 ? Colors.red
                 : request.reqDecideState == 1
-                ? Color.fromARGB(255, 2, 217, 9)
+                ? const Color.fromARGB(255, 2, 217, 9)
                 : const Color.fromARGB(255, 200, 194, 26),
             items: {
-              AppLocalKay.status.tr(): request.requestDesc ?? '-',
+              AppLocalKay.status.tr(): request.requestDesc,
               AppLocalKay.followedActions.tr(): request.actionNotes ?? '-',
             },
           ),

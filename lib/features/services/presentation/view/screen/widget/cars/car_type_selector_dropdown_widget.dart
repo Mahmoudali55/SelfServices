@@ -50,7 +50,7 @@ class CarTypeSelectorDropdown extends StatelessWidget {
             }
             return null;
           },
-          value: selectedCar,
+          initialValue: selectedCar,
           isDense: true,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),

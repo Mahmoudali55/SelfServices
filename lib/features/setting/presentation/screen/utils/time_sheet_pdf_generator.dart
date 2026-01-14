@@ -20,8 +20,8 @@ class TimeSheetPdfGenerator {
     final isRtl = isArabic || isUrdu;
 
     // Load fonts
-    final fontRegular = await rootBundle.load("assets/font/Cairo-Regular.ttf");
-    final fontBold = await rootBundle.load("assets/font/Cairo-Bold.ttf");
+    final fontRegular = await rootBundle.load('assets/font/Cairo-Regular.ttf');
+    final fontBold = await rootBundle.load('assets/font/Cairo-Bold.ttf');
     final ttfRegular = pw.Font.ttf(fontRegular);
     final ttfBold = pw.Font.ttf(fontBold);
 

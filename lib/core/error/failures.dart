@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
@@ -55,8 +54,7 @@ class ServerFailure extends Failure {
         default:
           return ServerFailure('Oops! There was an error, please try again.');
       }
-    } catch (e, stack) {
-  
+    } catch (e) {
       return ServerFailure('An unknown error occurred');
     }
   }
@@ -109,14 +107,12 @@ Future<Either<Failure, T>> handleDioRequest<T>({required Future<T> Function() re
     final response = await request();
     return Right(response);
   } on DioException catch (e) {
-  
     final serverMsg = ServerFailure._extractServerMessage(
       e.response?.data['Message'] ?? e.response?.data,
     );
-    if (serverMsg != null) ;
+    if (serverMsg != null) {}
     return Left(ServerFailure.fromDioError(e));
-  } catch (e, stack) {
-   
+  } catch (e) {
     return Left(ServerFailure(e.toString()));
   }
 }

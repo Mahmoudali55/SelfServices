@@ -15,8 +15,8 @@ class SalaryPdfGenerator {
     final isRtl = isArabic || isUrdu;
 
     // Load fonts
-    final fontRegular = await rootBundle.load("assets/font/Cairo-Regular.ttf");
-    final fontBold = await rootBundle.load("assets/font/Cairo-Bold.ttf");
+    final fontRegular = await rootBundle.load('assets/font/Cairo-Regular.ttf');
+    final fontBold = await rootBundle.load('assets/font/Cairo-Bold.ttf');
     final ttfRegular = pw.Font.ttf(fontRegular);
     final ttfBold = pw.Font.ttf(fontBold);
 
@@ -148,7 +148,7 @@ class SalaryPdfGenerator {
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
                       pw.Expanded(child: pw.Text(name ?? '')),
-                      pw.Text('${value?.toStringAsFixed(2) ?? "0.00"}'),
+                      pw.Text(value?.toStringAsFixed(2) ?? '0.00'),
                     ],
                   ),
                 );

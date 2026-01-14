@@ -676,4 +676,5 @@ class AppLocalKay {
   static const String loan_request_submit_success = 'loan_request_submit_success';
   static const String request_type = 'request_type';
   static const String servicess = 'servicess';
+  static const String face_already_exist = 'face_already_exist';
 }

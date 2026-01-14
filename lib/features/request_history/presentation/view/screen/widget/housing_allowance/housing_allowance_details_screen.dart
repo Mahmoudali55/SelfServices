@@ -34,25 +34,25 @@ class HousingAllowanceDetailsScreen extends StatelessWidget {
                 title: AppLocalKay.employee.tr(),
                 items: {
                   AppLocalKay.employeeName.tr(): langCode == 'en'
-                      ? (request.empNameE ?? '-')
-                      : (request.empName ?? '-'),
-                  AppLocalKay.employeeCode.tr(): request.empCode?.toString() ?? '-',
+                      ? (request.empNameE)
+                      : (request.empName),
+                  AppLocalKay.employeeCode.tr(): request.empCode.toString(),
                 },
               ),
               PrintSection(
                 title: AppLocalKay.vacation.tr(),
                 items: {
-                  AppLocalKay.requestDate.tr(): request.requestDate ?? '-',
-                  AppLocalKay.vacationAmount.tr(): request.sakanAmount?.toString() ?? '-',
-                  AppLocalKay.vacationPeriod.tr(): request.strAmountType ?? '-',
-                  AppLocalKay.reason.tr(): request.strNotes ?? '-',
+                  AppLocalKay.requestDate.tr(): request.requestDate,
+                  AppLocalKay.vacationAmount.tr(): request.sakanAmount.toString(),
+                  AppLocalKay.vacationPeriod.tr(): request.strAmountType,
+                  AppLocalKay.reason.tr(): request.strNotes,
                 },
               ),
               PrintSection(
                 title: AppLocalKay.status.tr(),
 
                 items: {
-                  AppLocalKay.status.tr(): request.requestDesc ?? '-',
+                  AppLocalKay.status.tr(): request.requestDesc,
                   AppLocalKay.followedActions.tr(): request.actionNotes ?? '-',
                 },
               ),
@@ -67,18 +67,18 @@ class HousingAllowanceDetailsScreen extends StatelessWidget {
             title: AppLocalKay.employee.tr(),
             items: {
               AppLocalKay.employeeName.tr(): langCode == 'en'
-                  ? (request.empNameE ?? '-')
-                  : (request.empName ?? '-'),
-              AppLocalKay.employeeCode.tr(): request.empCode?.toString() ?? '-',
+                  ? (request.empNameE )
+                  : (request.empName ),
+              AppLocalKay.employeeCode.tr(): request.empCode.toString() ,
             },
           ),
           SectionWidget(
             title: AppLocalKay.vacation.tr(),
             items: {
-              AppLocalKay.requestDate.tr(): request.requestDate ?? '-',
-              AppLocalKay.vacationAmount.tr(): request.sakanAmount?.toString() ?? '-',
-              AppLocalKay.vacationPeriod.tr(): request.strAmountType ?? '-',
-              AppLocalKay.reason.tr(): request.strNotes ?? '-',
+              AppLocalKay.requestDate.tr(): request.requestDate ,
+              AppLocalKay.vacationAmount.tr(): request.sakanAmount.toString() ,
+              AppLocalKay.vacationPeriod.tr(): request.strAmountType,
+              AppLocalKay.reason.tr(): request.strNotes ,
             },
           ),
           SectionWidget(
@@ -86,10 +86,10 @@ class HousingAllowanceDetailsScreen extends StatelessWidget {
             color: request.reqDecideState == 2
                 ? Colors.red
                 : request.reqDecideState == 1
-                ? Color.fromARGB(255, 2, 217, 9)
+                ? const Color.fromARGB(255, 2, 217, 9)
                 : const Color.fromARGB(255, 200, 194, 26),
             items: {
-              AppLocalKay.status.tr(): request.requestDesc ?? '-',
+              AppLocalKay.status.tr(): request.requestDesc ,
               AppLocalKay.followedActions.tr(): request.actionNotes ?? '-',
             },
           ),

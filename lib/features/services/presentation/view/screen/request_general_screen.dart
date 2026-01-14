@@ -22,7 +22,7 @@ import 'package:my_template/features/services/presentation/view/screen/widget/cu
 import 'package:my_template/features/services/presentation/view/screen/widget/request_leave/custom_fileForm_field_chips_widget.dart';
 
 class RequestGeneralScreen extends StatefulWidget {
-  const RequestGeneralScreen({Key? key, this.dynamicOrderModel}) : super(key: key);
+  const RequestGeneralScreen({super.key, this.dynamicOrderModel});
   final DynamicOrderModel? dynamicOrderModel;
   @override
   State<RequestGeneralScreen> createState() => _RequestGeneralScreenState();
@@ -58,8 +58,8 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
     if (model == null) return;
 
     requestNumber.text = model.requestId.toString();
-    notes.text = model.strNotes ?? '';
-    requestDescription.text = model.strField1 ?? '';
+    notes.text = model.strNotes;
+    requestDescription.text = model.strField1;
 
     if (model.requestDate.isNotEmpty) {
       try {
@@ -206,7 +206,7 @@ class _RequestGeneralScreenState extends State<RequestGeneralScreen> {
                     widget.dynamicOrderModel == null
                         ? const SizedBox.shrink()
                         : Padding(
-                            padding: EdgeInsets.only(bottom: 0),
+                            padding: const EdgeInsets.only(bottom: 0),
                             child: GestureDetector(
                               onTap: () async {
                                 final cubit = context.read<ServicesCubit>();

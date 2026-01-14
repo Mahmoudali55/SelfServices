@@ -34,6 +34,7 @@ class AuthRepoImpl implements AuthRepo {
     );
   }
 
+  @override
   Future<Either<Failure, EmpLoginModel>> empLogin({required int emp_id}) {
     return handleDioRequest<EmpLoginModel>(
       request: () async {

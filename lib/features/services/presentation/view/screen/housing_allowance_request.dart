@@ -53,7 +53,7 @@ class _HousingAllowanceRequestScreenState extends State<HousingAllowanceRequestS
     if (widget.model != null) {
       final model = widget.model!;
       _requestIdController.text = model.requestID.toString();
-      _noteController.text = model.strNotes ?? '';
+      _noteController.text = model.strNotes;
       _amountController.text = model.sakanAmount.toString();
 
       if (model.requestDate.isNotEmpty) {
@@ -130,7 +130,7 @@ class _HousingAllowanceRequestScreenState extends State<HousingAllowanceRequestS
                   widget.model == null
                       ? const SizedBox.shrink()
                       : Padding(
-                          padding: EdgeInsets.only(bottom: 0),
+                          padding: const EdgeInsets.only(bottom: 0),
                           child: GestureDetector(
                             onTap: () async {
                               final cubit = context.read<ServicesCubit>();

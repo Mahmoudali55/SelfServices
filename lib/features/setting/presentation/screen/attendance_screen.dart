@@ -24,7 +24,7 @@ import 'package:my_template/features/services/presentation/view/screen/widget/tr
 import 'package:my_template/features/setting/data/model/time_sheet_in_request.dart';
 import 'package:my_template/features/setting/data/model/time_sheet_out_request.dart';
 import 'package:my_template/features/setting/data/model/time_sheet_response.dart';
-import 'package:my_template/features/setting/presentation/cubit/settting_cubit.dart';
+import 'package:my_template/features/setting/presentation/cubit/setting_cubit.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/add_device_bottom_sheet.dart';
 import 'package:my_template/features/setting/presentation/screen/widget/attendance_button_widget.dart';
 

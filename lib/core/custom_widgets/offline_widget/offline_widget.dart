@@ -42,8 +42,8 @@ class OfflineWidget extends StatelessWidget {
                 Expanded(
                   child: Text(
                     context.apiTr(
-                      ar: "تأكد من الاتصال بالإنترنت",
-                      en: "Make sure you are connected to the internet",
+                      ar: 'تأكد من الاتصال بالإنترنت',
+                      en: 'Make sure you are connected to the internet',
                     ),
                     style: TextStyle(
                       color: AppTheme.getByTheme(
@@ -107,8 +107,8 @@ class OfflineWidget extends StatelessWidget {
               const SizedBox(height: 10),
               Text(
                 context.apiTr(
-                  ar: "تأكد من الاتصال بالإنترنت",
-                  en: "Make sure you are connected to the internet",
+                  ar: 'تأكد من الاتصال بالإنترنت',
+                  en: 'Make sure you are connected to the internet',
                 ),
                 style: TextStyle(
                   color: AppTheme.getByTheme(
@@ -124,7 +124,7 @@ class OfflineWidget extends StatelessWidget {
               const SizedBox(height: 10),
               CustomButton(
                 width: MediaQuery.of(context).size.width * 0.5,
-                text: context.apiTr(ar: "إعادة تحميل", en: "Reload"),
+                text: context.apiTr(ar: 'إعادة تحميل', en: 'Reload'),
                 prefixIcon: SvgPicture.asset(
                   AppImages.assetsGlobalIconRefreshIcon,
                   colorFilter: ColorFilter.mode(AppColor.buttonTextColor(context), BlendMode.srcIn),

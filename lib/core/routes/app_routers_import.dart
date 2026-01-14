@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:my_template/core/routes/routes_name.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
-import 'package:my_template/features/attendance/view/employees_face_registration_screen.dart';
 import 'package:my_template/features/attendance/view/face_recognition_attendance_screen.dart';
 import 'package:my_template/features/auth/presentation/view/screen/login_screen.dart';
 import 'package:my_template/features/home/presentation/view/screen/home_screen.dart';

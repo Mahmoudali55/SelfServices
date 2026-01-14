@@ -31,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     final cubit = context.read<AuthCubit>();
 

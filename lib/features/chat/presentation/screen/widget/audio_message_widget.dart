@@ -144,8 +144,8 @@ class _FixedWavePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final barWidth = 3.0;
-    final gap = 2.0;
+    const barWidth = 3.0;
+    const gap = 2.0;
     final bars = (size.width / (barWidth + gap)).floor();
 
     for (int i = 0; i < bars; i++) {

@@ -17,7 +17,7 @@ class GroupCubit extends Cubit<GroupState> {
 
   List<GroupModel> groups = [];
   Map<String, List<ChatMessage>> groupMessages = {};
-  Map<String, StreamSubscription<List<ChatMessage>>> _messagesSubscriptions = {};
+  final Map<String, StreamSubscription<List<ChatMessage>>> _messagesSubscriptions = {};
 
   final Set<String> _selectedMessageIds = {};
 
@@ -30,7 +30,7 @@ class GroupCubit extends Cubit<GroupState> {
     });
   }
 
-  void listenToGroupss() {
+  void listenToGroupsWithMessages() {
     repository.getUserGroups(currentUserId).listen((groupList) {
       groups = groupList;
 
@@ -163,7 +163,7 @@ class GroupCubit extends Cubit<GroupState> {
 
   Future<void> updateMessage(String groupId, ChatMessage oldMessage, String newText) async {
     try {
-      final updated = oldMessage.copyWith(message: newText ?? '', isEdited: true);
+      final updated = oldMessage.copyWith(message: newText, isEdited: true);
       await repository.updateGroupMessage(groupId, updated);
       final updatedMessages = groupMessages[groupId]
           ?.map((msg) => msg.id == updated.id ? updated : msg)
@@ -306,7 +306,7 @@ class GroupCubit extends Cubit<GroupState> {
 
   Future<void> markMessageAsRead(String groupId, ChatMessage msg) async {
     if (msg.isRead) return;
-    final updatedMsg = msg.copyWith(isRead: true);
+
     await FirebaseFirestore.instance
         .collection('groups')
         .doc(groupId)

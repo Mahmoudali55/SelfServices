@@ -108,7 +108,7 @@ class PendingRequestCard extends StatelessWidget {
                     label: AppLocalKay.accept.tr(),
                     color: AppColor.greenColor(context),
                     onTap: () {
-                      context.read<NotifictionCubit>().decidingIn(
+                      context.read<NotificationsCubit>().decidingIn(
                         request: DecidingInRequestModel(
                           requestType: request.requestType ?? 0,
                           requestId: request.requestId ?? 0,
@@ -149,7 +149,7 @@ class PendingRequestCard extends StatelessWidget {
     final notes = await showNotesBottomSheet(context);
     if (notes == null) return;
 
-    context.read<NotifictionCubit>().decidingIn(
+    context.read<NotificationsCubit>().decidingIn(
       request: DecidingInRequestModel(
         requestType: request.requestType ?? 0,
         requestId: request.requestId ?? 0,

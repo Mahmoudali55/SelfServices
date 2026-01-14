@@ -38,7 +38,7 @@ class RequestHistoryDetilesScreen extends StatelessWidget {
                   items: {
                     AppLocalKay.employee_name.tr(): request.empName,
                     AppLocalKay.employee_name_en.tr(): request.empNameE ?? '',
-                    AppLocalKay.employee_code.tr(): request.empCode?.toString() ?? '',
+                    AppLocalKay.employee_code.tr(): request.empCode.toString() ?? '',
                     AppLocalKay.department_name.tr(): request.dName,
                     AppLocalKay.department_name_en.tr(): request.dNameE ?? '',
                   },
@@ -46,12 +46,12 @@ class RequestHistoryDetilesScreen extends StatelessWidget {
                 PrintSection(
                   title: AppLocalKay.vacation_data.tr(),
                   items: {
-                    AppLocalKay.request_number.tr(): request.vacRequestId?.toString() ?? '',
+                    AppLocalKay.request_number.tr(): request.vacRequestId.toString() ?? '',
                     AppLocalKay.vacation_type.tr(): request.vacTypeName,
                     AppLocalKay.request_date.tr(): request.vacRequestDate,
                     AppLocalKay.from_date.tr(): request.vacRequestDateFrom,
                     AppLocalKay.to_date.tr(): request.vacRequestDateTo,
-                    AppLocalKay.days_count.tr(): request.vacDayCount?.toString() ?? '',
+                    AppLocalKay.days_count.tr(): request.vacDayCount.toString() ?? '',
                     AppLocalKay.notes.tr(): request.strNotes,
                   },
                 ),
@@ -68,7 +68,7 @@ class RequestHistoryDetilesScreen extends StatelessWidget {
                   items: {
                     AppLocalKay.alternative_name.tr(): request.alternativeEmpName,
                     AppLocalKay.alternative_name_en.tr(): request.alternativeEmpNameE ?? '',
-                    AppLocalKay.alternative_code.tr(): request.alternativeEmpCode?.toString() ?? '',
+                    AppLocalKay.alternative_code.tr(): request.alternativeEmpCode.toString() ?? '',
                   },
                 ),
               ],
@@ -84,7 +84,7 @@ class RequestHistoryDetilesScreen extends StatelessWidget {
             items: {
               AppLocalKay.employee_name.tr(): request.empName,
               AppLocalKay.employee_name_en.tr(): request.empNameE ?? '',
-              AppLocalKay.employee_code.tr(): request.empCode?.toString() ?? '',
+              AppLocalKay.employee_code.tr(): request.empCode.toString() ?? '',
               AppLocalKay.department_name.tr(): request.dName,
               AppLocalKay.department_name_en.tr(): request.dNameE ?? '',
             },
@@ -92,12 +92,12 @@ class RequestHistoryDetilesScreen extends StatelessWidget {
           SectionWidget(
             title: AppLocalKay.vacation_data.tr(),
             items: {
-              AppLocalKay.request_number.tr(): request.vacRequestId?.toString() ?? '',
+              AppLocalKay.request_number.tr(): request.vacRequestId.toString() ?? '',
               AppLocalKay.vacation_type.tr(): request.vacTypeName,
               AppLocalKay.request_date.tr(): request.vacRequestDate,
               AppLocalKay.from_date.tr(): request.vacRequestDateFrom,
               AppLocalKay.to_date.tr(): request.vacRequestDateTo,
-              AppLocalKay.days_count.tr(): request.vacDayCount?.toString() ?? '',
+              AppLocalKay.days_count.tr(): request.vacDayCount.toString() ?? '',
               AppLocalKay.notes.tr(): request.strNotes,
             },
           ),
@@ -106,7 +106,7 @@ class RequestHistoryDetilesScreen extends StatelessWidget {
             color: request.reqDecideState == 2
                 ? Colors.red
                 : request.reqDecideState == 1
-                ? Color.fromARGB(255, 2, 217, 9)
+                ? const Color.fromARGB(255, 2, 217, 9)
                 : const Color.fromARGB(255, 200, 194, 26),
             items: {
               AppLocalKay.status.tr(): request.requestDesc,
@@ -118,7 +118,7 @@ class RequestHistoryDetilesScreen extends StatelessWidget {
             items: {
               AppLocalKay.alternative_name.tr(): request.alternativeEmpName,
               AppLocalKay.alternative_name_en.tr(): request.alternativeEmpNameE ?? '',
-              AppLocalKay.alternative_code.tr(): request.alternativeEmpCode?.toString() ?? '',
+              AppLocalKay.alternative_code.tr(): request.alternativeEmpCode.toString() ?? '',
             },
           ),
         ],

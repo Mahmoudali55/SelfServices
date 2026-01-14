@@ -82,8 +82,8 @@ class HousingAllowanceRequestItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (request.reqDicidState == 4 && (request.actionNotes?.isNotEmpty ?? false))
-              AnimatedActionNote(text: request.actionNotes!),
+            if (request.reqDicidState == 4 && (request.actionNotes.isNotEmpty ?? false))
+              AnimatedActionNote(text: request.actionNotes),
             Padding(
               padding: const EdgeInsets.all(15),
               child: Column(

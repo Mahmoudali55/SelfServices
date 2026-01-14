@@ -58,7 +58,6 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
   @override
   Widget build(BuildContext context) {
     final currentUserId = widget.currentUserId;
-    final chatCubit = context.read<ChatCubit>();
 
     return Scaffold(
       floatingActionButton: Padding(
@@ -185,9 +184,6 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
                 final chattedEmployees = filteredEmployees
                     .where((emp) => lastMessageMap.containsKey(emp.empCode))
                     .toList();
-                final nonChattedEmployees = filteredEmployees
-                    .where((emp) => !lastMessageMap.containsKey(emp.empCode))
-                    .toList();
 
                 chattedEmployees.sort((a, b) {
                   final msgA = lastMessageMap[a.empCode]?.timestamp ?? DateTime(1970);
@@ -207,7 +203,10 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
                                 AppImages.assetsGlobalIconEmptyFolderIcon,
                                 height: 200,
                                 width: 200,
-                                color: AppColor.primaryColor(context),
+                                colorFilter: ColorFilter.mode(
+                                  AppColor.primaryColor(context),
+                                  BlendMode.srcIn,
+                                ),
                               ),
                               Gap(10.h),
                               Text(
@@ -551,7 +550,7 @@ class _UnifiedEmployeesPageState extends State<UnifiedEmployeesPage> {
                             final empName = _cleanName(emp.empName ?? '');
                             final empNameE = _cleanName(emp.empNameE ?? '');
                             final initials = _getInitialss(
-                              context.locale.languageCode == 'ar' ? empName : empNameE ?? '',
+                              context.locale.languageCode == 'ar' ? empName : empNameE,
                             );
 
                             return ListTile(

@@ -52,7 +52,7 @@ Widget buildRequestList(
             arguments: {'type': r.type},
           );
           if (shouldRefresh == true) {
-            context.read<NotifictionCubit>().getReqCount(empId: empId);
+            context.read<NotificationsCubit>().getReqCount(empId: empId);
           }
         },
       ),
@@ -73,11 +73,11 @@ Widget buildRequestList(
             arguments: {'type': RequestType.dynamicRequest},
           );
           if (shouldRefresh == true) {
-            context.read<NotifictionCubit>().getDynamicRequestToDecideModel(
+            context.read<NotificationsCubit>().getDynamicRequestToDecideModel(
               empId: empId,
               requestType: 5007,
             );
-            context.read<NotifictionCubit>().getReqCount(empId: empId);
+            context.read<NotificationsCubit>().getReqCount(empId: empId);
           }
         },
       ),
@@ -98,11 +98,11 @@ Widget buildRequestList(
             arguments: {'type': RequestType.changeIdPhoneRequest},
           );
           if (shouldRefresh == true) {
-            context.read<NotifictionCubit>().getDynamicRequestToDecideModel(
+            context.read<NotificationsCubit>().getDynamicRequestToDecideModel(
               empId: empId,
               requestType: 5008,
             );
-            context.read<NotifictionCubit>().getReqCount(empId: empId);
+            context.read<NotificationsCubit>().getReqCount(empId: empId);
           }
         },
       ),

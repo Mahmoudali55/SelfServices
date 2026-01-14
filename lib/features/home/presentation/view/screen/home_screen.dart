@@ -102,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
     final homeCubit = context.read<HomeCubit>();
     final servicesCubit = context.read<ServicesCubit>();
     final profileCubit = context.read<PrefileCubit>();
-    final notificationCubit = context.read<NotifictionCubit>();
+    final notificationCubit = context.read<NotificationsCubit>();
 
     // إعادة تعيين flags للسماح بإعادة التحميل
     await Future.wait([
@@ -186,8 +186,9 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
               BlocBuilder<HomeCubit, HomeState>(
                 builder: (context, state) {
                   final newsList = state.newsStatus.data ?? [];
-                  if (state.newsStatus.isLoading)
+                  if (state.newsStatus.isLoading) {
                     return const Center(child: CircularProgressIndicator());
+                  }
                   if (state.newsStatus.isFailure || newsList.isEmpty) {
                     return SizedBox(
                       height: 30.h,

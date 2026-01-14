@@ -26,13 +26,13 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<NotifictionCubit>().fetchRequests(widget.type);
+    context.read<NotificationsCubit>().fetchRequests(widget.type);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BlocBuilder<NotifictionCubit, NotificationState>(
+      bottomNavigationBar: BlocBuilder<NotificationsCubit, NotificationState>(
         builder: (context, state) {
           final status = _extractStatus(state);
           final requests = status.$2;
@@ -58,7 +58,7 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
                           ),
                           onPressed: () async {
                             final notes = await showNotesBottomSheet(context);
-                            context.read<NotifictionCubit>().decidingAll(
+                            context.read<NotificationsCubit>().decidingAll(
                               notes: notes ?? '',
                               requests: requests,
                               requestType: widget.type,
@@ -84,7 +84,7 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
                           ),
                           onPressed: () async {
                             final notes = await showNotesBottomSheet(context);
-                            context.read<NotifictionCubit>().decidingAll(
+                            context.read<NotificationsCubit>().decidingAll(
                               notes: notes ?? '',
                               requests: requests,
                               requestType: widget.type,
@@ -110,7 +110,7 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
           style: AppTextStyle.text18MSecond(context, color: AppColor.blackColor(context)),
         ),
       ),
-      body: BlocBuilder<NotifictionCubit, NotificationState>(
+      body: BlocBuilder<NotificationsCubit, NotificationState>(
         builder: (context, state) {
           final status = _extractStatus(state);
           final isLoading = status.$1;
@@ -132,7 +132,7 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: () async =>
-                      context.read<NotifictionCubit>().fetchRequests(widget.type),
+                      context.read<NotificationsCubit>().fetchRequests(widget.type),
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: requests.length,

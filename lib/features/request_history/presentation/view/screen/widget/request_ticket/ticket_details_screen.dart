@@ -84,7 +84,7 @@ class TicketDetailsScreen extends StatelessWidget {
             color: request.reqDecideState == 2
                 ? Colors.red
                 : request.reqDecideState == 1
-                ? Color.fromARGB(255, 2, 217, 9)
+                ? const Color.fromARGB(255, 2, 217, 9)
                 : const Color.fromARGB(255, 200, 194, 26),
             items: {
               AppLocalKay.status.tr(): statusText,

@@ -31,7 +31,7 @@ import 'package:my_template/features/services/presentation/cubit/services_state.
 import 'package:my_template/features/setting/data/model/time_sheet_in_request.dart';
 import 'package:my_template/features/setting/data/model/time_sheet_out_request.dart';
 import 'package:my_template/features/setting/data/model/time_sheet_response.dart';
-import 'package:my_template/features/setting/presentation/cubit/settting_cubit.dart';
+import 'package:my_template/features/setting/presentation/cubit/setting_cubit.dart';
 import 'package:uuid/uuid.dart';
 
 class FaceRecognitionAttendanceScreen extends StatefulWidget {
@@ -60,9 +60,9 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
   int _consecutiveNoMatchCount = 0; // To trigger registration delay
   Timer? _registrationDelayTimer;
 
-  File? _capturedAttendanceImage;
-  List<double>? _capturedAttendanceFeatures;
-  double? _capturedAttendanceQuality;
+  File? capturedAttendanceImage;
+  List<double>? capturedAttendanceFeatures;
+  double? capturedAttendanceQuality;
   Timer? _overlayTimer;
 
   // Pending registration data
@@ -140,7 +140,7 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
   Future<void> _startScanning() async {
     setState(() {
       isScanning = true;
-      _capturedAttendanceImage = null;
+      capturedAttendanceImage = null;
       _showFailureOverlay = false;
       _showSuccessOverlay = false;
       _consecutiveNoMatchCount = 0;
@@ -182,28 +182,6 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
 
     final cubit = context.read<FaceRecognitionCubit>();
     await cubit.disposeResources();
-  }
-
-  void _toggleStudentAttendance(String studentId, bool isPresent) {
-    if (isPresent) {
-      // Show validation message for manual presence
-      CommonMethods.showToast(
-        message: AppLocalKay.manual_attendance_disabled.tr(),
-        seconds: 5,
-        type: ToastType.error,
-      );
-      return;
-    }
-
-    setState(() {
-      final record = attendanceRecords[studentId]!;
-      attendanceRecords[studentId] = record.copyWith(
-        status: AttendanceStatus.absent,
-        recognitionMethod: RecognitionMethod.manual,
-        checkInTime: null,
-      );
-      recognizedStudents.remove(studentId);
-    });
   }
 
   Future<String> getDeviceId() async {
@@ -257,7 +235,9 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
       bool permissionGranted = await _checkLocationPermission();
       if (!permissionGranted) return;
 
-      final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      final pos = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+      );
       final lat = double.parse(pos.latitude.toStringAsFixed(8));
       final lng = double.parse(pos.longitude.toStringAsFixed(8));
 
@@ -649,8 +629,8 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
 
                                       if (alreadyHasFace) {
                                         CommonMethods.showToast(
-                                          message:
-                                              'عذرا هذا الموظف له بصمة وجه من قبل', // As requested
+                                          message: AppLocalKay.face_already_exist
+                                              .tr(), // As requested
                                           type: ToastType.error,
                                         );
                                         return;
@@ -716,24 +696,6 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
     );
   }
 
-  Map<String, int> _getStats() {
-    // Only count students who have a registered face (the ones visible in the list)
-    final activeRecords = attendanceRecords.values.where((r) {
-      return registeredFaces.containsKey(r.studentId);
-    }).toList();
-
-    final present = activeRecords.where((r) => r.status == AttendanceStatus.present).length;
-    final absent = activeRecords.where((r) => r.status == AttendanceStatus.absent).length;
-    final total = activeRecords.length;
-
-    return {
-      'total': total,
-      'present': present,
-      'absent': absent,
-      'percentage': total > 0 ? ((present / total) * 100).round() : 0,
-    };
-  }
-
   @override
   void dispose() {
     _scanTimer?.cancel();
@@ -779,7 +741,7 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
 
                     if (!recognizedStudents.contains(studentId)) {
                       setState(() {
-                        _capturedAttendanceImage = state.imageFile;
+                        capturedAttendanceImage = state.imageFile;
                       });
 
                       // Call the API marking logic immediately
@@ -897,9 +859,9 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: AppColor.primaryColor(context).withOpacity(0.05),
+        color: AppColor.primaryColor(context).withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: AppColor.primaryColor(context).withOpacity(0.1)),
+        border: Border.all(color: AppColor.primaryColor(context).withValues(alpha: 0.1)),
       ),
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Column(
@@ -1057,7 +1019,7 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
     required AttendanceRecordModel record,
   }) {
     final isPresent = record.status == AttendanceStatus.present;
-    final isAutoDetected = record.recognitionMethod == RecognitionMethod.faceRecognition;
+
     final faceModel = registeredFaces[studentId];
     final hasRegisteredFace = faceModel != null;
 
@@ -1096,7 +1058,7 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
                         )
                       : null,
                 ),
-                child: !hasRegisteredFace ? Icon(Icons.person, color: Colors.grey) : null,
+                child: !hasRegisteredFace ? const Icon(Icons.person, color: Colors.grey) : null,
               ),
             ],
           ),

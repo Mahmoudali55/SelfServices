@@ -133,7 +133,7 @@ class _ResignationRequestScreenState extends State<ResignationRequestScreen> {
                   widget.resignationModel == null
                       ? const SizedBox.shrink()
                       : Padding(
-                          padding: EdgeInsets.only(bottom: 0),
+                          padding: const EdgeInsets.only(bottom: 0),
                           child: GestureDetector(
                             onTap: () async {
                               final cubit = context.read<ServicesCubit>();

@@ -27,7 +27,7 @@ class RequestTypeDropdown extends StatelessWidget {
           labelStyle: AppTextStyle.text18MSecond(context, color: AppColor.primaryColor(context)),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
-        value: selectedType,
+        initialValue: selectedType,
         items: requestTypes
             .map((type) => DropdownMenuItem(value: type, child: Text(type)))
             .toList(),

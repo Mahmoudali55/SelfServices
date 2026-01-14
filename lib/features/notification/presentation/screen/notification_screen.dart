@@ -19,7 +19,7 @@ class NotificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (pagePrivID != 1) {
-      return BlocBuilder<NotifictionCubit, NotificationState>(
+      return BlocBuilder<NotificationsCubit, NotificationState>(
         builder: (context, state) {
           final status = state.reqCountStatus;
           final requestStatuses = state.employeeRequestsNotify;
@@ -62,7 +62,7 @@ class NotificationScreen extends StatelessWidget {
     } else {
       return DefaultTabController(
         length: 2,
-        child: BlocBuilder<NotifictionCubit, NotificationState>(
+        child: BlocBuilder<NotificationsCubit, NotificationState>(
           builder: (context, state) {
             final status = state.reqCountStatus;
             final requestStatuses = state.employeeRequestsNotify;
@@ -83,7 +83,7 @@ class NotificationScreen extends StatelessWidget {
                   preferredSize: const Size.fromHeight(60),
                   child: Padding(
                     padding: const EdgeInsets.all(10),
-                    child: BlocBuilder<NotifictionCubit, NotificationState>(
+                    child: BlocBuilder<NotificationsCubit, NotificationState>(
                       builder: (context, state) {
                         final dataList = state.reqCountStatus.data?.data ?? [];
                         final dynamic5007 = state.requestDynamic5007.data ?? [];

@@ -45,7 +45,7 @@ Future<Either<Failure, T>> handleDioRequest<T>({required Future<T> Function() re
 
     // هنا بنمرر الرسالة اللي رجعت من السيرفر
     return Left(ServerFailure(serverMsg));
-  } catch (e, stack) {
+  } catch (e) {
     return Left(ServerFailure(e.toString()));
   }
 }

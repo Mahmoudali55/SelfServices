@@ -9,7 +9,7 @@ import 'package:my_template/features/notification/data/model/employee_requests_n
 import 'package:my_template/features/notification/data/repo/notifiction_repo.dart';
 
 class RequestStatusMonitor {
-  final NotifictionRepo _repo;
+  final NotificationsRepo _repo;
   Timer? _timer;
   static const Duration _checkInterval = Duration(seconds: 10);
   final Box _box = Hive.box('app');
@@ -120,7 +120,7 @@ class RequestStatusMonitor {
 
     NotificationService.showRequestNotification(
       title: 'تحديث حالة الطلب: $requestName',
-      body: '${request.requestDesc}',
+      body: request.requestDesc,
       requestId: request.vacRequestId,
       reqType: request.reqtype,
     );

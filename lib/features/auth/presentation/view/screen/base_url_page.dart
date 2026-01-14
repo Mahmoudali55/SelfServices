@@ -46,7 +46,7 @@ class BaseUrlPage extends StatelessWidget {
                     if (value == null || value.trim().isEmpty) {
                       return AppLocalKay.url_empty.tr();
                     }
-                    final pattern = r'^(http|https)://[^\s/$.?#].[^\s]*$';
+                    const pattern = r'^(http|https)://[^\s/$.?#].[^\s]*$';
                     final regExp = RegExp(pattern);
                     if (!regExp.hasMatch(value.trim())) {
                       return AppLocalKay.url_invalid.tr();

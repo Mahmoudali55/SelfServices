@@ -19,7 +19,7 @@ class RequestBackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int status = request.reqDecideState as int? ?? 0;
+    final int status = request.reqDecideState ?? 0;
     final statusColor = _statusColor(status);
 
     return Container(

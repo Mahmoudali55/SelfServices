@@ -24,7 +24,7 @@ import 'package:my_template/features/request_history/presentation/view/cubit/vac
 import 'package:my_template/features/services/data/repo/services_repo.dart';
 import 'package:my_template/features/services/presentation/cubit/services_cubit.dart';
 import 'package:my_template/features/setting/data/repo/setting_repo.dart';
-import 'package:my_template/features/setting/presentation/cubit/settting_cubit.dart';
+import 'package:my_template/features/setting/presentation/cubit/setting_cubit.dart';
 import 'package:my_template/features/attendance/data/repository/face_recognition_repo.dart';
 import 'package:my_template/features/attendance/data/repository/attendance_repo.dart';
 import 'package:my_template/features/attendance/cubit/face_recognition_cubit.dart';

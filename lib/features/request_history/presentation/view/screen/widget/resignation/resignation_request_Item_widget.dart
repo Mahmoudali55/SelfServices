@@ -23,7 +23,7 @@ class ResignationRequestItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int statusText = request.reqDecideState ?? 0;
+    final int statusText = request.reqDecideState;
     final statusColor = _getStatusColor(statusText);
     final isEditable = request.reqDecideState == 3;
     final isEn = context.locale.languageCode == 'en';
@@ -49,7 +49,7 @@ class ResignationRequestItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  HeaderRowWidget(),
+                  const HeaderRowWidget(),
                   const Divider(height: 20, thickness: 1),
                   Details(request: request, isEn: isEn),
                   Container(
@@ -61,7 +61,7 @@ class ResignationRequestItem extends StatelessWidget {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: request.requestDesc ?? '',
+                                text: request.requestDesc,
                                 style: AppTextStyle.text14RGrey(
                                   context,
                                   color: statusColor,

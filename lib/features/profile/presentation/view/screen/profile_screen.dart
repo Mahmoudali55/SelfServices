@@ -78,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               CustomTittelAndSubTittelWidget(
                                 icon: Icons.code,
                                 title: AppLocalKay.empCode.tr(),
-                                value: item.empCode.toString() ?? '',
+                                value: item.empCode.toString(),
                               ),
                               const Divider(),
                               CustomTittelAndSubTittelWidget(

@@ -31,12 +31,12 @@ class RequestToIssueTicketsScreen extends StatefulWidget {
 class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _requestIdController = TextEditingController();
-  final TextEditingController _startDateController = TextEditingController();
+  final TextEditingController startDateController = TextEditingController();
   final TextEditingController countController = TextEditingController();
   final TextEditingController countryController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  DateTime? _startDate;
+  DateTime? startDate;
   String? selectedPlace;
   final List<String> travelPlaces = [AppLocalKay.travel_type.tr(), AppLocalKay.travel_type1.tr()];
   final attachmentController = TextEditingController();
@@ -65,12 +65,12 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
 
       // ✅ توحيد قراءة التاريخين
       try {
-        _startDateController.text = DateFormat(
+        startDateController.text = DateFormat(
           'dd/MM/yyyy',
           'en',
         ).parse(model.travelDate).toIso8601String().substring(0, 10);
       } catch (_) {
-        _startDateController.text = model.travelDate;
+        startDateController.text = model.travelDate;
       }
 
       try {
@@ -89,7 +89,7 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
   @override
   void dispose() {
     _dateController.dispose();
-    _startDateController.dispose();
+    startDateController.dispose();
     countController.dispose();
     countryController.dispose();
     noteController.dispose();
@@ -152,7 +152,7 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
             noteController.clear();
             countController.clear();
             countryController.clear();
-            _startDateController.clear();
+            startDateController.clear();
           },
           isLoading:
               context.watch<ServicesCubit>().state.addnewTicketStatus.isLoading ||
@@ -206,7 +206,7 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
                     empCode: widget.empCode ?? 0,
                     requestDate: _dateController.text,
                     ticketCount: int.parse(countController.text),
-                    travelDate: _startDateController.text,
+                    travelDate: startDateController.text,
                     ticketPath: countryController.text,
                     goBack: goBack,
                     strNotes: noteController.text,
@@ -221,7 +221,7 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
                     empCode: widget.empCode ?? 0,
                     requestDate: _dateController.text,
                     ticketCount: int.parse(countController.text),
-                    travelDate: _startDateController.text,
+                    travelDate: startDateController.text,
                     ticketPath: countryController.text,
                     goBack: goBack,
                     strNotes: noteController.text,
@@ -291,7 +291,7 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
 
                 CustomFormField(title: AppLocalKay.ticket_number.tr(), controller: countController),
                 CustomFormField(
-                  controller: _startDateController,
+                  controller: startDateController,
                   readOnly: true,
                   onTap: () async {
                     final today = DateTime.now();
@@ -303,8 +303,8 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
                     );
                     if (selectedDate != null) {
                       setState(() {
-                        _startDate = selectedDate;
-                        _startDateController.text = DateFormat(
+                        startDate = selectedDate;
+                        startDateController.text = DateFormat(
                           'yyyy-MM-dd',
                           'en',
                         ).format(selectedDate);
@@ -356,7 +356,7 @@ class _RequestToIssueTicketsScreenState extends State<RequestToIssueTicketsScree
                     widget.allTicketModel == null
                         ? const SizedBox.shrink()
                         : Padding(
-                            padding: EdgeInsets.only(bottom: 0),
+                            padding: const EdgeInsets.only(bottom: 0),
                             child: GestureDetector(
                               onTap: () async {
                                 final cubit = context.read<ServicesCubit>();

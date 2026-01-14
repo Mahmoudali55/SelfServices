@@ -681,5 +681,6 @@
   "update_resignation_success": "تم تحديث الاستقالة بنجاح",
   "ur": "الأوردو",
   "you": "أنت",
-  "your_rating_has_been_recorded": "تم تسجيل تقييمك بنجاح"
+  "your_rating_has_been_recorded": "تم تسجيل تقييمك بنجاح",
+  "face_already_exist":"عذرا هذا الموظف له بصمة وجه من قبل"
 }

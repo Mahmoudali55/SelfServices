@@ -82,7 +82,7 @@ class SalarySectionWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    '${AppLocalKay.total.tr()} ${title}',
+                    '${AppLocalKay.total.tr()} $title',
                     style: AppTextStyle.text14MPrimary(
                       context,
                     ).copyWith(color: AppColor.blackColor(context)),

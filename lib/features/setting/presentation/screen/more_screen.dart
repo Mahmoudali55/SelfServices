@@ -197,7 +197,7 @@ class _MoreScreenState extends State<MoreScreen> {
                 AppLocalKay.AppVersion.tr(),
                 style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
               ),
-              subtitle: Text('$appVersion'),
+              subtitle: Text(appVersion),
             ),
             ListTile(
               leading: _circleIcon(Icons.copyright, Colors.grey),

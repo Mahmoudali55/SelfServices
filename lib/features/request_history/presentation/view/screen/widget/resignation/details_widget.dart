@@ -8,7 +8,7 @@ class Details extends StatelessWidget {
   final GetAllResignationModel request;
   final bool isEn;
 
-  const Details({required this.request, required this.isEn});
+  const Details({super.key, required this.request, required this.isEn});
 
   @override
   Widget build(BuildContext context) {

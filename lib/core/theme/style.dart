@@ -32,7 +32,7 @@ ThemeData appThemeData(BuildContext context) {
       ),
     ),
     appBarTheme: AppBarTheme(
-      color: AppColor.secondAppColor(context),
+      backgroundColor: AppColor.secondAppColor(context),
       elevation: 0,
       centerTitle: true,
       titleTextStyle: AppTextStyle.appBarStyle(context),

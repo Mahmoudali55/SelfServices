@@ -52,28 +52,25 @@ class CommonMethods {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        contentPadding: EdgeInsets.fromLTRB(24, 20, 24, 10),
+        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(AppLocalKay.enterYourPin.tr()),
-        content: SizedBox(
-          height: 150,
-          child: Form(
-            key: formKey,
-            child: CustomFormField(
-              controller: passwordController,
-              title: AppLocalKay.password.tr(),
-              isPassword: true,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalKay.enterValidPin.tr();
-                }
-                final savedPassword = HiveMethods.getEmpPassword();
-                if (value != savedPassword) {
-                  return AppLocalKay.loginError.tr();
-                }
-                return null;
-              },
-            ),
+        content: Form(
+          key: formKey,
+          child: CustomFormField(
+            controller: passwordController,
+            title: AppLocalKay.password.tr(),
+            isPassword: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return AppLocalKay.enterValidPin.tr();
+              }
+              final savedPassword = HiveMethods.getEmpPassword();
+              if (value != savedPassword) {
+                return AppLocalKay.loginError.tr();
+              }
+              return null;
+            },
           ),
         ),
         actions: [

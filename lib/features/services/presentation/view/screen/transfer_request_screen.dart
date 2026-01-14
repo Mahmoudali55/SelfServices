@@ -170,6 +170,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
   @override
   final attachmentController = TextEditingController();
   List<Map<String, String>> selectedFilesMap = [];
+  @override
   Widget build(BuildContext context) {
     final List<AttachmentModel> attachmentList = selectedFilesMap.map((file) {
       return AttachmentModel(
@@ -504,7 +505,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                         },
                         controller: depToNameController,
                         validator: (p0) => p0!.isEmpty ? AppLocalKay.managerTo.tr() : null,
-                        suffixIcon: Icon(Icons.arrow_drop_down),
+                        suffixIcon: const Icon(Icons.arrow_drop_down),
                       ),
                     ),
                   ],
@@ -565,7 +566,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                             },
                           );
                         },
-                        suffixIcon: Icon(Icons.arrow_drop_down),
+                        suffixIcon: const Icon(Icons.arrow_drop_down),
                         controller: branchNameController,
                         validator: (p0) => p0!.isEmpty ? AppLocalKay.departmentTo.tr() : null,
                       ),
@@ -609,7 +610,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                         },
                         controller: projectNameController,
                         validator: (p0) => p0!.isEmpty ? AppLocalKay.projectTo.tr() : null,
-                        suffixIcon: Icon(Icons.arrow_drop_down),
+                        suffixIcon: const Icon(Icons.arrow_drop_down),
                       ),
                     ),
                   ],
@@ -636,7 +637,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                     widget.transferModel == null
                         ? const SizedBox.shrink()
                         : Padding(
-                            padding: EdgeInsets.only(bottom: 0),
+                            padding: const EdgeInsets.only(bottom: 0),
                             child: GestureDetector(
                               onTap: () async {
                                 final cubit = context.read<ServicesCubit>();

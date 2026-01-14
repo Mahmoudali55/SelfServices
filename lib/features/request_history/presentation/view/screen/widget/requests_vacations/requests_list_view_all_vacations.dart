@@ -175,7 +175,7 @@ class _HeaderRow extends StatelessWidget {
         const Spacer(),
         Row(
           children: [
-            Icon(Icons.calendar_today, size: 16),
+            const Icon(Icons.calendar_today, size: 16),
             const Gap(4),
             Text(
               '$vacDayCount ${AppLocalKay.days.tr()}',

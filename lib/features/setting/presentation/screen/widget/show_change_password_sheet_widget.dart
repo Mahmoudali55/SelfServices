@@ -8,8 +8,8 @@ import 'package:my_template/core/custom_widgets/custom_toast/custom_toast.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/core/utils/common_methods.dart';
 import 'package:my_template/features/setting/data/model/change_password_resquest.dart';
+import 'package:my_template/features/setting/presentation/cubit/setting_cubit.dart';
 import 'package:my_template/features/setting/presentation/cubit/setting_state.dart';
-import 'package:my_template/features/setting/presentation/cubit/settting_cubit.dart';
 
 void showChangePasswordSheet(BuildContext context) {
   final passwordController = TextEditingController();
@@ -63,7 +63,7 @@ void showChangePasswordSheet(BuildContext context) {
                 bottom: MediaQuery.of(context).viewInsets.bottom + 20,
               ),
               child: SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 child: Form(
                   key: formKey,
                   child: Column(
