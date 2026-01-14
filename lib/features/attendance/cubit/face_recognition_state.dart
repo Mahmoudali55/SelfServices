@@ -40,11 +40,16 @@ class FaceRecognitionRegistered extends FaceRecognitionState {
 class FaceRecognitionStudentRecognized extends FaceRecognitionState {
   final StudentFaceModel student;
   final double confidence;
+  final File? imageFile;
 
-  const FaceRecognitionStudentRecognized({required this.student, required this.confidence});
+  const FaceRecognitionStudentRecognized({
+    required this.student,
+    required this.confidence,
+    this.imageFile,
+  });
 
   @override
-  List<Object?> get props => [student, confidence];
+  List<Object?> get props => [student, confidence, imageFile];
 }
 
 class FaceRecognitionNoMatch extends FaceRecognitionState {

@@ -88,14 +88,17 @@ class FaceDetectionService {
     final leftMouth = face.landmarks[FaceLandmarkType.leftMouth]?.position;
     final rightMouth = face.landmarks[FaceLandmarkType.rightMouth]?.position;
     final bottomMouth = face.landmarks[FaceLandmarkType.bottomMouth]?.position;
+    final leftCheek = face.landmarks[FaceLandmarkType.leftCheek]?.position;
+    final rightCheek = face.landmarks[FaceLandmarkType.rightCheek]?.position;
+    final leftEar = face.landmarks[FaceLandmarkType.leftEar]?.position;
+    final rightEar = face.landmarks[FaceLandmarkType.rightEar]?.position;
 
-    // Check if we have all necessary landmarks
+    // Check if we have minimum necessary landmarks (eyes, nose, mouth)
     if (leftEye == null ||
         rightEye == null ||
         noseBase == null ||
         leftMouth == null ||
-        rightMouth == null ||
-        bottomMouth == null) {
+        rightMouth == null) {
       return [];
     }
 
@@ -106,7 +109,7 @@ class FaceDetectionService {
 
     // Normalize distances by eye distance (scale invariant)
     final eyeDist = dist(leftEye, rightEye);
-    if (eyeDist == 0) return [];
+    if (eyeDist <= 0) return [];
 
     final features = <double>[];
 
@@ -136,21 +139,41 @@ class FaceDetectionService {
     // 6. Right Eye to Right Mouth
     features.add(dist(rightEye, rightMouth) / eyeDist);
 
-    // 7. Nose to Bottom Mouth
-    features.add(dist(noseBase, bottomMouth) / eyeDist);
-
-    // 8. Face Proportions (Bounding Box Width/Height)
+    // 7. Face Proportions (Bounding Box Width/Height)
     final boundingBox = face.boundingBox;
     features.add(boundingBox.width / boundingBox.height);
 
-    // 9. Cheek to Cheek (if landmarks available - assuming Ear or similar?
-    // ML Kit doesn't have cheekbones directly in basic landmarks,
-    // but has Left/Right Cheek points in Contours.
-    // However, basic landmarks have Left/Right Ear.
-    final leftCheek = face.landmarks[FaceLandmarkType.leftCheek]?.position;
-    final rightCheek = face.landmarks[FaceLandmarkType.rightCheek]?.position;
+    // 8. Cheek to Cheek
     if (leftCheek != null && rightCheek != null) {
       features.add(dist(leftCheek, rightCheek) / eyeDist);
+    } else {
+      features.add(0.0);
+    }
+
+    // 9. Ear to Ear (if available) - adds significant uniqueness
+    if (leftEar != null && rightEar != null) {
+      features.add(dist(leftEar, rightEar) / eyeDist);
+    } else {
+      features.add(0.0);
+    }
+
+    // 10. Nose to Bottom Mouth (if available)
+    if (bottomMouth != null) {
+      features.add(dist(noseBase, bottomMouth) / eyeDist);
+    } else {
+      features.add(0.0);
+    }
+
+    // 11. Left Eye to Left Ear (Lateral positioning)
+    if (leftEar != null) {
+      features.add(dist(leftEye, leftEar) / eyeDist);
+    } else {
+      features.add(0.0);
+    }
+
+    // 12. Right Eye to Right Ear
+    if (rightEar != null) {
+      features.add(dist(rightEye, rightEar) / eyeDist);
     } else {
       features.add(0.0);
     }
@@ -159,7 +182,7 @@ class FaceDetectionService {
   }
 
   /// Compare two face feature vectors using Euclidean Distance
-  /// Returns a similarity score (0.0 to 1.0), where 1.0 is exact match
+  /// Returns a similarity score (0.0 to 100.0), where 100.0 is exact match
   double compareFaceFeatures(List<double> features1, List<double> features2) {
     if (features1.length != features2.length || features1.isEmpty) {
       return 0.0;
@@ -167,16 +190,16 @@ class FaceDetectionService {
 
     double sumSquaredDiff = 0.0;
     for (int i = 0; i < features1.length; i++) {
+      // Ignore zero features (missing landmarks) to avoid penalizing partial detections
+      if (features1[i] == 0.0 || features2[i] == 0.0) continue;
       sumSquaredDiff += pow(features1[i] - features2[i], 2);
     }
 
     final distance = sqrt(sumSquaredDiff);
 
-    // Convert distance to similarity score
-    // The threshold for a match is usually around distance < 0.2
-    // We map 0.0 distance to 100% similarity, and 0.5 distance to 0%
-
-    final similarity = (1.0 - (distance * 2)).clamp(0.0, 1.0) * 100;
+    // Stricter mapping: Distance of 0.1 -> ~70% similarity, 0.2 -> ~40%
+    // This makes the system much more sensitive to differences.
+    final similarity = (1.0 - (distance * 3.0)).clamp(0.0, 1.0) * 100;
     return similarity;
   }
 
@@ -184,7 +207,7 @@ class FaceDetectionService {
   Future<Map<String, dynamic>?> findBestMatch({
     required List<double> capturedFeatures,
     required Map<String, List<double>> registeredFeatures, // studentId -> features
-    double threshold = 80.0, // Minimum similarity score (0-100)
+    double threshold = 55.0, // Significant reduction for phone-like pose flexibility
   }) async {
     if (capturedFeatures.isEmpty || registeredFeatures.isEmpty) {
       return null;
@@ -219,18 +242,18 @@ class FaceDetectionService {
       final face = faces.first;
       final boundingBox = face.boundingBox;
 
-      // Face should be at least 100x100 pixels
-      if (boundingBox.width < 100 || boundingBox.height < 100) {
+      // Face should be at least 120x120 pixels for better feature extraction
+      if (boundingBox.width < 120 || boundingBox.height < 120) {
         return false;
       }
 
-      // Check if face has good quality (using head euler angles)
-      if (face.headEulerAngleY != null && face.headEulerAngleY!.abs() > 30) {
-        return false; // Face is turned too much
+      // Balanced quality checks (allow slight tilt but prevent extreme side profiles)
+      if (face.headEulerAngleY != null && face.headEulerAngleY!.abs() > 25) {
+        return false; // Max 25 degrees for better flexibility
       }
 
-      if (face.headEulerAngleZ != null && face.headEulerAngleZ!.abs() > 30) {
-        return false; // Face is tilted too much
+      if (face.headEulerAngleZ != null && face.headEulerAngleZ!.abs() > 25) {
+        return false; // Max 25 degrees for better flexibility
       }
 
       return true;
@@ -249,13 +272,13 @@ class FaceDetectionService {
       final face = faces.first;
       double score = 100.0;
 
-      // Reduce score based on face angle
+      // Reduce score based on face angle (balanced penalty)
       if (face.headEulerAngleY != null) {
-        score -= face.headEulerAngleY!.abs() * 2;
+        score -= face.headEulerAngleY!.abs() * 2.5;
       }
 
       if (face.headEulerAngleZ != null) {
-        score -= face.headEulerAngleZ!.abs() * 2;
+        score -= face.headEulerAngleZ!.abs() * 2.5;
       }
 
       // Reduce score if face is too small

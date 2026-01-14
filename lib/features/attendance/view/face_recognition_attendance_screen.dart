@@ -44,7 +44,7 @@ class FaceRecognitionAttendanceScreen extends StatefulWidget {
 class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttendanceScreen> {
   static const String globalClassId = 'employees';
   bool isScanning = false;
-  bool isContinuousMode = true;
+  bool isContinuousMode = false;
   bool isCheckingIn = true; // New state for In/Out toggle
   bool isMarkingAttendance = false; // To prevent concurrent API calls for same recognition
   Timer? _scanTimer;
@@ -55,6 +55,10 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
   // Face ID style success overlay
   String? _lastRecognizedName;
   bool _showSuccessOverlay = false;
+  bool _showFailureOverlay = false;
+  File? _capturedAttendanceImage;
+  List<double>? _capturedAttendanceFeatures;
+  double? _capturedAttendanceQuality;
   Timer? _overlayTimer;
 
   // New variables for pending registration
@@ -128,13 +132,16 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
   Future<void> _startScanning() async {
     setState(() {
       isScanning = true;
+      _capturedAttendanceImage = null;
+      _showFailureOverlay = false;
+      _showSuccessOverlay = false;
     });
 
     final cubit = context.read<FaceRecognitionCubit>();
     await cubit.initializeCamera(direction: CameraLensDirection.front);
 
-    // Immediate first pass
-    _performRecognition();
+    // Do NOT perform recognition immediately. Let the user adjust and click the button.
+    // _performRecognition();
 
     if (isContinuousMode) {
       _startContinuousScanning();
@@ -159,8 +166,8 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
     // For now, the cubit finds the best match among all registered.
     await cubit.recognizeStudent(
       classId: globalClassId,
-      threshold: 60.0,
-    ); // Face ID style: lenient threshold for fast matching
+      threshold: 85.0,
+    ); // Increased to 85% with new complex geometry signature
   }
 
   void _stopScanning() {
@@ -329,11 +336,6 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
         _lastRecognizedName = empName;
         _showSuccessOverlay = true;
       });
-
-      _overlayTimer?.cancel();
-      _overlayTimer = Timer(const Duration(milliseconds: 2000), () {
-        if (mounted) setState(() => _showSuccessOverlay = false);
-      });
     } else if (state.isFailure) {
       String status = '';
       switch (state.error) {
@@ -417,6 +419,17 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
   }) {
     final TextEditingController empCodeController = TextEditingController();
     final formKey = GlobalKey<FormState>();
+    File? currentImage;
+    List<double>? currentFeatures;
+    double? currentQuality;
+    bool isRetaking = true; // Start with camera open by default
+
+    // Initialize camera immediately
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await context.read<FaceRecognitionCubit>().initializeCamera(
+        direction: CameraLensDirection.front,
+      );
+    });
 
     showModalBottomSheet(
       context: context,
@@ -429,192 +442,274 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
           topRight: Radius.circular(20),
         ),
       ),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 16.w,
-          right: 16.w,
-          top: 16.h,
-        ),
-        child: SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 50.w,
-                  height: 5.h,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  AppLocalKay.register_new_face.tr(),
-                  style: AppTextStyle.textFormStyle(
-                    context,
-                    color: Colors.black,
-                    listen: false,
-                  ).copyWith(color: Colors.black, fontSize: 18.sp),
-                ),
-                SizedBox(height: 16.h),
-                Container(
-                  height: 250.h,
-                  width: 250.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColor.primaryColor(context), width: 3),
-                    image: DecorationImage(image: FileImage(imageFile), fit: BoxFit.cover),
-                  ),
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  AppLocalKay.face_not_recognized_register.tr(),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 20.h),
-                CustomFormField(
-                  controller: empCodeController,
-                  keyboardType: TextInputType.number,
-                  hintText: AppLocalKay.empCode.tr(),
-                  title: AppLocalKay.empCode.tr(),
-                  prefixIcon: const Icon(Icons.badge),
-
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return AppLocalKay.required_field.tr();
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 24.h),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          _startScanning();
-                        },
-                        style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: Text(AppLocalKay.cancel.tr()),
-                      ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 16.w,
+            right: 16.w,
+            top: 16.h,
+          ),
+          child: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 50.w,
+                    height: 5.h,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    SizedBox(width: 16.w),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (formKey.currentState!.validate()) {
-                            final empCode = empCodeController.text;
-                            final employees =
-                                context.read<ServicesCubit>().state.employeesStatus.data ?? [];
+                  ),
+                  SizedBox(height: 16.h),
+                  Text(
+                    AppLocalKay.register_new_face.tr(),
+                    style: AppTextStyle.textFormStyle(
+                      context,
+                      color: Colors.black,
+                      listen: false,
+                    ).copyWith(color: Colors.black, fontSize: 18.sp),
+                  ),
+                  SizedBox(height: 16.h),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(125.r),
+                    child: Container(
+                      height: 250.h,
+                      width: 250.h,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColor.primaryColor(context), width: 3),
+                      ),
+                      child: isRetaking
+                          ? BlocBuilder<FaceRecognitionCubit, FaceRecognitionState>(
+                              builder: (context, state) {
+                                final cubit = context.read<FaceRecognitionCubit>();
+                                final controller = cubit.cameraService.controller;
 
-                            final employee = employees.firstWhere(
-                              (e) => e.empCode.toString() == empCode,
-                              orElse: () => const EmployeeModel(
-                                empCode: -1,
-                                dCode: 0,
-                                makerWork: 0,
-                                jobId: 0,
-                                empBranch: 0,
-                                naGroup: 0,
-                              ),
-                            );
-
-                            if (employee.empCode == -1) {
-                              CommonMethods.showToast(
-                                message: AppLocalKay.employee_not_found.tr(),
-                                type: ToastType.error,
-                              );
-                              return;
-                            }
-
-                            // Check if employee already has a face registered
-                            try {
-                              final servicesRepo = context.read<ServicesCubit>().leavesRepo;
-                              final result = await servicesRepo.getEmployeeFaceImage(
-                                int.parse(empCode),
-                              );
-
-                              bool alreadyHasFace = false;
-                              result.fold((l) {}, (photo) {
-                                if (photo.isNotEmpty) alreadyHasFace = true;
-                              });
-
-                              if (alreadyHasFace) {
-                                CommonMethods.showToast(
-                                  message: 'عذرا هذا الموظف له بصمة وجه من قبل', // As requested
-                                  type: ToastType.error,
-                                );
-                                return;
-                              }
-                            } catch (e) {
-                              // Ignore error and proceed? Or block? Safe to proceed or maybe show error
-                              // For now let's proceed if check fails to avoid blocking due to network error if that's desired,
-                              // OR assume if check fails we shouldn't overwrite.
-                              // Given the requirement is strict "if he has photo", we proceed only if we validly checked he doesn't.
-                              // But if network fails, maybe we shouldn't block.
-                              // Let's print error and proceed for now, but the requirement is "chack".
-                              debugPrint('Error checking face: $e');
-                            }
-
-                            Navigator.pop(context);
-
-                            final name = context.locale.languageCode == 'ar'
-                                ? (employee.empName ?? '')
-                                : (employee.empNameE ?? '');
-
-                            // Store pending data
-                            _pendingRegistrationEmpCode = empCode;
-                            _pendingRegistrationEmpName = name;
-                            _pendingRegistrationImage = imageFile;
-                            _pendingRegistrationFeatures = features;
-                            _pendingRegistrationQuality = qualityScore;
-
-                            // call upload API
-                            final bytes = await imageFile.readAsBytes();
-                            final base64Image = base64Encode(bytes);
-
-                            final request = EmployeeChangePhotoRequest(
-                              empId: int.parse(empCode),
-                              empPhotoWeb: base64Image,
-                            );
-
-                            if (context.mounted) {
-                              context.read<ServicesCubit>().employeefacephoto(request);
-                            }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor.primaryColor(context),
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: BlocBuilder<ServicesCubit, ServicesState>(
-                          builder: (context, state) {
-                            if (state.employeefacephotoStatus!.isLoading) {
-                              return Column(
-                                children: [const CircularProgressIndicator(color: Colors.white)],
-                              );
-                            }
-                            return Text(
-                              AppLocalKay.register_attendance.tr(),
-                              style: const TextStyle(color: Colors.white),
-                            );
+                                if (controller == null || !controller.value.isInitialized) {
+                                  return const Center(child: CircularProgressIndicator());
+                                }
+                                return CameraPreview(controller);
+                              },
+                            )
+                          : (currentImage != null
+                                ? Image.file(currentImage!, fit: BoxFit.cover)
+                                : const Center(
+                                    child: Icon(Icons.person, size: 100, color: Colors.grey),
+                                  )),
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  if (!isRetaking)
+                    TextButton.icon(
+                      onPressed: () async {
+                        setModalState(() => isRetaking = true);
+                        await context.read<FaceRecognitionCubit>().initializeCamera(
+                          direction: CameraLensDirection.front,
+                        );
+                        setModalState(() {});
+                      },
+                      icon: const Icon(Icons.refresh),
+                      label: Text(AppLocalKay.re_register_face.tr()),
+                    )
+                  else
+                    BlocBuilder<FaceRecognitionCubit, FaceRecognitionState>(
+                      builder: (context, state) {
+                        return ElevatedButton.icon(
+                          onPressed: state is FaceRecognitionProcessing
+                              ? null
+                              : () async {
+                                  final cubit = context.read<FaceRecognitionCubit>();
+                                  final captured = await cubit.cameraService.captureImage();
+                                  if (captured != null) {
+                                    final faces = await cubit.faceDetectionService
+                                        .detectFacesInFile(captured);
+                                    if (faces.isNotEmpty) {
+                                      final feats = cubit.faceDetectionService.extractFaceFeatures(
+                                        faces.first,
+                                      );
+                                      if (feats.isNotEmpty) {
+                                        final quality = await cubit.faceDetectionService
+                                            .getFaceQualityScore(captured);
+                                        setModalState(() {
+                                          currentImage = captured;
+                                          currentFeatures = feats;
+                                          currentQuality = quality;
+                                          isRetaking = false;
+                                        });
+                                        await cubit.disposeResources();
+                                      } else {
+                                        CommonMethods.showToast(
+                                          message: AppLocalKay.no_face_detected.tr(),
+                                          type: ToastType.error,
+                                        );
+                                      }
+                                    } else {
+                                      CommonMethods.showToast(
+                                        message: AppLocalKay.no_face_detected.tr(),
+                                        type: ToastType.error,
+                                      );
+                                    }
+                                  }
+                                },
+                          icon: const Icon(Icons.camera_alt, color: Colors.white),
+                          label: Text(
+                            AppLocalKay.capture_face.tr(),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor.primaryColor(context),
+                          ),
+                        );
+                      },
+                    ),
+                  SizedBox(height: 16.h),
+                  Text(
+                    AppLocalKay.face_not_recognized_register.tr(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 20.h),
+                  CustomFormField(
+                    controller: empCodeController,
+                    keyboardType: TextInputType.number,
+                    hintText: AppLocalKay.empCode.tr(),
+                    title: AppLocalKay.empCode.tr(),
+                    prefixIcon: const Icon(Icons.badge),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return AppLocalKay.required_field.tr();
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 24.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () async {
+                            final cubit = context.read<FaceRecognitionCubit>();
+                            await cubit.disposeResources();
+                            if (context.mounted) Navigator.pop(context);
+                            _startScanning();
                           },
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: Text(AppLocalKay.cancel.tr()),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 30.h),
-              ],
+                      SizedBox(width: 16.w),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: (isRetaking || currentImage == null)
+                              ? null
+                              : () async {
+                                  if (formKey.currentState!.validate()) {
+                                    final empCode = empCodeController.text;
+                                    final employees =
+                                        context.read<ServicesCubit>().state.employeesStatus.data ??
+                                        [];
+
+                                    final employee = employees.firstWhere(
+                                      (e) => e.empCode.toString() == empCode,
+                                      orElse: () => const EmployeeModel(
+                                        empCode: -1,
+                                        dCode: 0,
+                                        makerWork: 0,
+                                        jobId: 0,
+                                        empBranch: 0,
+                                        naGroup: 0,
+                                      ),
+                                    );
+
+                                    if (employee.empCode == -1) {
+                                      CommonMethods.showToast(
+                                        message: AppLocalKay.employee_not_found.tr(),
+                                        type: ToastType.error,
+                                      );
+                                      return;
+                                    }
+
+                                    // Check if employee already has a face registered
+                                    try {
+                                      final servicesRepo = context.read<ServicesCubit>().leavesRepo;
+                                      final result = await servicesRepo.getEmployeeFaceImage(
+                                        int.parse(empCode),
+                                      );
+
+                                      bool alreadyHasFace = false;
+                                      result.fold((l) {}, (photo) {
+                                        if (photo.isNotEmpty) alreadyHasFace = true;
+                                      });
+
+                                      if (alreadyHasFace) {
+                                        CommonMethods.showToast(
+                                          message:
+                                              'عذرا هذا الموظف له بصمة وجه من قبل', // As requested
+                                          type: ToastType.error,
+                                        );
+                                        return;
+                                      }
+                                    } catch (e) {
+                                      debugPrint('Error checking face: $e');
+                                    }
+
+                                    if (context.mounted) Navigator.pop(context);
+
+                                    final name = context.locale.languageCode == 'ar'
+                                        ? (employee.empName ?? '')
+                                        : (employee.empNameE ?? '');
+
+                                    // Store pending data
+                                    _pendingRegistrationEmpCode = empCode;
+                                    _pendingRegistrationEmpName = name;
+                                    _pendingRegistrationImage = currentImage;
+                                    _pendingRegistrationFeatures = currentFeatures;
+                                    _pendingRegistrationQuality = currentQuality;
+
+                                    // call upload API
+                                    final bytes = await currentImage!.readAsBytes();
+                                    final base64Image = base64Encode(bytes);
+
+                                    final request = EmployeeChangePhotoRequest(
+                                      empId: int.parse(empCode),
+                                      empPhotoWeb: base64Image,
+                                    );
+
+                                    if (context.mounted) {
+                                      context.read<ServicesCubit>().employeefacephoto(request);
+                                    }
+                                  }
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor.primaryColor(context),
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: BlocBuilder<ServicesCubit, ServicesState>(
+                            builder: (context, state) {
+                              if (state.employeefacephotoStatus!.isLoading) {
+                                return const CircularProgressIndicator(color: Colors.white);
+                              }
+                              return Text(
+                                AppLocalKay.register_attendance.tr(),
+                                style: const TextStyle(color: Colors.white),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 30.h),
+                ],
+              ),
             ),
           ),
         ),
@@ -668,117 +763,129 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
             style: AppTextStyle.appBarStyle(context).copyWith(fontWeight: FontWeight.bold),
           ),
         ),
-        body: MultiBlocListener(
-          listeners: [
-            BlocListener<FaceRecognitionCubit, FaceRecognitionState>(
-              listener: (context, state) {
-                if (state is FaceRecognitionStudentRecognized) {
-                  final studentId = state.student.studentId;
-                  final studentName = state.student.studentName;
+        body: SafeArea(
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<FaceRecognitionCubit, FaceRecognitionState>(
+                listener: (context, state) {
+                  if (state is FaceRecognitionStudentRecognized) {
+                    final studentId = state.student.studentId;
+                    final studentName = state.student.studentName;
 
-                  if (!recognizedStudents.contains(studentId)) {
-                    // Face ID style: Only stop in single scan mode, keep scanning in continuous
-                    if (!isContinuousMode) {
+                    if (!recognizedStudents.contains(studentId)) {
+                      setState(() {
+                        _capturedAttendanceImage = state.imageFile;
+                      });
+
+                      // Face ID style: Only stop in single scan mode, keep scanning in continuous
+                      if (!isContinuousMode) {
+                        _stopScanning();
+                      }
+
+                      // Call the API marking logic immediately
+                      _markAttendanceForEmployee(studentId, studentName);
+                    }
+                  } else if (state is FaceRecognitionNoMatch) {
+                    // Stop scanning to show freeze frame/result
+                    _stopScanning();
+
+                    setState(() {
+                      _capturedAttendanceImage = state.imageFile;
+                      _capturedAttendanceFeatures = state.features;
+                      _capturedAttendanceQuality = state.qualityScore;
+                      _showFailureOverlay = true;
+                    });
+
+                    // Play Error Sound ("Buzz") and Vibrate
+                    HapticFeedback.heavyImpact();
+                    SystemSound.play(SystemSoundType.alert);
+
+                    if (state.imageFile != null && state.features != null) {
+                      _showRegistrationDialog(
+                        imageFile: state.imageFile!,
+                        features: state.features!,
+                        qualityScore: state.qualityScore ?? 0,
+                      );
+                    } else if (state.imageFile == null) {
+                      CommonMethods.showToast(
+                        message: AppLocalKay.face_not_recognized_retry.tr(),
+                        type: ToastType.error,
+                      );
+                      _startScanning();
+                    }
+                  } else if (state is FaceRecognitionError) {
+                    if (state.message.contains('No registered faces')) {
+                      CommonMethods.showToast(
+                        message: state.message,
+                        seconds: 5,
+                        type: ToastType.error,
+                      );
                       _stopScanning();
                     }
-
-                    // Call the API marking logic immediately
-                    _markAttendanceForEmployee(studentId, studentName);
+                  } else if (state is FaceRecognitionLoading) {
+                    // Ensure loading state is handled by UI overlay
+                  } else if (state is FaceRecognitionRegisteredStudentsLoaded) {
+                    setState(() {
+                      registeredFaces.clear();
+                      for (var face in state.students) {
+                        registeredFaces[face.studentId] = face;
+                      }
+                    });
+                  } else if (state is FaceRecognitionRegistered) {
+                    setState(() {
+                      registeredFaces[state.faceModel.studentId] = state.faceModel;
+                    });
                   }
-                } else if (state is FaceRecognitionNoMatch) {
-                  // Stop scanning to show dialog/play sound
-                  _stopScanning();
-
-                  // Play Error Sound ("Buzz") and Vibrate
-                  HapticFeedback.heavyImpact();
-                  SystemSound.play(SystemSoundType.alert);
-                  // Or use specific sound plugin if needed
-
-                  if (state.imageFile != null && state.features != null) {
-                    _showRegistrationDialog(
-                      imageFile: state.imageFile!,
-                      features: state.features!,
-                      qualityScore: state.qualityScore ?? 0,
-                    );
-                  } else {
-                    // Fallback if no data somehow
+                },
+              ),
+              BlocListener<AttendanceCubit, AttendanceState>(
+                listener: (context, state) {
+                  if (state is AttendanceLoaded) {
+                    final employees =
+                        context.read<ServicesCubit>().state.employeesStatus.data ?? [];
+                    _initializeAttendance(employees, state.records);
+                  } else if (state is AttendanceSaved) {
                     CommonMethods.showToast(
-                      message: AppLocalKay.face_not_recognized_retry.tr(),
-                      type: ToastType.error,
+                      message: AppLocalKay.user_management_save.tr(),
+                      type: ToastType.success,
                     );
-                    _startScanning();
+                    Navigator.pop(context);
+                  } else if (state is AttendanceError) {
+                    print('Attendance Error: ${state.message}');
+                    CommonMethods.showToast(message: state.message, type: ToastType.error);
                   }
-                } else if (state is FaceRecognitionError) {
-                  if (state.message.contains('No registered faces')) {
-                    CommonMethods.showToast(
-                      message: state.message,
-                      seconds: 5,
-                      type: ToastType.error,
-                    );
-                    _stopScanning();
-                  }
-                } else if (state is FaceRecognitionLoading) {
-                  // Ensure loading state is handled by UI overlay
-                } else if (state is FaceRecognitionRegisteredStudentsLoaded) {
-                  setState(() {
-                    registeredFaces.clear();
-                    for (var face in state.students) {
-                      registeredFaces[face.studentId] = face;
+                },
+              ),
+              BlocListener<ServicesCubit, ServicesState>(
+                listener: (context, state) {
+                  if (state.employeefacephotoStatus!.isSuccess) {
+                    // After successful photo upload, mark attendance
+                    final empCode = _pendingRegistrationEmpCode;
+                    final empName = _pendingRegistrationEmpName; // You might need to store this too
+
+                    if (empCode != null && empName != null) {
+                      _finalizeRegistrationAndMarkAttendance(empCode, empName);
                     }
-                  });
-                } else if (state is FaceRecognitionRegistered) {
-                  setState(() {
-                    registeredFaces[state.faceModel.studentId] = state.faceModel;
-                  });
-                }
-              },
-            ),
-            BlocListener<AttendanceCubit, AttendanceState>(
-              listener: (context, state) {
-                if (state is AttendanceLoaded) {
-                  final employees = context.read<ServicesCubit>().state.employeesStatus.data ?? [];
-                  _initializeAttendance(employees, state.records);
-                } else if (state is AttendanceSaved) {
-                  CommonMethods.showToast(
-                    message: AppLocalKay.user_management_save.tr(),
-                    type: ToastType.success,
-                  );
-                  Navigator.pop(context);
-                } else if (state is AttendanceError) {
-                  print('Attendance Error: ${state.message}');
-                  CommonMethods.showToast(message: state.message, type: ToastType.error);
-                }
-              },
-            ),
-            BlocListener<ServicesCubit, ServicesState>(
-              listener: (context, state) {
-                if (state.employeefacephotoStatus!.isSuccess) {
-                  // After successful photo upload, mark attendance
-                  final empCode = _pendingRegistrationEmpCode;
-                  final empName = _pendingRegistrationEmpName; // You might need to store this too
-
-                  if (empCode != null && empName != null) {
-                    _finalizeRegistrationAndMarkAttendance(empCode, empName);
+                  } else if (state.employeefacephotoStatus!.isFailure) {
+                    CommonMethods.showToast(
+                      message: state.employeefacephotoStatus!.error ?? 'Upload failed',
+                      type: ToastType.error,
+                    );
                   }
-                } else if (state.employeefacephotoStatus!.isFailure) {
-                  CommonMethods.showToast(
-                    message: state.employeefacephotoStatus!.error ?? 'Upload failed',
-                    type: ToastType.error,
-                  );
-                }
-              },
-            ),
-          ],
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildHeader(),
-                if (isScanning)
-                  SizedBox(height: 300.h, child: _buildCameraView())
-                else
-                  // Employee List (smaller when camera is active)
-                  SizedBox(height: 500, child: _buildEmployeeListWrapper()),
-              ],
+                },
+              ),
+            ],
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildHeader(),
+                  if (isScanning)
+                    SizedBox(height: 300.h, child: _buildCameraView())
+                  else
+                    // Employee List (smaller when camera is active)
+                    SizedBox(height: 500, child: _buildEmployeeListWrapper()),
+                ],
+              ),
             ),
           ),
         ),
@@ -885,8 +992,11 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
             SizedBox(
               width: double.infinity,
               height: double.infinity,
-              child: CameraPreview(controller),
+              child: _capturedAttendanceImage != null
+                  ? Image.file(_capturedAttendanceImage!, fit: BoxFit.cover)
+                  : CameraPreview(controller),
             ),
+            // Instruction overlay (top)
             Positioned(
               top: 16.h,
               left: 0,
@@ -899,14 +1009,82 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Text(
-                  AppLocalKay.scanning_faces.tr(),
+                  AppLocalKay.scanning_faces.tr(), // Use existing key or new "Capture when ready"
                   style: AppTextStyle.text16MSecond(context).copyWith(color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
               ),
             ),
-            if (state is FaceRecognitionProcessing)
-              const Center(child: CircularProgressIndicator(color: Colors.white)),
+
+            // Manual Verify Button (bottom)
+            Positioned(
+              bottom: 24.h,
+              left: 40.w,
+              right: 40.w,
+              child: ElevatedButton.icon(
+                onPressed: state is FaceRecognitionProcessing ? null : () => _performRecognition(),
+                icon: state is FaceRecognitionProcessing
+                    ? SizedBox(
+                        width: 20.w,
+                        height: 20.w,
+                        child: const CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : const Icon(Icons.verified_user, color: Colors.white),
+                label: Text(
+                  state is FaceRecognitionProcessing
+                      ? AppLocalKay.loading.tr()
+                      : AppLocalKay.verify_face.tr(), // More specific for attendance
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColor.primaryColor(context),
+                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
+                  elevation: 8,
+                ),
+              ),
+            ),
+
+            // Failure Overlay
+            if (_showFailureOverlay)
+              Container(
+                color: Colors.red.withOpacity(0.4),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(24.w),
+                        decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                        child: Icon(Icons.close, color: Colors.white, size: 60.sp),
+                      ),
+                      SizedBox(height: 16.h),
+                      Text(
+                        AppLocalKay.unknown_face.tr(),
+                        style: AppTextStyle.formTitleStyle(context).copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          shadows: [const Shadow(color: Colors.black, blurRadius: 8)],
+                        ),
+                      ),
+                      SizedBox(height: 24.h),
+                      ElevatedButton.icon(
+                        onPressed: () => _startScanning(),
+                        icon: const Icon(Icons.refresh, color: Colors.red),
+                        label: Text(
+                          'اعادة المحاولة', // As requested "Retry"
+                          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
             // Face ID Style Success Overlay
             if (_showSuccessOverlay)
@@ -939,6 +1117,20 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
                         style: AppTextStyle.formTitleStyle(context).copyWith(
                           color: Colors.white,
                           shadows: [const Shadow(color: Colors.black, blurRadius: 8)],
+                        ),
+                      ),
+                      SizedBox(height: 24.h),
+                      ElevatedButton.icon(
+                        onPressed: () => _startScanning(),
+                        icon: const Icon(Icons.arrow_forward, color: Colors.green),
+                        label: Text(
+                          AppLocalKay.next.tr(), // "Next" or "Done"
+                          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
                         ),
                       ),
                     ],

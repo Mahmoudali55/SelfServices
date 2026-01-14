@@ -209,6 +209,7 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
           FaceRecognitionStudentRecognized(
             student: matchedStudent,
             confidence: match['confidence'],
+            imageFile: capturedImage,
           ),
         );
       } else {
