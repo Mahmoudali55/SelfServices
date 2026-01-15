@@ -92,7 +92,7 @@ class HousingAllowanceRequestItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _HeaderRow(context),
+                  headerRow(context),
                   const Divider(height: 20, thickness: 1),
                   _Details(request: request, isEn: isEn),
                   Container(
@@ -126,7 +126,7 @@ class HousingAllowanceRequestItem extends StatelessWidget {
     );
   }
 
-  Widget _HeaderRow(BuildContext context) {
+  Widget headerRow(BuildContext context) {
     return Row(
       children: [
         Row(

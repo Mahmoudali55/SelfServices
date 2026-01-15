@@ -673,7 +673,7 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
                           ),
                           child: BlocBuilder<ServicesCubit, ServicesState>(
                             builder: (context, state) {
-                              if (state.employeefacephotoStatus!.isLoading) {
+                              if (state.employeeFacePhotoStatus!.isLoading) {
                                 return const CircularProgressIndicator(color: Colors.white);
                               }
                               return Text(
@@ -809,7 +809,7 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
               ),
               BlocListener<ServicesCubit, ServicesState>(
                 listener: (context, state) {
-                  if (state.employeefacephotoStatus!.isSuccess) {
+                  if (state.employeeFacePhotoStatus!.isSuccess) {
                     // After successful photo upload, mark attendance
                     final empCode = _pendingRegistrationEmpCode;
                     final empName = _pendingRegistrationEmpName; // You might need to store this too
@@ -817,9 +817,9 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
                     if (empCode != null && empName != null) {
                       _finalizeRegistrationAndMarkAttendance(empCode, empName);
                     }
-                  } else if (state.employeefacephotoStatus!.isFailure) {
+                  } else if (state.employeeFacePhotoStatus!.isFailure) {
                     CommonMethods.showToast(
-                      message: state.employeefacephotoStatus!.error ?? 'Upload failed',
+                      message: state.employeeFacePhotoStatus!.error ?? 'Upload failed',
                       type: ToastType.error,
                     );
                   }

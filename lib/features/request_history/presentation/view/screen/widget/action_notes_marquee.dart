@@ -20,7 +20,7 @@ class AnimatedActionNote extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColor.primaryColor(context).withOpacity(.25),
+            color: AppColor.primaryColor(context).withValues(alpha: .25),
             blurRadius: 6,
             offset: const Offset(0, 3),
           ),
