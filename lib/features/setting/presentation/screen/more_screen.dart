@@ -108,7 +108,7 @@ class _MoreScreenState extends State<MoreScreen> {
                 ? _listTile(
                     icon: Icons.fingerprint,
                     color: Colors.teal,
-                    title: 'تسجيل الحضور والانصراف',
+                    title: AppLocalKay.register_attendance_and_resignation.tr(),
                     onTap: () => NavigatorMethods.pushNamed(
                       context,
                       RoutesName.faceRecognitionAttendanceScreen,

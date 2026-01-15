@@ -682,5 +682,6 @@
   "ur": "الأوردو",
   "you": "أنت",
   "your_rating_has_been_recorded": "تم تسجيل تقييمك بنجاح",
-  "face_already_exist":"عذرا هذا الموظف له بصمة وجه من قبل"
+  "face_already_exist":"عذرا هذا الموظف له بصمة وجه من قبل",
+  "register_attendance_and_resignation":"تسجيل الحضور والانصراف"
 }

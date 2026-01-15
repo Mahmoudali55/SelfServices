@@ -677,4 +677,5 @@ class AppLocalKay {
   static const String request_type = 'request_type';
   static const String servicess = 'servicess';
   static const String face_already_exist = 'face_already_exist';
+  static const String register_attendance_and_resignation = 'register_attendance_and_resignation';
 }

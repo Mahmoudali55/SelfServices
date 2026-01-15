@@ -694,5 +694,7 @@
   "user_management_percentage": "شرح",
   "user_management_save": "حاضری محفوظ کریں",
   "verify_face": "چہرے کی تصدیق کریں",
-   "face_already_exist":"اس ملازم کی چہرے کی شناخت پہلے سے ملازم کی چہرے کی شناخت میں موجود ہے"
+   "face_already_exist":"اس ملازم کی چہرے کی شناخت پہلے سے ملازم کی چہرے کی شناخت میں موجود ہے",
+    "register_attendance_and_resignation": "حاضری اور انصراف"
+
 }

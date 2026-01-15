@@ -55,7 +55,7 @@ class SalarySectionWidget extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColor.blackColor(context).withOpacity(0.05),
+                    color: AppColor.blackColor(context).withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -75,7 +75,7 @@ class SalarySectionWidget extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             decoration: BoxDecoration(
-              color: accentColor.withOpacity(0.1),
+              color: accentColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Row(

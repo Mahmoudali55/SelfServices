@@ -160,7 +160,7 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
     }
   }
 
-  Future<void> _performRecognition({String? targetStudentId}) async {
+  Future<void> _performRecognition() async {
     final cubit = context.read<FaceRecognitionCubit>();
     if (cubit.state is FaceRecognitionProcessing) return;
 

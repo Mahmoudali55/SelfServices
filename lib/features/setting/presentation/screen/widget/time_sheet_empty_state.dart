@@ -22,7 +22,7 @@ class TimeSheetEmptyState extends StatelessWidget {
               AppImages.assetsGlobalIconEmptyFolderIcon,
               height: 180.h,
               width: 180.w,
-              color: AppColor.primaryColor(context),
+              colorFilter: ColorFilter.mode(AppColor.primaryColor(context), BlendMode.srcIn),
             ),
             Gap(16.h),
             Text(

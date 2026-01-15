@@ -52,25 +52,33 @@ class CommonMethods {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(AppLocalKay.enterYourPin.tr()),
-        content: Form(
-          key: formKey,
-          child: CustomFormField(
-            controller: passwordController,
-            title: AppLocalKay.password.tr(),
-            isPassword: true,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return AppLocalKay.enterValidPin.tr();
-              }
-              final savedPassword = HiveMethods.getEmpPassword();
-              if (value != savedPassword) {
-                return AppLocalKay.loginError.tr();
-              }
-              return null;
-            },
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: Text(
+          AppLocalKay.enterYourPin.tr(),
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        content: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.7,
+          height: 100,
+          child: Form(
+            key: formKey,
+            child: CustomFormField(
+              controller: passwordController,
+              title: AppLocalKay.password.tr(),
+              titleStyle: Theme.of(context).textTheme.bodySmall,
+              isPassword: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return AppLocalKay.enterValidPin.tr();
+                }
+                final savedPassword = HiveMethods.getEmpPassword();
+                if (value != savedPassword) {
+                  return AppLocalKay.loginError.tr();
+                }
+                return null;
+              },
+            ),
           ),
         ),
         actions: [
