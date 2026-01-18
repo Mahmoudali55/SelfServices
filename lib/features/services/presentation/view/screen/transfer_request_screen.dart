@@ -38,7 +38,7 @@ class TransferRequestScreen extends StatefulWidget {
 
 class _TransferRequestScreenState extends State<TransferRequestScreen> {
   @override
-  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
   final TextEditingController requestIdController = TextEditingController();
   final TextEditingController depToIdController = TextEditingController();
   final TextEditingController depToNameController = TextEditingController();
@@ -66,7 +66,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
   void initState() {
     super.initState();
 
-    _dateController.text = DateFormat('yyyy-MM-dd', 'en').format(DateTime.now());
+    dateController.text = DateFormat('yyyy-MM-dd', 'en').format(DateTime.now());
   }
 
   @override
@@ -102,36 +102,32 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
   void _initExistingRequest() {
     final model = widget.transferModel!;
     requestIdController.text = model.requestId.toString();
-    _dateController.text = model.requestDate ?? '';
+    dateController.text = model.requestDate;
     ownerEmpIdController.text = model.empCode.toString();
     ownerEmpNameController.text = context.locale.languageCode == 'en'
-        ? model.empNameE ?? ''
-        : model.empName ?? '';
-    depFromNameController.text = context.locale.languageCode == 'en'
-        ? model.dNameE ?? ''
-        : model.dName ?? '';
+        ? model.empNameE
+        : model.empName;
+    depFromNameController.text = context.locale.languageCode == 'en' ? model.dNameE : model.dName;
     depFromIdController.text = model.tDep.toString();
     branchIdformController.text = model.tBra.toString();
     branchNameformController.text = context.locale.languageCode == 'en'
-        ? model.bNameE ?? ''
-        : model.bName ?? '';
+        ? model.bNameE
+        : model.bName;
     projectIdFromController.text = model.tProj.toString();
     projectNameFromController.text = context.locale.languageCode == 'en'
         ? model.projEName.toString()
         : model.projName.toString();
-    reasonController.text = model.causes1 ?? '';
+    reasonController.text = model.causes1;
     depToIdController.text = model.tDep.toString();
-    depToNameController.text = context.locale.languageCode == 'en'
-        ? model.toDNameE ?? ''
-        : model.toDName ?? '';
+    depToNameController.text = context.locale.languageCode == 'en' ? model.toDNameE : model.toDName;
     projectIdController.text = model.tProj.toString();
     projectNameController.text = context.locale.languageCode == 'en'
-        ? model.toProjNameE ?? ''
-        : model.toProjName ?? '';
+        ? model.toProjNameE
+        : model.toProjName;
     branchIdController.text = model.tBra.toString();
     branchNameController.text = context.locale.languageCode == 'en'
-        ? model.toBNameE ?? ''
-        : model.toBName ?? '';
+        ? model.toBNameE
+        : model.toBName;
   }
 
   void _autoFillEmployeeData(EmployeeModel emp) {
@@ -234,7 +230,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
         },
         child: CustomBottomNavButtonWidget(
           newrequest: () {
-            _dateController.text = DateFormat('yyyy-MM-dd', 'en').format(DateTime.now());
+            dateController.text = DateFormat('yyyy-MM-dd', 'en').format(DateTime.now());
 
             ownerEmpIdController.clear();
             ownerEmpNameController.clear();
@@ -309,7 +305,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                     tDep: int.tryParse(depToIdController.text) ?? 0,
                     tBra: int.tryParse(branchIdController.text) ?? 0,
                     tProj: int.tryParse(projectIdController.text) ?? 0,
-                    requestDate: _dateController.text,
+                    requestDate: dateController.text,
                     causes: reasonController.text,
                     adminEmp: widget.empCode ?? 0,
                     attachment: attachmentList,
@@ -324,7 +320,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                     tDep: int.tryParse(depToIdController.text) ?? 0,
                     tBra: int.tryParse(branchIdController.text) ?? 0,
                     tProj: int.tryParse(projectIdController.text) ?? 0,
-                    requsetDate: _dateController.text,
+                    requsetDate: dateController.text,
                     causes: reasonController.text,
                     adminEmp: widget.empCode ?? 0,
                     attachment: attachmentList,
@@ -363,7 +359,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
                     Expanded(
                       child: CustomFormField(
                         onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
-                        controller: _dateController,
+                        controller: dateController,
                         readOnly: true,
                         onTap: () async {
                           final DateTime today = DateTime.now();
@@ -376,7 +372,7 @@ class _TransferRequestScreenState extends State<TransferRequestScreen> {
 
                           final DateTime dateToSet = selectedDate ?? DateTime.now();
                           setState(() {
-                            _dateController.text = DateFormat('yyyy-MM-dd', 'en').format(dateToSet);
+                            dateController.text = DateFormat('yyyy-MM-dd', 'en').format(dateToSet);
                           });
                         },
 

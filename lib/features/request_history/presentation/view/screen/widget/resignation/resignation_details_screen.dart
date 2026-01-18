@@ -31,24 +31,24 @@ class ResignationDetailsScreen extends StatelessWidget {
               PrintSection(
                 title: AppLocalKay.employee.tr(),
                 items: {
-                  AppLocalKay.employeeName.tr(): request.empName ?? '-',
-                  AppLocalKay.employeeNameEn.tr(): request.empNameE ?? '-',
-                  AppLocalKay.empCode.tr(): request.empCode.toString() ?? '-',
+                  AppLocalKay.employeeName.tr(): request.empName,
+                  AppLocalKay.employeeNameEn.tr(): request.empNameE,
+                  AppLocalKay.empCode.tr(): request.empCode.toString(),
                 },
               ),
               PrintSection(
                 title: AppLocalKay.resignation.tr(),
                 items: {
-                  AppLocalKay.requestDate.tr(): request.requestDate ?? '-',
-                  AppLocalKay.trainingDay.tr(): request.lastWorkDate.toString() ?? '-',
-                  AppLocalKay.reason.tr(): request.strNotes ?? '-',
+                  AppLocalKay.requestDate.tr(): request.requestDate,
+                  AppLocalKay.trainingDay.tr(): request.lastWorkDate.toString(),
+                  AppLocalKay.reason.tr(): request.strNotes,
                 },
               ),
               PrintSection(
                 title: AppLocalKay.status.tr(),
 
                 items: {
-                  AppLocalKay.status.tr(): request.requestDesc ?? '-',
+                  AppLocalKay.status.tr(): request.requestDesc,
                   AppLocalKay.followedActions.tr(): request.actionNotes ?? '-',
                 },
               ),
@@ -62,18 +62,18 @@ class ResignationDetailsScreen extends StatelessWidget {
           SectionWidget(
             title: AppLocalKay.employee.tr(),
             items: {
-              AppLocalKay.employeeName.tr(): request.empName ?? '-',
-              AppLocalKay.employeeNameEn.tr(): request.empNameE ?? '-',
-              AppLocalKay.empCode.tr(): request.empCode.toString() ?? '-',
+              AppLocalKay.employeeName.tr(): request.empName,
+              AppLocalKay.employeeNameEn.tr(): request.empNameE,
+              AppLocalKay.empCode.tr(): request.empCode.toString(),
             },
           ),
 
           SectionWidget(
             title: AppLocalKay.resignation.tr(),
             items: {
-              AppLocalKay.requestDate.tr(): request.requestDate ?? '-',
-              AppLocalKay.trainingDay.tr(): request.lastWorkDate.toString() ?? '-',
-              AppLocalKay.reason.tr(): request.strNotes ?? '-',
+              AppLocalKay.requestDate.tr(): request.requestDate,
+              AppLocalKay.trainingDay.tr(): request.lastWorkDate.toString(),
+              AppLocalKay.reason.tr(): request.strNotes,
             },
           ),
 

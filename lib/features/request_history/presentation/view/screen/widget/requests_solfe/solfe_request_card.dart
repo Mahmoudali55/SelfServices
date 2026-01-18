@@ -17,7 +17,7 @@ class RequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final StatusInfo statusInfo = _getStatusInfo(request.reqDecideState ?? 0);
+    final StatusInfo statusInfo = _getStatusInfo(request.reqDecideState);
 
     final langCode = context.locale.languageCode;
 
@@ -47,9 +47,7 @@ class RequestCard extends StatelessWidget {
                       Icon(Icons.money, size: 16, color: AppColor.blackColor(context)),
                       const SizedBox(width: 8),
                       Text(
-                        langCode == 'en'
-                            ? request.solfaTypeNameE ?? ''
-                            : request.solfaTypeName ?? '',
+                        langCode == 'en' ? request.solfaTypeNameE ?? '' : request.solfaTypeName,
                         style: AppTextStyle.text16MSecond(
                           context,
                           color: AppColor.blackColor(context),
@@ -63,7 +61,7 @@ class RequestCard extends StatelessWidget {
                     icon: Icons.person,
                     request: request,
                     title: AppLocalKay.employee.tr(),
-                    description: langCode == 'en' ? request.empNameE ?? '' : request.empName ?? '',
+                    description: langCode == 'en' ? request.empNameE ?? '' : request.empName,
                   ),
                   CustomTitelCardWidget(
                     icon: Icons.calendar_month,
@@ -99,7 +97,7 @@ class RequestCard extends StatelessWidget {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: request.requestDesc ?? '',
+                                text: request.requestDesc,
                                 style: AppTextStyle.text14RGrey(
                                   context,
                                   color: statusInfo.color,
@@ -177,7 +175,7 @@ class ActionButtons extends StatelessWidget {
               if (confirm == true) {
                 context.read<VacationRequestsCubit>().deleteRequestSolfa(
                   requestId: request.requestId,
-                  empcode: request.empCode ?? 0,
+                  empcode: request.empCode,
                   empcodeadmin: empcoded,
                   context: context,
                 );

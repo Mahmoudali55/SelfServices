@@ -26,6 +26,7 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
   // Local file based cache: empId -> {hash: String, features: List<double>}
   Map<String, dynamic> _featuresCache = {};
   bool _cacheLoaded = false;
+  String? _persistentCachePath;
 
   FaceRecognitionCubit({required this.cameraService, required this.faceDetectionService})
     : super(FaceRecognitionInitial());
@@ -325,19 +326,71 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
     }
   }
 
-  /// Process remote faces and store in memory (Optimized for speed + Caching)
-  Future<void> loadFacesFromRemote(List<EmployeeModel> employees, ServicesRepo servicesRepo) async {
-    _remoteFaces.clear();
-    _remoteFeaturesMap.clear();
-    // Initial loading state
-    emit(FaceRecognitionLoading());
-
-    // Load cache from disk if not already loaded
+  /// Populate memory from local cache for instant UI response
+  Future<void> populateFromCache(List<EmployeeModel> employees) async {
     if (!_cacheLoaded) {
       await _loadCache();
     }
 
-    final tempDir = await getTemporaryDirectory();
+    if (_persistentCachePath == null) {
+      final docDir = await getApplicationDocumentsDirectory();
+      _persistentCachePath = '${docDir.path}/face_cache';
+      final dir = Directory(_persistentCachePath!);
+      if (!await dir.exists()) {
+        await dir.create(recursive: true);
+      }
+    }
+
+    final List<StudentFaceModel> cachedList = [];
+    final Set<String> currentEmpIds = employees.map((e) => e.empCode.toString()).toSet();
+
+    for (var empId in _featuresCache.keys) {
+      if (!currentEmpIds.contains(empId)) continue;
+
+      final cachedData = _featuresCache[empId];
+      final imageFile = File('$_persistentCachePath/remote_$empId.jpg');
+
+      if (await imageFile.exists() && cachedData['features'] != null) {
+        final emp = employees.firstWhere((e) => e.empCode.toString() == empId);
+        final model = StudentFaceModel(
+          studentId: empId,
+          studentName: emp.empName ?? emp.empNameE ?? '',
+          faceImagePath: imageFile.path,
+          registrationDate: DateTime.now(),
+          classId: 'employees',
+          faceMetadata: {'features': List<double>.from(cachedData['features'])},
+        );
+        cachedList.add(model);
+        _remoteFeaturesMap[empId] = List<double>.from(cachedData['features']);
+      }
+    }
+
+    if (cachedList.isNotEmpty) {
+      _remoteFaces.clear();
+      _remoteFaces.addAll(cachedList);
+      emit(FaceRecognitionRegisteredStudentsLoaded(List.from(_remoteFaces)));
+    }
+  }
+
+  /// Process remote faces and store in memory (Optimized for speed + Caching)
+  Future<void> loadFacesFromRemote(List<EmployeeModel> employees, ServicesRepo servicesRepo) async {
+    // 1. First, populate from cache for instant response
+    await populateFromCache(employees);
+
+    // Initial loading state if empty, otherwise we just update in background
+    if (_remoteFaces.isEmpty) {
+      emit(FaceRecognitionLoading());
+    }
+
+    // 2. Determine persistent path
+    if (_persistentCachePath == null) {
+      final docDir = await getApplicationDocumentsDirectory();
+      _persistentCachePath = '${docDir.path}/face_cache';
+      final dir = Directory(_persistentCachePath!);
+      if (!await dir.exists()) {
+        await dir.create(recursive: true);
+      }
+    }
 
     // Process in chunks to balance concurrency and resource usage
     const int chunkSize = 5;
@@ -346,7 +399,7 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
       final end = (i + chunkSize < employees.length) ? i + chunkSize : employees.length;
       final chunk = employees.sublist(i, end);
 
-      await Future.wait(chunk.map((emp) => _processEmployeeFace(emp, servicesRepo, tempDir)));
+      await Future.wait(chunk.map((emp) => _processEmployeeFace(emp, servicesRepo)));
 
       // Emit incremental update
       if (!isClosed) {
@@ -363,11 +416,7 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
     }
   }
 
-  Future<void> _processEmployeeFace(
-    EmployeeModel emp,
-    ServicesRepo servicesRepo,
-    Directory tempDir,
-  ) async {
+  Future<void> _processEmployeeFace(EmployeeModel emp, ServicesRepo servicesRepo) async {
     final empIdStr = emp.empCode.toString();
 
     try {
@@ -376,8 +425,7 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
       await result.fold((failure) async {}, (base64Img) async {
         if (base64Img.isNotEmpty) {
           try {
-            // 1. Calculate Signature of the image data (Length + Prefix)
-            // This avoids adding the 'crypto' dependency while being safer than just length
+            // 1. Calculate Signature of the image data
             final prefixLen = base64Img.length > 50 ? 50 : base64Img.length;
             final signature = '${base64Img.length}_${base64Img.substring(0, prefixLen)}';
 
@@ -387,26 +435,26 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
             if (_featuresCache.containsKey(empIdStr)) {
               final cachedData = _featuresCache[empIdStr];
               if (cachedData['hash'] == signature && cachedData['features'] != null) {
-                // Cache Hit! Use cached features
-                features = List<double>.from(cachedData['features']);
+                // Cache Hit! Check if file exists in persistent storage
+                final cacheFile = File('$_persistentCachePath/remote_$empIdStr.jpg');
+                if (await cacheFile.exists()) {
+                  features = List<double>.from(cachedData['features']);
 
-                // We still need the file for display purposes in the list (UI uses FileImage)
-                final tempFile = File('${tempDir.path}/remote_${emp.empCode}.jpg');
-                if (!await tempFile.exists()) {
-                  await tempFile.writeAsBytes(base64Decode(base64Img));
+                  // Ensure it's in memory for recognition if not already there
+                  if (!_remoteFeaturesMap.containsKey(empIdStr)) {
+                    _addFaceToMemory(emp, cacheFile, features);
+                  }
+                  return; // Done, no update needed
                 }
-
-                _addFaceToMemory(emp, tempFile, features);
-                return; // Done
               }
             }
 
             // 3. Cache Miss (or signature mismatch) -> Run ML
             final bytes = base64Decode(base64Img);
-            final tempFile = File('${tempDir.path}/remote_${emp.empCode}.jpg');
-            await tempFile.writeAsBytes(bytes);
+            final cacheFile = File('$_persistentCachePath/remote_$empIdStr.jpg');
+            await cacheFile.writeAsBytes(bytes);
 
-            final faces = await faceDetectionService.detectFacesInFile(tempFile);
+            final faces = await faceDetectionService.detectFacesInFile(cacheFile);
             if (faces.isNotEmpty) {
               features = faceDetectionService.extractFaceFeatures(faces.first);
               if (features.isNotEmpty) {
@@ -417,7 +465,8 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
                   'lastUpdated': DateTime.now().toIso8601String(),
                 };
 
-                _addFaceToMemory(emp, tempFile, features);
+                // Update or add to memory
+                _addOrUpdateFaceInMemory(emp, cacheFile, features);
               }
             }
           } catch (e) {
@@ -428,6 +477,27 @@ class FaceRecognitionCubit extends Cubit<FaceRecognitionState> {
     } catch (e) {
       print('Error fetching remote face for $emp: $e');
     }
+  }
+
+  void _addOrUpdateFaceInMemory(EmployeeModel emp, File imageFile, List<double> features) {
+    final empId = emp.empCode.toString();
+    final model = StudentFaceModel(
+      studentId: empId,
+      studentName: emp.empName ?? emp.empNameE ?? '',
+      faceImagePath: imageFile.path,
+      registrationDate: DateTime.now(),
+      classId: 'employees',
+      faceMetadata: {'features': features},
+    );
+
+    // Update if exists, else add
+    final index = _remoteFaces.indexWhere((f) => f.studentId == empId);
+    if (index != -1) {
+      _remoteFaces[index] = model;
+    } else {
+      _remoteFaces.add(model);
+    }
+    _remoteFeaturesMap[empId] = features;
   }
 
   void _addFaceToMemory(EmployeeModel emp, File imageFile, List<double> features) {

@@ -60,7 +60,7 @@ class CommonMethods {
         ),
         content: SizedBox(
           width: MediaQuery.of(context).size.width * 0.7,
-          height: 100,
+          height: 150,
           child: Form(
             key: formKey,
             child: CustomFormField(

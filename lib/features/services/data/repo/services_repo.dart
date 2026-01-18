@@ -66,19 +66,16 @@ import '../../../../core/error/failures.dart' hide handleDioRequest;
 
 abstract interface class ServicesRepo {
   Future<Either<Failure, List<VacationTypeModel>>> getLeaves();
-
   Future<Either<Failure, List<EmployeeModel>>> getEmployees({
     required int empcode,
     required int privid,
     bool forceRefresh = false,
   });
-
   Future<Either<Failure, List<EmployeeVacationModel>>> getEmployeeVacations({
     required int empCode,
     required DateTime bnDate,
     required DateTime edDate,
   });
-
   Future<Either<Failure, List<EmployeeBalModel>>> getEmployeeBal({
     required int empCode,
     required DateTime bnDate,
@@ -100,7 +97,6 @@ abstract interface class ServicesRepo {
   );
   //العودة من الاجازات///
   Future<Either<Failure, List<VacationBackRequestModel>>> getVacationBack({required int empCode});
-
   Future<Either<Failure, AddNewVacationBackResponseModel>> addNewVacationBack(
     AddNewVacationBackRequestModel request,
   );
@@ -113,9 +109,7 @@ abstract interface class ServicesRepo {
 
   /// السلفات
   Future<Either<Failure, List<SolfaTypeModel>>> getSolfaType();
-
   Future<Either<Failure, List<GetEmployeeModel>>> getEmployee();
-
   Future<Either<Failure, AddNewSolfaResponseModel>> addnewSolfa(AddNewSolfaRquestModel request);
   Future<Either<Failure, List<CheckEmpHaveRequestsModel>>> checkEmpHaveSolfaRequests({
     required int empCode,

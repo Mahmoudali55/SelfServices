@@ -117,7 +117,7 @@ class VacationRequestItem extends StatelessWidget {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: request.requestDesc ?? '',
+                                text: request.requestDesc,
                                 style: AppTextStyle.text14RGrey(
                                   context,
                                   color: statusInfo.color,
@@ -221,29 +221,6 @@ class _VacationDetails extends StatelessWidget {
     );
   }
 }
-
-class _StatusLabel extends StatelessWidget {
-  final String status;
-  final Color color;
-
-  const _StatusLabel({required this.status, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 8),
-      child: Text(
-        status,
-        style: AppTextStyle.text14RGrey(
-          context,
-          color: color,
-        ).copyWith(fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
-/*────────────────── ACTIONS ──────────────────*/
 
 class _ActionButtons extends StatelessWidget {
   final VacationRequestOrdersModel request;

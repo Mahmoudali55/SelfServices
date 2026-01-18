@@ -30,7 +30,7 @@ class RequestItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int statusText = request.reqDicidState ?? 0;
+    final int statusText = request.reqDicidState;
     final Color statusColor = _getStatusColor(statusText);
     final bool canEdit = request.reqDecideState == 3;
 
@@ -67,7 +67,7 @@ class RequestItemCard extends StatelessWidget {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: request.requestDesc ?? '',
+                                text: request.requestDesc,
                                 style: AppTextStyle.text14RGrey(
                                   context,
                                   color: statusColor,
@@ -124,13 +124,13 @@ class _RequestDetails extends StatelessWidget {
           icon: Icons.person,
           request: request,
           title: AppLocalKay.employee.tr(),
-          description: isEn ? (request.empNameE ?? '') : (request.empName ?? ''),
+          description: isEn ? (request.empNameE) : (request.empName),
         ),
         CustomTitelCardWidget(
           icon: Icons.calendar_month,
           request: request,
           title: AppLocalKay.requestDate.tr(),
-          description: request.requestDate ?? '',
+          description: request.requestDate,
         ),
         CustomTitelCardWidget(
           icon: Icons.list_alt,
@@ -151,27 +151,6 @@ class _RequestDetails extends StatelessWidget {
           description: isEn ? request.toProjName.toString() : request.toProjName.toString(),
         ),
       ],
-    );
-  }
-}
-
-class _StatusLabel extends StatelessWidget {
-  final String statusText;
-  final Color statusColor;
-  const _StatusLabel({required this.statusText, required this.statusColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: Text(
-        statusText,
-        style: AppTextStyle.text14RGrey(
-          context,
-          color: statusColor,
-        ).copyWith(fontWeight: FontWeight.bold),
-      ),
     );
   }
 }
@@ -251,8 +230,8 @@ class _DeleteButton extends StatelessWidget {
         );
         if (confirm == true) {
           context.read<VacationRequestsCubit>().deleteTransfer(
-            requestId: request.requestId ?? 0,
-            empcode: request.adminEmpCode ?? 0,
+            requestId: request.requestId,
+            empcode: request.adminEmpCode,
             empcodeadmin: empcoded,
             context: context,
           );

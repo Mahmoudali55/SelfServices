@@ -56,7 +56,6 @@ class _GroupsListScreenState extends State<GroupsListScreen> {
                 ),
               );
             }
-
             return ListView.builder(
               itemCount: groups.length,
               itemBuilder: (context, index) {

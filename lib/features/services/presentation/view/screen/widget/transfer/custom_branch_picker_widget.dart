@@ -47,7 +47,7 @@ class CustomBranchPickerWidget extends StatelessWidget {
             return StatefulBuilder(
               builder: (context, setState) {
                 final filtered = branches.where((branch) {
-                  final name = branch.bName.toLowerCase() ?? '';
+                  final name = branch.bName.toLowerCase();
                   final code = branch.bCode.toString();
                   return searchQuery.isEmpty ||
                       name.contains(searchQuery.toLowerCase()) ||
@@ -56,7 +56,6 @@ class CustomBranchPickerWidget extends StatelessWidget {
 
                 return Column(
                   children: [
-                    // ======= العنوان =======
                     Padding(
                       padding: const EdgeInsets.all(10),
                       child: Row(
@@ -147,7 +146,7 @@ class CustomBranchPickerWidget extends StatelessWidget {
                                   title: Text(branch.bCode.toString()),
                                   trailing: Text(
                                     context.locale.languageCode == 'en'
-                                        ? branch.bName ?? ''
+                                        ? branch.bName
                                         : branch.bNameE ?? '',
                                     style: AppTextStyle.text16MSecond(
                                       context,
@@ -157,7 +156,7 @@ class CustomBranchPickerWidget extends StatelessWidget {
                                   onTap: () {
                                     branchIdController.text = branch.bCode.toString();
                                     branchNameController.text = context.locale.languageCode == 'en'
-                                        ? branch.bName ?? ''
+                                        ? branch.bName
                                         : branch.bNameE ?? '';
 
                                     if (onBranchSelected != null) {

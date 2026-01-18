@@ -70,8 +70,8 @@ class _SesidChangeRequestScreenState extends State<SesidChangeRequestScreen> {
 
     requestNumber.text = model.requestId.toString();
     _employeeId.text = model.empCode.toString();
-    _newSesid.text = model.strField1 ?? '';
-    _reason.text = model.strField2 ?? '';
+    _newSesid.text = model.strField1;
+    _reason.text = model.strField2;
     if (model.requestDate.isNotEmpty) {
       try {
         final parsedDate = DateFormat('dd/MM/yyyy', 'en').parse(model.requestDate);
@@ -84,7 +84,7 @@ class _SesidChangeRequestScreenState extends State<SesidChangeRequestScreen> {
     final deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       final androidInfo = await deviceInfo.androidInfo;
-      return androidInfo.id ?? '';
+      return androidInfo.id;
     } else if (Platform.isIOS) {
       final iosInfo = await deviceInfo.iosInfo;
       return iosInfo.identifierForVendor ?? '';

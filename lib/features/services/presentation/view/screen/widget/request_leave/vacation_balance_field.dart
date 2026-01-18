@@ -33,13 +33,13 @@ class VacationBalanceField extends StatelessWidget {
       listener: (context, state) {
         if (isBall && state.employeeBalStatus.isSuccess && state.employeeBalStatus.data != null) {
           final List<EmployeeBalModel> data = state.employeeBalStatus.data!;
-          final total = data.fold<double>(0.0, (sum, e) => sum + (e.column1 ?? 0));
+          final total = data.fold<double>(0.0, (sum, e) => sum + (e.column1));
           controller.text = total.toString();
         } else if (!isBall &&
             state.employeeVacationsStatus.isSuccess &&
             state.employeeVacationsStatus.data != null) {
           final List<EmployeeVacationModel> data = state.employeeVacationsStatus.data!;
-          final total = data.fold<double>(0.0, (sum, e) => sum + (e.empVacBal ?? 0));
+          final total = data.fold<double>(0.0, (sum, e) => sum + (e.empVacBal));
           controller.text = total.toString();
         }
       },

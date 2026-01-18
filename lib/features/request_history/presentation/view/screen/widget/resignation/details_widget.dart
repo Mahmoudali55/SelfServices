@@ -19,13 +19,13 @@ class Details extends StatelessWidget {
           icon: Icons.person,
           request: request,
           title: AppLocalKay.employee.tr(),
-          description: isEn ? (request.empNameE ?? '') : request.empName ?? '',
+          description: isEn ? (request.empNameE) : request.empName,
         ),
         CustomTitelCardWidget(
           icon: Icons.calendar_month,
           request: request,
           title: AppLocalKay.requestDate.tr(),
-          description: request.requestDate ?? '',
+          description: request.requestDate,
         ),
         CustomTitelCardWidget(
           icon: Icons.calendar_month,

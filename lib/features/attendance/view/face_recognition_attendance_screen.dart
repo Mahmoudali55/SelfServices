@@ -78,8 +78,12 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
     _loadRegisteredEmployees();
     _loadTodayAttendance();
 
-    // Auto-start scanning for phone-like ease
+    // Instant local cache loading if employees are already available
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final employees = context.read<ServicesCubit>().state.employeesStatus.data;
+      if (employees != null && employees.isNotEmpty) {
+        context.read<FaceRecognitionCubit>().populateFromCache(employees);
+      }
       _startScanning();
     });
   }

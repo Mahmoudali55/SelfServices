@@ -85,7 +85,7 @@ class TimeSheetPdfGenerator {
                       children: [
                         _buildCell(item.nameGpf),
                         _buildCell(item.signInDate),
-                        _buildCell(item.signInTime ?? '-'),
+                        _buildCell(item.signInTime),
                         _buildCell(item.signOutTime ?? '-'),
                         _buildCell(item.projectSignInTime.toString()),
                         _buildCell(item.projectSignOutTime.toString()),

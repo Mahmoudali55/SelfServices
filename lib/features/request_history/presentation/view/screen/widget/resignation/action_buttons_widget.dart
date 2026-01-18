@@ -58,8 +58,8 @@ class ActionButtons extends StatelessWidget {
 
               if (confirm == true) {
                 context.read<VacationRequestsCubit>().deleteResignation(
-                  requestId: request.requestID ?? 0,
-                  empcode: request.empCode ?? 0,
+                  requestId: request.requestID,
+                  empcode: request.empCode,
                   empcodeadmin: empcoded,
                   context: context,
                 );

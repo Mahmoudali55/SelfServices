@@ -35,8 +35,8 @@ class _VacationRequestsBottomSheetLightState extends State<VacationRequestsBotto
       filteredRequests = widget.requests
           .where(
             (r) =>
-                (r.empName ?? '').toLowerCase().contains(query.toLowerCase()) ||
-                (r.empNameE ?? '').toLowerCase().contains(query.toLowerCase()),
+                (r.empName).toLowerCase().contains(query.toLowerCase()) ||
+                (r.empNameE).toLowerCase().contains(query.toLowerCase()),
           )
           .toList();
     });
@@ -91,7 +91,7 @@ class _VacationRequestsBottomSheetLightState extends State<VacationRequestsBotto
                           ? r.empName
                           : r.empNameE;
                       return ListTile(
-                        trailing: Text(displayName ?? ''),
+                        trailing: Text(displayName),
                         title: Text(r.empCode.toString()),
                         onTap: () => widget.onSelect(r),
                       );

@@ -44,7 +44,7 @@ class CustomSolfeAllEmployeeWidgetLight extends StatelessWidget {
             return StatefulBuilder(
               builder: (context, setState) {
                 final filtered = employees.where((emp) {
-                  final name = (emp.empName ?? '').toLowerCase();
+                  final name = (emp.empName).toLowerCase();
                   return searchQuery.isEmpty || name.contains(searchQuery.toLowerCase());
                 }).toList();
 
@@ -127,11 +127,11 @@ class CustomSolfeAllEmployeeWidgetLight extends StatelessWidget {
                                     ? emp.empName.replaceFirst(RegExp(r'^[0-9]+\s*'), '')
                                     : emp.empNameE.replaceFirst(RegExp(r'^[0-9]+\s*'), '');
                                 return ListTile(
-                                  trailing: Text(displayName ?? ''),
+                                  trailing: Text(displayName),
                                   title: Text(emp.empCode.toString()),
                                   onTap: () {
                                     empIdController.text = emp.empCode.toString();
-                                    empNameController.text = displayName ?? '';
+                                    empNameController.text = displayName;
                                     Navigator.pop(context);
                                   },
                                 );

@@ -97,7 +97,6 @@ class _RateAppScreenState extends State<RateAppScreen> {
                 text: AppLocalKay.send_rating.tr(),
                 onPressed: () async {
                   final feedback = feedbackController.text.trim();
-                  final lang = context.locale.languageCode;
 
                   if (rating == 0.0) {
                     CommonMethods.showToast(

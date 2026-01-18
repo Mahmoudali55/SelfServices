@@ -100,7 +100,6 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                     if (_formKey.currentState!.validate()) {
                       final title = titleController.text.trim();
                       final suggestion = suggestionController.text.trim();
-                      final lang = context.locale.languageCode;
 
                       if (title.isEmpty || suggestion.isEmpty) {
                         CommonMethods.showToast(
