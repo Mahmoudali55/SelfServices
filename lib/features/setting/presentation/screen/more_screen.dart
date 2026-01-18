@@ -93,23 +93,7 @@ class _MoreScreenState extends State<MoreScreen> {
               title: AppLocalKay.timesheet.tr(),
               onTap: () => NavigatorMethods.pushNamed(context, RoutesName.timeSheetScreen),
             ),
-            _listTile(
-              icon: Icons.calendar_month_outlined,
-              color: Colors.blueAccent,
-              title: AppLocalKay.calendar.tr(),
-              onTap: () => NavigatorMethods.pushNamed(context, RoutesName.calendarScreen),
-            ),
-            // pagePrivID == 1 || pagePrivID == 2
-            //     ? _listTile(
-            //         icon: Icons.fingerprint,
-            //         color: Colors.teal,
-            //         title: 'تسجيل وجوه الموظفين',
-            //         onTap: () => NavigatorMethods.pushNamed(
-            //           context,
-            //           RoutesName.studentFaceRegistrationScreen,
-            //         ),
-            //       )
-            //     : Container(),
+
             pagePrivID == 1 || pagePrivID == 2
                 ? _listTile(
                     icon: Icons.fingerprint,
@@ -121,6 +105,12 @@ class _MoreScreenState extends State<MoreScreen> {
                     ),
                   )
                 : Container(),
+            _listTile(
+              icon: Icons.calendar_month_outlined,
+              color: Colors.blueAccent,
+              title: AppLocalKay.calendar.tr(),
+              onTap: () => NavigatorMethods.pushNamed(context, RoutesName.calendarScreen),
+            ),
           ]),
 
           // Language Section
