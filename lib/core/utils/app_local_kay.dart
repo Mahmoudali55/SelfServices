@@ -678,4 +678,12 @@ class AppLocalKay {
   static const String servicess = 'servicess';
   static const String face_already_exist = 'face_already_exist';
   static const String register_attendance_and_resignation = 'register_attendance_and_resignation';
+  static const String calendar = 'calendar';
+  static const String founding_day = 'founding_day';
+  static const String national_day = 'national_day';
+  static const String flag_day = 'flag_day';
+  static const String eid_al_fitr = 'eid_al_fitr';
+  static const String eid_al_adha = 'eid_al_adha';
+  static const String saudi_holidays = 'saudi_holidays';
+  static const String hijri_calendar = 'hijri_calendar';
 }

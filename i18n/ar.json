@@ -683,5 +683,13 @@
   "you": "أنت",
   "your_rating_has_been_recorded": "تم تسجيل تقييمك بنجاح",
   "face_already_exist":"عذرا هذا الموظف له بصمة وجه من قبل",
-  "register_attendance_and_resignation":"تسجيل الحضور والانصراف"
+  "register_attendance_and_resignation":"تسجيل الحضور والانصراف",
+  "calendar": "التقويم",
+  "founding_day": "يوم التأسيس",
+  "national_day": "اليوم الوطني",
+  "flag_day": "يوم العلم",
+  "eid_al_fitr": "عيد الفطر",
+  "eid_al_adha": "عيد الأضحى",
+  "saudi_holidays": "المناسبات والعطلات السعودية",
+  "hijri_calendar":"التقويم الهجري"
 }

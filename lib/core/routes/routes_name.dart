@@ -48,4 +48,5 @@ class RoutesName {
   static const String generalRequestDetailsScreen = 'generalRequestDetailsScreen';
   static const String faceRecognitionAttendanceScreen = 'faceRecognitionAttendanceScreen';
   static const String studentFaceRegistrationScreen = 'studentFaceRegistrationScreen';
+  static const String calendarScreen = 'calendarScreen';
 }

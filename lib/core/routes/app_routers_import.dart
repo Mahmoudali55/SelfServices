@@ -48,6 +48,7 @@ import 'package:my_template/features/setting/presentation/screen/salary_vocabula
 import 'package:my_template/features/setting/presentation/screen/security_settings_screen.dart';
 import 'package:my_template/features/setting/presentation/screen/suggestions_screen.dart';
 import 'package:my_template/features/setting/presentation/screen/time_sheet_screen.dart';
+import 'package:my_template/features/setting/presentation/screen/calendar_screen.dart';
 
 import '../../features/splash/presentation/view/screen/splash_screen.dart' show SplashScreen;
 

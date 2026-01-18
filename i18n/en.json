@@ -700,5 +700,13 @@
   "user_management_save": "user_management_save",
   "your_rating_has_been_recorded": "your_rating_has_been_recorded",
    "face_already_exist": "face_already_exist",
-   "register_attendance_and_resignation": "register Attendance And Resignation"
+   "register_attendance_and_resignation": "register Attendance And Resignation",
+   "calendar": "Calendar",
+   "founding_day": "Founding Day",
+   "national_day": "National Day",
+   "flag_day": "Flag Day",
+   "eid_al_fitr": "Eid al-Fitr",
+   "eid_al_adha": "Eid al-Adha",
+   "saudi_holidays": "Saudi Holidays & Occasions",
+   "hijri_calendar": "Hijri Calendar"
 }

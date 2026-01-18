@@ -59,6 +59,8 @@ dependencies:
   path_provider:
   shared_preferences:
   syncfusion_flutter_datepicker:
+  table_calendar: ^3.1.2
+  hijri: ^3.0.0
   local_auth: ^2.3.0
   geolocator: ^14.0.2
   url_launcher: ^6.3.2

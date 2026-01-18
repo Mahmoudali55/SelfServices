@@ -694,7 +694,15 @@
   "user_management_percentage": "شرح",
   "user_management_save": "حاضری محفوظ کریں",
   "verify_face": "چہرے کی تصدیق کریں",
-   "face_already_exist":"اس ملازم کی چہرے کی شناخت پہلے سے ملازم کی چہرے کی شناخت میں موجود ہے",
-    "register_attendance_and_resignation": "حاضری اور انصراف"
+  "face_already_exist":"اس ملازم کی چہرے کی شناخت پہلے سے ملازم کی چہرے کی شناخت میں موجود ہے",
+  "register_attendance_and_resignation": "حاضری اور انصراف",
+  "calendar": "کیلنڈر",
+  "founding_day": "یوم تاسیس",
+  "national_day": "قومی دن",
+  "flag_day": "پرچم کا دن",
+  "eid_al_fitr": "عید الفطر",
+  "eid_al_adha": "عید الاضحی",
+  "saudi_holidays": "سودی تعطیلات اور تقریبات",
+  "hijri_calendar":"هجری کیلنڈر"
 
 }
