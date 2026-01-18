@@ -238,8 +238,8 @@ class FaceDetectionService {
     final distance = sqrt(sumSquaredDiff);
 
     // More forgiving mapping for phone-like experience:
-    // Distance 0.2 -> ~70% similarity, 0.3 -> ~55%
-    final similarity = (1.0 - (distance * 1.5)).clamp(0.0, 1.0) * 100;
+    // Distance 0.3 -> ~70% similarity, 0.4 -> ~55%
+    final similarity = (1.0 - (distance * 1.2)).clamp(0.0, 1.0) * 100;
     return similarity;
   }
 
@@ -247,7 +247,8 @@ class FaceDetectionService {
   Future<Map<String, dynamic>?> findBestMatch({
     required List<double> capturedFeatures,
     required Map<String, List<double>> registeredFeatures, // studentId -> features
-    double threshold = 55.0, // Significant reduction for phone-like pose flexibility
+    double threshold =
+        48.0, // Reduced from 55 for significant reduction for phone-like pose flexibility
   }) async {
     if (capturedFeatures.isEmpty || registeredFeatures.isEmpty) {
       return null;
@@ -288,12 +289,12 @@ class FaceDetectionService {
       }
 
       // Balanced quality checks (allow slight tilt but prevent extreme side profiles)
-      if (face.headEulerAngleY != null && face.headEulerAngleY!.abs() > 25) {
-        return false; // Max 25 degrees for better flexibility
+      if (face.headEulerAngleY != null && face.headEulerAngleY!.abs() > 35) {
+        return false; // Max 35 degrees (increased from 25) for better flexibility
       }
 
-      if (face.headEulerAngleZ != null && face.headEulerAngleZ!.abs() > 25) {
-        return false; // Max 25 degrees for better flexibility
+      if (face.headEulerAngleZ != null && face.headEulerAngleZ!.abs() > 35) {
+        return false; // Max 35 degrees (increased from 25) for better flexibility
       }
 
       return true;

@@ -158,7 +158,7 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
       // High Performance: Use camera image stream instead of a timer
       cubit.cameraService.startImageStream((image) {
         if (isScanning && !isMarkingAttendance && !_showSuccessOverlay && !_showFailureOverlay) {
-          cubit.recognizeFromStream(image: image, threshold: 55.0);
+          cubit.recognizeFromStream(image: image, threshold: 48.0);
         }
       });
     }
@@ -170,7 +170,7 @@ class _FaceRecognitionAttendanceScreenState extends State<FaceRecognitionAttenda
 
     await cubit.recognizeStudent(
       classId: globalClassId,
-      threshold: 55.0, // Phone-like flexibility
+      threshold: 48.0, // Phone-like flexibility
     );
   }
 
