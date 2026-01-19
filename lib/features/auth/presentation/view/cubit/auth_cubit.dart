@@ -43,6 +43,7 @@ class AuthCubit extends Cubit<AuthState> {
     final isConnected = await connectionChecker.isConnected;
     if (!isConnected) {
       CommonMethods.showToast(
+
         message: AppLocalKay.no_internet_connection.tr(),
         type: ToastType.error,
       );
@@ -106,8 +107,9 @@ class AuthCubit extends Cubit<AuthState> {
     return null;
   }
 
-  String? validateMobile(value, BuildContext context) =>
-      value!.isEmpty ? AppLocalKay.enter_mobile.tr() : null;
+  String? validateMobile(value, BuildContext context) => value!.isEmpty
+      ? AppLocalKay.enter_mobile.tr()
+      : null;
 
   void onLoginSuccess({
     required BuildContext context,
@@ -115,7 +117,10 @@ class AuthCubit extends Cubit<AuthState> {
     required String languageCode,
   }) {
     if (state.loginStatus.isSuccess) {
-      CommonMethods.showToast(message: AppLocalKay.login_success.tr(), type: ToastType.success);
+      CommonMethods.showToast(
+        message: AppLocalKay.login_success.tr(),
+        type: ToastType.success,
+      );
       if (HiveMethods.getToken() == null) {
         showChangePasswordSheet(context);
       } else {
@@ -123,7 +128,7 @@ class AuthCubit extends Cubit<AuthState> {
           context,
           RoutesName.layoutScreen,
           arguments: {
-            'username': languageCode == 'ar' || languageCode == 'ur'
+            'username': languageCode == 'ar'
                 ? state.loginStatus.data?.user.empName
                 : state.loginStatus.data?.user.empNameE,
             'empCode': int.tryParse(state.loginStatus.data?.user.empCode ?? '0') ?? 0,
@@ -133,7 +138,8 @@ class AuthCubit extends Cubit<AuthState> {
     }
 
     if (state.loginStatus.isFailure) {
-      final error = state.loginStatus.error ?? AppLocalKay.login_failed.tr();
+      final error =
+          state.loginStatus.error ?? AppLocalKay.login_failed.tr();
       CommonMethods.showToast(message: error, type: ToastType.error);
     }
   }
