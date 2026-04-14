@@ -73,36 +73,44 @@ class _SelfServicesState extends State<SelfServices> {
         BlocProvider(create: (context) => sl<FaceRecognitionCubit>()),
         BlocProvider(create: (context) => sl<AttendanceCubit>()),
       ],
-      child: ScreenUtilInit(
-        designSize: const Size(360, 690),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (_, child) {
-          return MaterialApp(
-            localizationsDelegates: [
-              ...context.localizationDelegates,
-              CountryLocalizations.delegate,
-            ],
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            // Provide fallback for locales not supported by all delegates
-            localeResolutionCallback: (locale, supportedLocales) {
-              // If the locale is Urdu and CountryLocalizations doesn't support it,
-              // fallback to Arabic for country picker
-              if (locale?.languageCode == 'ur') {
-                return locale;
-              }
-              return locale;
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+        final isTablet = constraints.maxWidth >= 600;
+        final Size designSize = isTablet
+            ? Size(constraints.maxWidth, constraints.maxHeight)
+            : const Size(360, 690);
+          return ScreenUtilInit(
+            designSize: designSize,
+            minTextAdapt: true,
+            splitScreenMode: true,
+            builder: (_, child) {
+              return MaterialApp(
+                localizationsDelegates: [
+                  ...context.localizationDelegates,
+                  CountryLocalizations.delegate,
+                ],
+                supportedLocales: context.supportedLocales,
+                locale: context.locale,
+                // Provide fallback for locales not supported by all delegates
+                localeResolutionCallback: (locale, supportedLocales) {
+                  // If the locale is Urdu and CountryLocalizations doesn't support it,
+                  // fallback to Arabic for country picker
+                  if (locale?.languageCode == 'ur') {
+                    return locale;
+                  }
+                  return locale;
+                },
+                debugShowCheckedModeBanner: false,
+                theme: appThemeData(context),
+                initialRoute: RoutesName.splashScreen,
+                onGenerateRoute: AppRouters.onGenerateRoute,
+                navigatorKey: AppRouters.navigatorKey,
+                builder: BotToastInit(),
+                navigatorObservers: [BotToastNavigatorObserver()],
+              );
             },
-            debugShowCheckedModeBanner: false,
-            theme: appThemeData(context),
-            initialRoute: RoutesName.splashScreen,
-            onGenerateRoute: AppRouters.onGenerateRoute,
-            navigatorKey: AppRouters.navigatorKey,
-            builder: BotToastInit(),
-            navigatorObservers: [BotToastNavigatorObserver()],
           );
-        },
+        }
       ),
     );
   }
