@@ -9,6 +9,7 @@ import 'package:my_template/core/cache/hive/get_secure_key.dart';
 import 'package:my_template/core/network/contants.dart';
 import 'package:my_template/core/theme/cubit/app_theme_cubit.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
+import 'package:my_template/firebase_options.dart';
 
 import 'app.dart';
 import 'core/theme/theme_enum.dart';
@@ -23,7 +24,9 @@ void main() async {
     DeviceOrientation.landscapeRight,
   ]);
   await EasyLocalization.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
   await Hive.initFlutter();
   Hive.registerAdapter(ThemeEnumAdapter());
   final key = await getSecureKey();
@@ -33,7 +36,7 @@ void main() async {
   await ServiceInitialize.initialize();
   await Constants.loadBaseUrl();
   final isDeviceJailBroken = await JailbreakRootDetection.instance.isJailBroken;
-  final isDebugged = await JailbreakRootDetection.instance.isDebugged;
+ final isDebugged = await JailbreakRootDetection.instance.isDebugged;
   if (isDeviceJailBroken && !isDebugged) {
     runApp(
       MaterialApp(

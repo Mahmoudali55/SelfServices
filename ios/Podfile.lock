@@ -1560,8 +1560,6 @@ DEPENDENCIES:
   - google_mlkit_commons (from `.symlinks/plugins/google_mlkit_commons/ios`)
   - google_mlkit_face_detection (from `.symlinks/plugins/google_mlkit_face_detection/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
-  - "gRPC-C++"
-  - gRPC-Core
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - jailbreak_root_detection (from `.symlinks/plugins/jailbreak_root_detection/ios`)
   - local_auth_darwin (from `.symlinks/plugins/local_auth_darwin/darwin`)
@@ -1741,6 +1739,6 @@ SPEC CHECKSUMS:
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
 
-PODFILE CHECKSUM: e0f0abf7f7663b6d02b98a3521ed5f1168616c54
+PODFILE CHECKSUM: fd8d5046ca847233fa86c8fee95afdf1f75e051c
 
 COCOAPODS: 1.16.2
