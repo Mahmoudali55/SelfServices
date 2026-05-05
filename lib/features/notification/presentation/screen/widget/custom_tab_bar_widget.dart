@@ -17,70 +17,85 @@ class CustomTabBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 40.h,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: TabBar(
-        physics: const NeverScrollableScrollPhysics(),
-
-        isScrollable: true,
-        indicator: BoxDecoration(
-          color: AppColor.primaryColor(context),
+    return SizedBox(
+      width: double.infinity,
+      height: 48.h,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(12),
         ),
-        labelColor: AppColor.whiteColor(context),
-        unselectedLabelColor: AppColor.blackColor(context),
-        labelStyle: AppTextStyle.text16MSecond(context),
-        unselectedLabelStyle: AppTextStyle.text16MSecond(context),
-        tabs: [
-          Tab(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Text(AppLocalKay.pendingRequests.tr(), overflow: TextOverflow.ellipsis),
-                ),
-                const SizedBox(width: 6),
-                CircleAvatar(
-                  radius: 12,
-                  backgroundColor: AppColor.whiteColor(context),
-                  child: Text(
-                    totalRequestsCount.toString(),
-                    style: AppTextStyle.text14MPrimary(
-                      context,
-                    ).copyWith(color: AppColor.blackColor(context), fontSize: 12),
-                  ),
-                ),
-              ],
-            ),
+        child: TabBar(
+          physics: const NeverScrollableScrollPhysics(),
+          isScrollable: false,
+          tabAlignment: TabAlignment.fill,
+          indicator: BoxDecoration(
+            color: AppColor.primaryColor(context),
+            borderRadius: BorderRadius.circular(12),
           ),
-          Tab(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Text(AppLocalKay.requestStatuses.tr(), overflow: TextOverflow.ellipsis),
-                ),
-                const SizedBox(width: 6),
-                CircleAvatar(
-                  radius: 12,
-                  backgroundColor: AppColor.whiteColor(context),
-                  child: Text(
-                    totalStatusesCount.toString(),
-                    style: AppTextStyle.text14MPrimary(context).copyWith(
-                      color: AppColor.blackColor(context),
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+          indicatorSize: TabBarIndicatorSize.tab,
+          dividerColor: Colors.transparent,
+          labelColor: AppColor.whiteColor(context),
+          unselectedLabelColor: AppColor.blackColor(context),
+          labelStyle: AppTextStyle.text16MSecond(context),
+          unselectedLabelStyle: AppTextStyle.text16MSecond(context),
+          tabs: [
+            Tab(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Flexible(
+                    child: Text(
+                      AppLocalKay.pendingRequests.tr(),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 6),
+                  CircleAvatar(
+                    radius: 12,
+                    backgroundColor: AppColor.whiteColor(context),
+                    child: Text(
+                      totalRequestsCount.toString(),
+                      style: AppTextStyle.text14MPrimary(
+                        context,
+                      ).copyWith(color: AppColor.blackColor(context), fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            Tab(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Flexible(
+                    child: Text(
+                      AppLocalKay.requestStatuses.tr(),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  CircleAvatar(
+                    radius: 12,
+                    backgroundColor: AppColor.whiteColor(context),
+                    child: Text(
+                      totalStatusesCount.toString(),
+                      style: AppTextStyle.text14MPrimary(context).copyWith(
+                        color: AppColor.blackColor(context),
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

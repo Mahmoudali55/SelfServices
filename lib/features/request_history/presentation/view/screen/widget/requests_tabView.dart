@@ -27,15 +27,19 @@ class RequestsTabView extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            margin: const EdgeInsets.all(12),
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.grey.shade200,
               borderRadius: BorderRadius.circular(12),
             ),
             child: TabBar(
-              isScrollable: true,
+              isScrollable: false,
+              tabAlignment: TabAlignment.fill,
               automaticIndicatorColorAdjustment: false,
               physics: const NeverScrollableScrollPhysics(),
+              dividerColor: Colors.transparent,
+              indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(
                 color: AppColor.primaryColor(context),
                 borderRadius: BorderRadius.circular(12),
@@ -68,11 +72,17 @@ class RequestsTabView extends StatelessWidget {
   Widget _buildTab(BuildContext context, String text, int count) {
     return Tab(
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(text, overflow: TextOverflow.ellipsis),
-          SizedBox(width: 2.w),
+          Flexible(
+            child: Text(
+              text,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+          SizedBox(width: 4.w),
           Container(
             padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(color: AppColor.whiteColor(context), shape: BoxShape.circle),

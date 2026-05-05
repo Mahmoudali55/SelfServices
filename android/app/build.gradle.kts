@@ -31,8 +31,13 @@ android {
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false        // ✅ الشكل الصحيح في Kotlin DSL
-            isShrinkResources = false      // ✅ الشكل الصحيح في Kotlin DSL
+            // ✅ تفعيل حذف الكود والموارد غير المستخدمة لتقليل الحجم بشكل كبير
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("debug")
         }
         getByName("debug") {
