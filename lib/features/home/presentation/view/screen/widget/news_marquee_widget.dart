@@ -49,8 +49,15 @@ class _NewsTickerState extends State<NewsTicker> with SingleTickerProviderStateM
       padding: EdgeInsets.symmetric(horizontal: 12.w),
       decoration: BoxDecoration(
         color: AppColor.whiteColor(context),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: AppColor.primaryColor(context).withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.primaryColor(context).withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: ListView.separated(
         controller: _scrollController,

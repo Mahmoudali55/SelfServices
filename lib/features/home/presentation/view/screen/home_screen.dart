@@ -121,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      backgroundColor: AppColor.whiteColor(context),
+      backgroundColor: const Color(0xFFF4F6FB),
       body: RefreshIndicator(
         onRefresh: _refreshData,
         color: AppColor.primaryColor(context),
@@ -207,7 +207,26 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
 
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Text(AppLocalKay.services.tr(), style: AppTextStyle.text18MSecond(context)),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: AppColor.primaryColor(context),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    const Gap(10),
+                    Text(
+                      AppLocalKay.services.tr(),
+                      style: AppTextStyle.text18MSecond(context).copyWith(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 20.sp,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Gap(10.h),
 
@@ -255,32 +274,19 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            mainAxisSpacing: 15,
-                            crossAxisSpacing: 15,
-                            childAspectRatio: 1.0,
+                            mainAxisSpacing: 20,
+                            crossAxisSpacing: 20,
+                            childAspectRatio: 0.95,
                           ),
                           itemCount: filteredServicesForGrid.length,
                           itemBuilder: (context, index) {
                             final service = filteredServicesForGrid[index];
                             final cubit = context.read<HomeCubit>();
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: AppColor.whiteColor(context),
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
-                                    blurRadius: 6,
-                                    offset: const Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: CustomGridViewList(
-                                cubit: cubit,
-                                service: service,
-                                widget: widget,
-                                langCode: langCode,
-                              ),
+                            return CustomGridViewList(
+                              cubit: cubit,
+                              service: service,
+                              widget: widget,
+                              langCode: langCode,
                             );
                           },
                         );

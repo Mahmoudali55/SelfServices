@@ -78,13 +78,27 @@ class _CustomHomeHeaderWidgetState extends State<CustomHomeHeaderWidget> {
         }
       },
       child: Container(
-        padding: const EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 20),
+        padding: const EdgeInsets.only(top: 60, left: 20, right: 20, bottom: 25),
         width: double.infinity,
         decoration: BoxDecoration(
-          color: AppColor.primaryColor(context),
+          gradient: LinearGradient(
+            colors: [
+              AppColor.primaryColor(context),
+              AppColor.primaryColor(context).withOpacity(0.7),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.primaryColor(context).withOpacity(0.3),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
           borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.circular(20),
-            bottomRight: Radius.circular(20),
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
           ),
         ),
         child: Column(

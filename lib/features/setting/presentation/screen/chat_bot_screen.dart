@@ -30,7 +30,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    aiService = AiService(apiKey: 'AIzaSyAxwXagf0SJLMyZYLT23jJiSqKWHv6MGw8');
+    aiService = AiService(apiKey: 'AIzaSyBOfuLTtUMJ5_dmiMKZ97JiM3xN3RQaXvQ');
 
     _dotsController = AnimationController(vsync: this, duration: const Duration(seconds: 1))
       ..repeat();
