@@ -105,7 +105,14 @@ class _SelfServicesState extends State<SelfServices> {
                 initialRoute: RoutesName.splashScreen,
                 onGenerateRoute: AppRouters.onGenerateRoute,
                 navigatorKey: AppRouters.navigatorKey,
-                builder: BotToastInit(),
+                builder: (context, child) {
+                  child = BotToastInit()(context, child);
+                  return SafeArea(
+                    top: false,
+                    bottom: true,
+                    child: child!,
+                  );
+                },
                 navigatorObservers: [BotToastNavigatorObserver()],
               );
             },

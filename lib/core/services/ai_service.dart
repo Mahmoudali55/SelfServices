@@ -1,11 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class AiService {
   final String apiKey;
   final List<String> _models = [
-    'gemini-2.5-flash-lite-preview-09-2025',
-    'gemini-2.5-pro',
-    'gemini-2.0',
+    'gemini-3-flash-preview',
+    'gemini-3.1-pro-preview',
+    'gemini-3.1-flash-lite-preview',
   ];
 
   AiService({required this.apiKey});
@@ -18,7 +19,9 @@ class AiService {
         if (response.text != null) {
           return response.text!;
         }
-      } catch (e) {}
+      } catch (e) {
+        debugPrint('Error with model $modelName: $e');
+      }
     }
     return 'حدث خطأ أثناء الاتصال بكل الموديلات.';
   }

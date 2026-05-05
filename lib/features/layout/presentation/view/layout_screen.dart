@@ -49,7 +49,6 @@ class LayoutScreen extends StatelessWidget {
               return await _showExitDialog(context);
             },
             child: Scaffold(
-              extendBody: true,
 
               /// ✅ BODY بدون IndexedStack
               body: _buildCurrentScreen(

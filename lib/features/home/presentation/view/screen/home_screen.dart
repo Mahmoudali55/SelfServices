@@ -122,7 +122,6 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
     super.build(context);
     return Scaffold(
       backgroundColor: AppColor.whiteColor(context),
-      extendBody: true,
       body: RefreshIndicator(
         onRefresh: _refreshData,
         color: AppColor.primaryColor(context),

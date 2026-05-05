@@ -66,5 +66,49 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+
+	<!-- Camera, Photo Library, and Microphone Permissions (image_picker, camera, flutter_sound, file_picker) -->
+	<key>NSCameraUsageDescription</key>
+	<string>يحتاج التطبيق للوصول إلى الكاميرا لالتقاط الصور وتسجيل الفيديو.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>يحتاج التطبيق للوصول إلى معرض الصور لاختيار الصور والمستندات.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>يحتاج التطبيق لصلاحية حفظ الصور والمستندات في الهاتف.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>يحتاج التطبيق للوصول إلى الميكروفون لتسجيل مقاطع الصوت.</string>
+
+	<!-- Location Permissions (geolocator, google_maps_flutter) -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>يحتاج التطبيق للوصول إلى موقعك الجغرافي لعرض موقعك على الخريطة وتوفير الخدمات القريبة.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>يحتاج التطبيق للوصول إلى موقعك الجغرافي في جميع الأوقات لتقديم خدمات أفضل.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>يحتاج التطبيق لمعرفة موقعك لتوفير تجربة مخصصة.</string>
+
+	<!-- Face ID (local_auth) -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>يحتاج التطبيق لاستخدام بصمة الوجه (Face ID) لتسهيل وتسريع عملية تسجيل الدخول بأمان.</string>
+
+	<!-- URL Launcher Schemes (url_launcher) -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>http</string>
+		<string>https</string>
+		<string>tel</string>
+		<string>mailto</string>
+		<string>sms</string>
+	</array>
+
+	<!-- Firebase Messaging Background Modes -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>
