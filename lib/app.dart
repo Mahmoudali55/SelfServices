@@ -76,9 +76,10 @@ class _SelfServicesState extends State<SelfServices> {
       child: LayoutBuilder(
         builder: (context, constraints) {
         final isTablet = constraints.maxWidth >= 600;
+        // Use a more stable design size for tablets
         final Size designSize = isTablet
-            ? Size(constraints.maxWidth, constraints.maxHeight)
-            : const Size(360, 690);
+            ? const Size(768, 1024) // Standard tablet design size
+            : const Size(360, 690); // Standard phone design size
           return ScreenUtilInit(
             designSize: designSize,
             minTextAdapt: true,

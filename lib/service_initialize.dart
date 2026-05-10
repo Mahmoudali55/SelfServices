@@ -12,7 +12,6 @@ import 'features/notification/services/request_status_monitor.dart';
 class ServiceInitialize {
   ServiceInitialize._();
   static Future<void> initialize() async {
-    WidgetsFlutterBinding.ensureInitialized();
     // Hive is initialized and opened in main.dart with encryption
     try {
       Hive.registerAdapter(StudentFaceModelAdapter());
@@ -24,13 +23,17 @@ class ServiceInitialize {
         'Warning: Hive adapters failed to register (might be already registered or not generated): $e',
       );
     }
-
-    await ScreenUtil.ensureScreenSize();
+    
     await EasyLocalization.ensureInitialized();
     await NotificationService.initialize();
     await initDependencies();
+    
     // Start monitoring request status
-    final monitor = sl<RequestStatusMonitor>();
-    await monitor.initialize();
+    try {
+      final monitor = sl<RequestStatusMonitor>();
+      await monitor.initialize();
+    } catch (e) {
+      debugPrint('RequestStatusMonitor failed to initialize: $e');
+    }
   }
 }
