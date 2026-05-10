@@ -10,7 +10,6 @@ import 'package:my_template/core/network/contants.dart';
 import 'package:my_template/core/theme/cubit/app_theme_cubit.dart';
 import 'package:my_template/core/utils/app_local_kay.dart';
 import 'package:my_template/firebase_options.dart';
-
 import 'app.dart';
 import 'core/theme/theme_enum.dart';
 import 'service_initialize.dart';

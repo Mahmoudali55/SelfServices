@@ -80,7 +80,7 @@ class BaseUrlPage extends StatelessWidget {
                     },
                     child: Text(
                       AppLocalKay.save.tr(),
-                      style: AppTextStyle.formTitleStyle(context, color: Colors.white),
+                      style: AppTextStyle.formTitleStyle(context, color: AppColor.whiteColor(context)),
                     ),
                   ),
                 ),
